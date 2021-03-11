@@ -2,6 +2,7 @@ package com.Microservices.Csv2RdfConverter.service;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -26,9 +27,10 @@ public class Csv2RdfService {
     String ns = "sd";
     String superclass = "Sachdaten";
     String delimiter = ";";
+    String feedback = "";
 
     public String convert(ConvertInfos infos) {
-        File filename = infos.getFile();
+        File filename = new File(infos.getFile());
         if (infos.getNamespace() != null)
             namespace = infos.getNamespace();
         if (infos.getPrefix() != null)
@@ -83,9 +85,14 @@ public class Csv2RdfService {
             } finally {
                 out.close();
             }
+            feedback = "File created under: " + convFile;
+        } catch (FileNotFoundException f) {
+            feedback = "400 - File not found. \n" + f.getMessage();
+            f.printStackTrace();
         } catch (IOException e) {
+            feedback = "400 - Something went wrong. \n" + e.getMessage();
             e.printStackTrace();
         }
-        return "File created under: " + convFile;
+        return feedback;
     }
 }

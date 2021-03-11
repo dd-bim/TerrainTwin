@@ -1,13 +1,23 @@
 server:
     port: 7202
+    # servlet:
+    #     context-path: /terraintwin
+
 spring:
     application:
         name: Csv2RdfConverter
     cloud:
-        config: 
+        config:
             uri: http://localhost:9090
 
-eureka: 
+eureka:
     client:
         serviceUrl:
             defaultZone: http://localhost:9091/eureka
+
+springdoc:
+    api-docs:
+        path: /terraintwin/csv2rdf/v3/api-docs
+    swagger-ui: 
+        path: /terraintwin/csv2rdf/swagger-ui.html
+        operationsSorter: method
