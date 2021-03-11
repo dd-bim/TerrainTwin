@@ -32,7 +32,7 @@ public class MinIOConnection {
 
     MinioClient client;
     // Dotenv env = Dotenv.load();
-    Dotenv env = Dotenv.configure().directory("./GraphDBImport").load();
+    Dotenv env = Dotenv.configure().directory("./GraphDBImportService").load();
     public static GraphDBConnection connector = new GraphDBConnection();
 
     // Connect to MinIO

@@ -1,7 +1,5 @@
 server:
     port: 7202
-    # servlet:
-    #     context-path: /terraintwin
 
 spring:
     application:

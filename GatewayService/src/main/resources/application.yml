@@ -19,7 +19,7 @@ spring:
       - id: graphdbimport-service
         uri: lb://GRAPHDBIMPORTER
         predicates:
-        - Path=/graphdbimport/**
+        - Path=/terraintwin/graphdbimport/**
       - id: csv2rdf-service
         uri: lb://CSV2RDFCONVERTER
         predicates:

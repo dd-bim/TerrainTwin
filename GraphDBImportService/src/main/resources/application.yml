@@ -1,0 +1,25 @@
+server:
+    port: 7201
+
+spring:
+    application:
+        name: GraphDBImporter
+    main:
+        banner-mode: off
+    web:
+        resources:
+            add-mappings: true
+    cloud:
+        config:
+            uri:  http://localhost:9090
+eureka:
+    client:
+        serviceUrl:
+            defaultZone: http://localhost:9091/eureka
+
+springdoc:
+    api-docs:
+        path: /terraintwin/graphdbimport/v3/api-docs
+    swagger-ui: 
+        path: /terraintwin/graphdbimport/swagger-ui.html
+        operationsSorter: method
