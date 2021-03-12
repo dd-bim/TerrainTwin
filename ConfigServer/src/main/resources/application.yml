@@ -1,0 +1,19 @@
+server:
+    port: 9090
+spring:
+    main: 
+        banner-mode: off
+    cloud:
+        config:
+            server:
+                # native:
+                #     searchLocations: file:///D:/Git_Projekte/spring_boot_microservices/centralProperties 
+                git:
+                    uri: file:///D:/Git_Projekte/spring_boot_microservices/centralProperties
+                    clone-on-start: true
+    security:
+        user:
+            name: root
+            password: s3cr3t
+    # profiles:
+    #     active: native

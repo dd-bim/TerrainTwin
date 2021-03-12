@@ -1,4 +1,4 @@
-package com.graphdb.connection.connectors;
+package com.graphdb.connection.service;
 
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.manager.RemoteRepositoryManager;

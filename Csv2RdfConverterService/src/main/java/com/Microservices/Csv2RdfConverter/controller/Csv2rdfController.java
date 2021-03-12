@@ -40,7 +40,7 @@ public class Csv2rdfController {
     }
 
     @PostMapping("/csv2rdf/convert")
-    @Operation(summary = "Convert a csv file to a rdf file in turtle sysntax.")
+    @Operation(summary = "Convert a csv file to a rdf file in turtle sysntax.", description = "Possible value combinations in request body:<br><br> file <br> file, delimiter <br> file, namespace, prefix, superclass <br> all")
     @ApiResponse(responseCode = "200", description = "Conversion performed successfully", content = @Content)
     @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
     @ApiResponse(responseCode = "404", description = "Service not found", content = @Content)

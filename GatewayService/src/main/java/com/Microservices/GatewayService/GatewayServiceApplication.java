@@ -13,10 +13,6 @@ import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinitionLocator;
 import org.springframework.context.annotation.Bean;
 
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.info.License;
-
 @EnableDiscoveryClient
 @SpringBootApplication
 public class GatewayServiceApplication {
@@ -24,14 +20,6 @@ public class GatewayServiceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(GatewayServiceApplication.class, args);
 	}
-
-	// @Bean
-	// public OpenAPI infosOpenAPI() {
-	// return new OpenAPI().info(new Info().title("TerrainTwin
-	// API").description("Documentation").version("v1.0")
-	// .license(new License().name("Apache
-	// 2.0").url("http://www.apache.org/licenses/")));
-	// }
 
 	@Autowired
 	RouteDefinitionLocator locator;
