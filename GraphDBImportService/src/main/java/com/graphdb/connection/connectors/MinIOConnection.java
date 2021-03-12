@@ -91,7 +91,7 @@ public class MinIOConnection {
                     try (InputStream stream = client
                             .getObject(GetObjectArgs.builder().bucket(bucket).object(filename).build())) {
 
-                        // get key-value-paires from json and remove all paires with empty value
+                        // get key-value-paires from json
                         HashMap<String, Object> json = new HashMap<String, Object>();
                         @SuppressWarnings("unchecked")
                         HashMap<String, Object> obj = new ObjectMapper().readValue(stream, HashMap.class);
@@ -104,12 +104,20 @@ public class MinIOConnection {
                                 json.putAll(s);
                             }
                         });
-                        json.entrySet().removeIf(entry -> "".equals(entry.getValue()));
 
-                        // create rdf model from key-value-paires
+                        // create rdf model from key-value-paires and remove all paires with empty value
+                        String r = "https://terrain.dd-bim.org/" + json.get("name").toString();
+                        String namespace = "https://terrain.dd-bim.org/";
+                        if (!json.get("location").toString().isEmpty()) {
+                            r = json.get("location").toString();
+                            namespace = r.replace(json.get("name").toString(), "");
+                        }
+                        String resource = r;
+
+                        json.entrySet().removeIf(entry -> "".equals(entry.getValue()));
+                        json.entrySet().removeIf(entry -> entry.getValue() == null);
+
                         ModelBuilder builder = new ModelBuilder();
-                        String resource = json.get("location").toString();
-                        String namespace = resource.replace(json.get("name").toString(), "");
                         builder.setNamespace("files", namespace).setNamespace("meta",
                                 "https://terrain.dd-bim.org/ontology/metadaten_ontology/");
                         json.forEach((k, v) -> {

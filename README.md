@@ -16,16 +16,37 @@ Die Microservie Architektur verbindet Programme und Funktionen für das Projekt 
 [Csv2Rdf Converter Service](#csv2rdf-converter-service)  
 ... to be continued.
 
+## Funktionen der Komponenten
+
 ### Discovery Server
 
+- dient als Manager-Dienst
+- bei ihm registrieren sich alle Instanzen der Microservices
+- ermöglicht mehrere Instanzen eines Microservice laufen zu haben
+- koordiniert Kommunikation zwischen Diensten
+- Hochverfügbarkeit erforderlich
 
 ### Config Server
+
+- Verwaltung und Versionierung der Eigenschaftsdateien zu jedem Microservice
+- Änderungen der Eigenschaften werden an alle Microservices übermittelt, ohne diese neu starten zu müssen
+- Hochverfügbarkeit erforderlich
+
 ### Gateway Service
+
+- organisiert Verfügbarkeit der Microservices über einen Endpunkt
+- stellt REST-API's der Microservices nach außen bereit
+- kann für Authentifizierung und Sicherheitsüberprüfung verwendet werden
+
 ### MinIO Upload Service
 ### GraphDB Import Service
 ### Csv2Rdf Converter Service
 
 ## REST-API
+
+- wird von jedem Microservice bereitgestellt
+- Gateway bündelt die REST-API's
+- Request können direkt in API über Button "Try it out" verwendet werden
 
 ## weitere hilfreiche Quellen:
 
