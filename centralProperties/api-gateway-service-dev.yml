@@ -1,0 +1,35 @@
+server:
+    port: 8084
+
+eureka:
+    client:
+        serviceUrl:
+            defaultZone: http://localhost:9091/eureka
+#       register-with-eureka: true
+#       fetch-registry: true
+
+spring:
+  cloud:
+    gateway:
+      routes:
+      - id: graphdbimport-service
+        uri: lb://GRAPHDB-IMPORT-SERVICE
+        predicates:
+        - Path=/terraintwin/graphdbimport/**
+      - id: csv2rdf-service
+        uri: lb://CSV2RDF-CONVERTER-SERVICE
+        predicates:
+        - Path=/terraintwin/csv2rdf/**
+      - id: openapi
+        uri: http://localhost:${server.port}
+        predicates:
+        - Path=/v3/api-docs/**
+        filters:
+        - RewritePath=/v3/api-docs/(?<path>.*), /terraintwin/$\{path}/v3/api-docs
+
+springdoc:
+  api-docs: 
+    path: /v3/api-docs
+  swagger-ui: 
+    path: /terraintwin/swagger-ui.html 
+    operationsSorter: method

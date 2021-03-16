@@ -2,6 +2,7 @@ package com.graphdb.connection.controller;
 
 import com.graphdb.connection.service.MinIOConnection;
 
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+@RefreshScope
 @RestController
 @RequestMapping("/terraintwin")
 @CrossOrigin(origins = "http://localhost:8084")

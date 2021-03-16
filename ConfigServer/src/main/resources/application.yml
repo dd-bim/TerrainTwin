@@ -1,19 +1,16 @@
 server:
-    port: 9090
+    port: 8888
 spring:
-    main: 
-        banner-mode: off
+    application: 
+        name: configserver
     cloud:
         config:
-            server:
-                # native:
-                #     searchLocations: file:///D:/Git_Projekte/spring_boot_microservices/centralProperties 
-                git:
-                    uri: file:///D:/Git_Projekte/spring_boot_microservices/centralProperties
-                    clone-on-start: true
+            server: 
+                native:
+                    search-locations: file:///D:/Git_Projekte/spring_boot_microservices/centralProperties
+    profiles:
+        active: native
     security:
         user:
-            name: root
-            password: s3cr3t
-    # profiles:
-    #     active: native
+            name: configserver
+            password: s3cr3tconfigs
