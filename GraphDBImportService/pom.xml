@@ -7,8 +7,8 @@
 		<version>2.4.3</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.graphdb</groupId>
-	<artifactId>connection</artifactId>
+	<groupId>com.Microservices</groupId>
+	<artifactId>GraphDBImportService</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>connection</name>
 	<description>Connection to GraphDB</description>

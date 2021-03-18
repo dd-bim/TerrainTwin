@@ -1,6 +1,6 @@
-package com.graphdb.connection.controller;
+package com.Microservices.GraphDBImportService.controller;
 
-import com.graphdb.connection.service.MinIOConnection;
+import com.Microservices.GraphDBImportService.service.MinIOConnection;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

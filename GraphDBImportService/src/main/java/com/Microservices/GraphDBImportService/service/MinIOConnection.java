@@ -1,4 +1,4 @@
-package com.graphdb.connection.service;
+package com.Microservices.GraphDBImportService.service;
 
 import java.io.File;
 import java.io.FileOutputStream;

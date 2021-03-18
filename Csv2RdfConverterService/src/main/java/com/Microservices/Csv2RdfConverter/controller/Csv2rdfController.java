@@ -44,7 +44,7 @@ public class Csv2rdfController {
     @ApiResponse(responseCode = "200", description = "Conversion performed successfully", content = @Content)
     @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
     @ApiResponse(responseCode = "404", description = "Service not found", content = @Content)
-    public ResponseEntity<?> createDog(@Valid @RequestBody ConvertInfos infos) {
+    public ResponseEntity<?> createRDF(@Valid @RequestBody ConvertInfos infos) {
         String feedback = converter.convert(infos);
         if (feedback.contains("400")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(feedback);

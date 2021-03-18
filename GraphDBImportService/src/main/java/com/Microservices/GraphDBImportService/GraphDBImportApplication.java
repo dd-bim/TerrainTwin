@@ -1,4 +1,4 @@
-package com.graphdb.connection;
+package com.Microservices.GraphDBImportService;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

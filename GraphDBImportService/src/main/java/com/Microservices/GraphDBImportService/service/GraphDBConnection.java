@@ -1,4 +1,4 @@
-package com.graphdb.connection.service;
+package com.Microservices.GraphDBImportService.service;
 
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.manager.RemoteRepositoryManager;

@@ -31,13 +31,3 @@ build/
 
 ### VS Code ###
 .vscode/
-
-### environment variables ###
-.env
-
-*.tmp
-
-*.log
-
-### JS ####
-node_modules
