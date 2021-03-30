@@ -1,0 +1,51 @@
+server:
+    port: 7203
+
+eureka:
+    client:
+        serviceUrl:
+            defaultZone: http://localhost:9091/eureka
+            
+springdoc:
+    api-docs:
+        path: /terraintwin/postgresImport/v3/api-docs
+    swagger-ui: 
+        path: /terraintwin/postgresImport/swagger-ui.html
+        operationsSorter: method
+
+spring:
+    datasource:
+        url: jdbc:postgresql:${DATABASE_URL}/${DATABASE_NAME}
+        username: ${DATABASE_USERNAME}
+        password: ${DATABASE_PASSWORD}
+        driver-class-name: org.postgresql.Driver
+        initialization-mode: always
+
+    jpa:
+        show-sql: true
+        open-in-view: false
+        hibernate:
+            ddl-auto: update # Hibernate ddl auto (create, create-drop, validate, update)
+        properties:
+            hibernate:
+                generate_statistics: true
+                format_sql: true
+                dialect: org.hibernate.dialect.PostgreSQL95Dialect
+    data:
+        jpa:
+            repositories:
+                bootstrap-mode: default
+
+hibernate:
+    format_sql: true
+
+logging:
+    level:
+        org:
+            hibernate:
+                stat: debug
+                type: trace
+
+javax:
+    persistence:
+        create-database-schemas: true

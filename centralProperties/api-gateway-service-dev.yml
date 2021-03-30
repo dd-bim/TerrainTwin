@@ -20,6 +20,10 @@ spring:
         uri: lb://CSV2RDF-CONVERTER-SERVICE
         predicates:
         - Path=/terraintwin/csv2rdf/**
+      - id: minioupload-service
+        uri: lb://MINIO-UPLOAD-SERVICE
+        predicates:
+        - Path=/terraintwin/minioupload/**
       - id: openapi
         uri: http://localhost:${server.port}
         predicates:
