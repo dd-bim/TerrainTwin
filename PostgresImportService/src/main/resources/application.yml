@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: postgres-import-service
+  profiles:
+    active: dev
+  config:
+    import: configserver:http://localhost:8888
+  cloud:
+    config:
+      username: configserver
+      password: s3cr3tconfigs

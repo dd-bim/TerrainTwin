@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Data to PostGIS</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+
+<body>
+    <h2>Projektordner wählen:</h2>
+    <form th:action="@{/terraintwin/postgresimport}" method="post">
+        <input th:name="folder" name="folder" type="text" />
+        <button type="submit">Send</button>
+    </form>
+    <div>
+        <h3>Logs:</h3>
+        <p data-th-utext="${#strings.replace(#strings.escapeXml(erg),'&#10;','&lt;br&gt;')}"></p>
+    </div>
+</body>
+
+</html>
