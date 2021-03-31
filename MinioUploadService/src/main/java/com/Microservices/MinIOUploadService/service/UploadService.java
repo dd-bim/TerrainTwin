@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import io.minio.BucketExistsArgs;
 import io.minio.ListObjectsArgs;
 import io.minio.MakeBucketArgs;
@@ -33,14 +32,12 @@ import io.minio.messages.Item;
 public class UploadService {
 
     MinioClient client;
-    Dotenv env = Dotenv.configure().directory("./MinioUploadService").load();
 
     // Connect to MinIO
-    public UploadService() {
-        client = MinioClient.builder().endpoint(env.get("MINIO_URL") + ":" + env.get("MINIO_PORT"))
-                .credentials(env.get("MINIO_ACCESS_KEY"), env.get("MINIO_SECRET_KEY")).build();
+    public UploadService(String url, String port, String access_key, String secret_key) {
+        client = MinioClient.builder().endpoint(url + ":" + port)
+                .credentials(access_key, secret_key).build();
     }
-
     // Upload file to given bucket name
     public String upload(UploadInfos infos) throws InvalidKeyException, ErrorResponseException,
             InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException,

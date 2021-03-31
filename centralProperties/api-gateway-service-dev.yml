@@ -24,6 +24,10 @@ spring:
         uri: lb://MINIO-UPLOAD-SERVICE
         predicates:
         - Path=/terraintwin/minioupload/**
+      - id: postgresimport-service
+        uri: lb://POSTGRES-IMPORT-SERVICE
+        predicates:
+        - Path=/terraintwin/postgresimport/**
       - id: openapi
         uri: http://localhost:${server.port}
         predicates:

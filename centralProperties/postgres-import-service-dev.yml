@@ -8,16 +8,16 @@ eureka:
             
 springdoc:
     api-docs:
-        path: /terraintwin/postgresImport/v3/api-docs
+        path: /terraintwin/postgresimport/v3/api-docs
     swagger-ui: 
-        path: /terraintwin/postgresImport/swagger-ui.html
+        path: /terraintwin/postgresimport/swagger-ui.html
         operationsSorter: method
 
 spring:
     datasource:
-        url: jdbc:postgresql:${DATABASE_URL}/${DATABASE_NAME}
-        username: ${DATABASE_USERNAME}
-        password: ${DATABASE_PASSWORD}
+        url: jdbc:postgresql:${postgres.url}/${postgres.database.name}
+        username: ${postgres.database.username}
+        password: ${postgres.database.password}
         driver-class-name: org.postgresql.Driver
         initialization-mode: always
 

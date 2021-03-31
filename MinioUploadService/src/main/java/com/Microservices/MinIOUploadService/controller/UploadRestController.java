@@ -12,6 +12,7 @@ import com.Microservices.MinIOUploadService.domain.model.Upload;
 import com.Microservices.MinIOUploadService.domain.model.UploadInfos;
 import com.Microservices.MinIOUploadService.service.UploadService;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,16 +40,25 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "MinIO Uploader", description = "Upload files and metadata to the MinIO Object Storage", externalDocs = @ExternalDocumentation(url = "/terraintwin/minioupload", description = "Interface"))
 public class UploadRestController {
 
+  @Value("${minio.url}")
+  private String url;
+  @Value("${minio.port}")
+  private String port;
+  @Value("${minio.access_key}")
+  private String access_key;
+  @Value("${minio.secret_key}")
+  private String secret_key;
+
   @GetMapping("/minioupload/createbucket/{bucket}")
   public String create(@PathVariable String bucket) throws Exception {
-    UploadService minio = new UploadService();
+    UploadService minio = new UploadService(url, port, access_key, secret_key);
     String results = minio.createBucket(bucket);
     return results;
   }
 
   @GetMapping("/minioupload/deletebucket/{bucket}")
   public String delete(@PathVariable String bucket) throws Exception {
-    UploadService minio = new UploadService();
+    UploadService minio = new UploadService(url, port, access_key, secret_key);
     String results = minio.deleteBucket(bucket);
     return results;
   }
@@ -59,7 +69,7 @@ public class UploadRestController {
   public String uploadFileUI(@RequestBody Upload meta) throws InvalidKeyException, ErrorResponseException,
       InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException, ServerException,
       XmlParserException, IllegalArgumentException, IOException {
-    UploadService minio = new UploadService();
+    UploadService minio = new UploadService(url, port, access_key, secret_key);
     String results = "";
 
     // create buckets and upload files with metadata
@@ -126,7 +136,7 @@ public class UploadRestController {
       throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException,
       InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException,
       IOException {
-    UploadService minio = new UploadService();
+    UploadService minio = new UploadService(url, port, access_key, secret_key);
     String results = "";
 
     File file = new File(filepath);

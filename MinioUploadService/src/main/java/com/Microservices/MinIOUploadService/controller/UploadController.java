@@ -12,6 +12,7 @@ import com.Microservices.MinIOUploadService.domain.model.Metadata;
 import com.Microservices.MinIOUploadService.domain.model.UploadInfos;
 import com.Microservices.MinIOUploadService.service.UploadService;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -33,6 +34,15 @@ import io.minio.errors.XmlParserException;
 @CrossOrigin(origins = "http://localhost:8084")
 public class UploadController {
 
+  @Value("${minio.url}")
+  private String url;
+  @Value("${minio.port}")
+  private String port;
+  @Value("${minio.access_key}")
+  private String access_key;
+  @Value("${minio.secret_key}")
+  private String secret_key;
+
   // start page
   @GetMapping("/minioupload")
   public String index(Model model) throws Exception {
@@ -45,7 +55,7 @@ public class UploadController {
       Model model) throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException,
       InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException,
       IOException {
-    UploadService minio = new UploadService();
+    UploadService minio = new UploadService(url, port, access_key, secret_key);
     String results = "";
     String action = data.get("action");
     String bucket = data.get("bucket");
