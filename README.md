@@ -16,7 +16,7 @@ Die Microservie Architektur verbindet Programme und Funktionen für das Projekt 
 [Gateway Service](#gateway-service)  
 [MinIO Upload Service](#minio-upload-service)  
 [GraphDB Import Service](#graphdb-import-service)  
-[Csv2Rdf Converter Service](#csv2rdf-converter-service) 
+[Csv2Rdf Converter Service](#csv2rdf-converter-service)  
 [Postgres Import Service](#postgres-import-service)   
 ... to be continued.
 
