@@ -59,12 +59,14 @@ public class Csv2RdfService {
             builder.add(headclass, RDF.TYPE, RDFS.CLASS);
 
             // create triples from csv array
+            // make DatatypeProperties from table header
             String[] header = csvInhalt.get(0);
             for (int i = 0; i < header.length; i++) {
                 String column = ns1 + header[i].replaceAll("\s", "_").replaceAll("\\W", "");
                 builder.add(column, RDF.TYPE, OWL.DATATYPEPROPERTY).add(column, RDFS.DOMAIN, headclass).add(column,
                         RDFS.RANGE, RDFS.LITERAL);
             }
+            // create resources with literals as DatatypeProperties
             for (int i = 1; i < csvInhalt.size(); i++) {
                 String resource = ns1 + UUID.randomUUID().toString();
                 builder.add(resource, RDF.TYPE, headclass);

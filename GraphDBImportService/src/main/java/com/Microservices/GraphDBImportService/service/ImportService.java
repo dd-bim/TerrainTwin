@@ -111,8 +111,10 @@ public class ImportService {
                         });
 
                         // create rdf model from key-value-paires and remove all paires with empty value
+                        // standard namespace
                         String r = "https://terrain.dd-bim.org/" + json.get("name").toString();
                         String namespace = "https://terrain.dd-bim.org/";
+                        // specific namespace from location, if exists in metadata
                         if (!json.get("location").toString().isEmpty()) {
                             r = json.get("location").toString();
                             namespace = r.replace(json.get("name").toString(), "");
