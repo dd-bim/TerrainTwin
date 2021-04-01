@@ -17,7 +17,7 @@ Die Microservie Architektur verbindet Programme und Funktionen für das Projekt 
 [MinIO Upload Service](#minio-upload-service)  
 [GraphDB Import Service](#graphdb-import-service)  
 [Csv2Rdf Converter Service](#csv2rdf-converter-service) 
-[Postgres Import Service](#postgres-import-service) 
+[Postgres Import Service](#postgres-import-service)   
 ... to be continued.
 
 #### Discovery Server (Port:`9091`)
@@ -57,6 +57,7 @@ Die Microservie Architektur verbindet Programme und Funktionen für das Projekt 
 - Hochladen von Dateien
 - Hochladen einer Datei + Angabe von Metadaten sowie deren Upload als Json-Datei
 - alle Metadaten sind optional
+- HTML-Interface verfügbar
 
 **Metadatenstruktur inklusive Angabe des Dateipfades und des Zielordners:**
 ```schell script
@@ -104,17 +105,37 @@ Die Microservie Architektur verbindet Programme und Funktionen für das Projekt 
 - Namespace der Triple wird, wenn vorhanden, auf Dateipfad der beschriebenen Datei gesetzt
 - Standardnamespace ist "_https://terrain.dd-bim.org/_" + Dateiname
 - GraphDB verhindert automatisch redundanten Import von Tripeln 
+- HTML-Interface verfügbar
 
 #### Csv2Rdf Converter Service (Port:`7202`)
 
 - convertiert lokale `CSV`-Dateien in mit `Turtle` serialisierte `RDF`-Dateien
-- neben dem Dateipfad ist die Eingabe von 
-
-- GUI für lokale Ausführung verfügbar
+- möglich ist die Eingabe von:
+  - file
+  - file, delimiter
+  - file, namespace, prefix, superclass 
+  - file, namespace, prefix, superclass, delimiter
+- file ist der Dateipfad
+- Standard-Delimiter: ;
+- Standard-Namespace: http://example.org/Sachdaten/
+- Standard-Präfix: ns 
+- Standard-Superklasse: Sachdaten
+- Werte der Kopfzeile der CSV-Tabelle werden als DatatypeProperties der Superklasse interpretiert
+- jede Zeile wird als Ressource mit eindeutiger ID aus der Spalte ID erzeugt
+- jeder Ressource werden die weiteren Attribute als Instanzen ihrer jeweiligen DatatypeProperties angehangen
+- Tripel werden als `Turtle` serialisiert und am Ort der Quelldatei als Datei gespeichert
+- `GUI` für lokale Ausführung verfügbar
 
 #### Postgres Import Service (Port:`7203`)
-  
- 
+
+- Angabe eines MinIO Bucket als Quellordner und einer Postgres Datenbank als Zieldatenbank
+- Prüfung ob Datenbank bereits über Tabellen für TIN, Breaklines und Surfaces verfügt, wennn nicht wird Schemadatei zur Erstellung dieser ausgeführt
+- Bucket wird nach Dateien mit den Endungen `.xml`, `.txt`, `.csv` durchsucht
+- ist die `XML`-Datei eine LandXML-Datei werden darin TIN's gesucht und deren Points und Faces werden in ein `WKT-TIN` umgewandelt
+- `TIN` wird in die Datenbank importiert
+- existieren Breaklines werden diese als `WKT-LINESTRING` in die Datenbank importiert 
+- `TXT`- und `CSV`-Dateien werden nach `WKT`-Flächen durchsucht und diese werden in die Datenbank importiert
+- HTML-Interface verfügbar
 
 
 ### allgemeine Ordnerstruktur
