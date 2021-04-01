@@ -20,7 +20,7 @@ Die Microservie Architektur verbindet Programme und Funktionen für das Projekt 
 [Postgres Import Service](#postgres-import-service) 
 ... to be continued.
 
-#### Discovery Server
+#### Discovery Server (Port:`9091`)
 
 - dient als Manager-Dienst
 - bei ihm registrieren sich alle Instanzen der Microservices
@@ -28,7 +28,7 @@ Die Microservie Architektur verbindet Programme und Funktionen für das Projekt 
 - koordiniert Kommunikation zwischen Diensten
 - Hochverfügbarkeit erforderlich
 
-#### Config Server
+#### Config Server (Port:`8888`)
 
 - Verwaltung und Versionierung der Eigenschaftsdateien zu jedem Microservice
 - Hochverfügbarkeit erforderlich
@@ -44,21 +44,22 @@ Die Microservie Architektur verbindet Programme und Funktionen für das Projekt 
 - jeder Service enthält ebenfalls eine `application.yml`, in der die URL sowie die Zugangsdaten angegeben werden
 
 
-#### Gateway Service
+#### Gateway Service (Port:`8084`)
 
 - organisiert Verfügbarkeit der Microservices über einen Endpunkt
 - stellt REST-API's der Microservices nach außen bereit
 - kann für Authentifizierung und Sicherheitsüberprüfung verwendet werden
 
-#### MinIO Upload Service
+#### MinIO Upload Service (Port:`7204`)
 
 - Erstellen von Buckets im MinIO Object Storage
 - Löschen von Buckets mit samt deren enthaltenen Dateien
 - Hochladen von Dateien
 - Hochladen einer Datei + Angabe von Metadaten sowie deren Upload als Json-Datei
 - alle Metadaten sind optional
-- 
--Metadatenstruktur:
+
+**Metadatenstruktur inklusive Angabe des Dateipfades und des Zielordners:**
+```schell script
 {
   "file": "string",
   "bucket": "string",
@@ -92,13 +93,17 @@ Die Microservie Architektur verbindet Programme und Funktionen für das Projekt 
     "aeußereGenauigkeit": "string"
   }
 }
+```
 
+#### GraphDB Import Service (Port:`7201`)
 
-#### GraphDB Import Service
-#### Csv2Rdf Converter Service
-#### Postgres Import Service
+- Angabe eines MinIO Bucket als Quellordner und eines GraphDB Repositories als Zieldatenbank
+- 
+
+#### Csv2Rdf Converter Service (Port:`7202`)
+#### Postgres Import Service (Port:`7203`)
   
-blabla  
+ 
 
 
 ### allgemeine Ordnerstruktur
