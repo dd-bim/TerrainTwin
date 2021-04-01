@@ -98,9 +98,20 @@ Die Microservie Architektur verbindet Programme und Funktionen für das Projekt 
 #### GraphDB Import Service (Port:`7201`)
 
 - Angabe eines MinIO Bucket als Quellordner und eines GraphDB Repositories als Zieldatenbank
-- 
+- Ordner wird nach serialisierten RDF-Dateien mit den Endungen `.ttl`, `.rdf`, `.owl` durchsucht und diese werden nach GraphDB importiert
+- `JSON`-Dateien mit "_metadata_" im Namen werden als Triple in `Turtle`-Syntax serialisiert und in die Datenbank geschrieben
+- leere Metadaten werden dabei ignoriert
+- Namespace der Triple wird, wenn vorhanden, auf Dateipfad der beschriebenen Datei gesetzt
+- Standardnamespace ist "_https://terrain.dd-bim.org/_" + Dateiname
+- GraphDB verhindert automatisch redundanten Import von Tripeln 
 
 #### Csv2Rdf Converter Service (Port:`7202`)
+
+- convertiert lokale `CSV`-Dateien in mit `Turtle` serialisierte `RDF`-Dateien
+- neben dem Dateipfad ist die Eingabe von 
+
+- GUI für lokale Ausführung verfügbar
+
 #### Postgres Import Service (Port:`7203`)
   
  
