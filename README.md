@@ -8,7 +8,7 @@ Die Microservie Architektur verbindet Programme und Funktionen für das Projekt 
 
 ## Aufbau, Funktionsweise und Starten der Microservice Architektur
 
-![Architektur](images\Architektur.PNG)
+![Architektur](images/Architektur.PNG)
 
 ### Komponenten
 [Discovery Server](#discovery-server)  
@@ -167,7 +167,10 @@ Die Microservie Architektur verbindet Programme und Funktionen für das Projekt 
 
 - wird von jedem Microservice bereitgestellt
 - Gateway bündelt die REST-API's
+- Interfaces sind zusätzlich verlinkt
 - Requests können direkt in API über Button "Try it out" verwendet werden
+
+![Gateway-Swagger](images/Gateway_Swagger.PNG)
 
 ## weitere hilfreiche Quellen:
 
@@ -177,6 +180,7 @@ https://spring.io/microservices
 https://spring.io/blog/2015/07/14/microservices-with-spring  
 https://spring.io/guides/tutorials/rest/  
 https://medium.com/an-idea/spring-boot-microservices-api-gateway-e9dbcd4bb754
+https://programmingtechie.com/2021/03/25/spring-boot-microservices-project-tutorial-part-2/#Centralized_Configuration_using_Spring_Cloud_Config_Server
 
 
 ### Springdoc (Swagger 3.0.3):
