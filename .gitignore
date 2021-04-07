@@ -39,5 +39,7 @@ build/
 
 *.log
 
+*.jar
+
 ### JS ####
 node_modules

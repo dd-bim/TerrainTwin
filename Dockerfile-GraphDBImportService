@@ -1,0 +1,4 @@
+FROM alpine-jdk:base
+COPY files/GraphDBImportService.jar /opt/lib/
+CMD ["java", "-jar", "/opt/lib/GraphDBImportService.jar"]
+EXPOSE 7201

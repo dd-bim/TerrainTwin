@@ -1,0 +1,4 @@
+FROM alpine-jdk:base
+COPY files/Csv2RdfConverterService.jar /opt/lib/
+CMD ["java", "-jar", "/opt/lib/Csv2RdfConverterService.jar"]
+EXPOSE 7202

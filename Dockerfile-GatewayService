@@ -1,0 +1,4 @@
+FROM alpine-jdk:base
+COPY files/GatewayService.jar /opt/lib/
+CMD ["java", "-jar", "/opt/lib/GatewayService.jar"]
+EXPOSE 8084

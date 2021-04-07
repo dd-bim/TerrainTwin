@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>com.Microservices</groupId>
 	<artifactId>Csv2RdfConverterService</artifactId>
-	<version>1</version>
+	<version>0.0.1-SNAPSHOT</version>
 	<name>Csv2RdfConverterService</name>
 	<properties>
 		<java.version>15</java.version>

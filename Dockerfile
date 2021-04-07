@@ -1,5 +1,3 @@
-
-FROM openjdk:13-jdk-alpine
+FROM mohit0193/15-jdk-alpine
 LABEL maintainer="Schilling"
-RUN apk add --no-cache openjdk13
-
+# RUN apk add --no-cache openjdk:15.0.2-slim-buster

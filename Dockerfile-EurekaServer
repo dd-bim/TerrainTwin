@@ -1,0 +1,4 @@
+FROM alpine-jdk:base
+COPY files/EurekaServer.jar /opt/lib/
+CMD ["java", "-jar", "/opt/lib/EurekaServer.jar"]
+EXPOSE 9091

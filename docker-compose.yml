@@ -1,0 +1,86 @@
+version: '3.8'
+services:
+    config-server:
+        container_name: config-server
+        build:
+            context: .
+            dockerfile: Dockerfile-ConfigServer
+        image: config-server:latest
+        # restart: unless-stopped
+        ports:
+            - 8888:8888
+
+    eureka-server:
+        container_name: eureka-server
+        build:
+            context: .
+            dockerfile: Dockerfile-EurekaServer
+        image: eureka-server:latest
+        # restart: unless-stopped
+        ports:
+            - 9091:9091
+
+    minio-upload-service:
+        container_name: minio-upload-service
+        build:
+            context: .
+            dockerfile: Dockerfile-MinIOUploadService
+        image: minio-upload-service:latest
+        restart: unless-stopped
+        ports:
+            - 7204:7204
+        depends_on:
+            - config-server
+            - eureka-server
+
+    # graphdb-import-service:
+    #     container_name: graphdb-import-service
+    #     build:
+    #         context: .
+    #         dockerfile: Dockerfile-GraphDBImportService
+    #     image: graphdb-import-service:latest
+    #     restart: unless-stopped
+    #     ports:
+    #         - 7201:7201
+    #     depends_on:
+    #         - config-server
+    #         - eureka-server
+
+    # postgres-import-service:
+    #     container_name: postgres-import-service
+    #     build:
+    #         context: .
+    #         dockerfile: Dockerfile-PostgresImportService
+    #     image: postgres-import-service:latest
+    #     restart: unless-stopped
+    #     ports:
+    #         - 7203:7203
+    #     depends_on:
+    #         - config-server
+    #         - eureka-server
+
+    # csv2rdf-converter-service:
+    #     container_name: csv2rdf-converter-service
+    #     build:
+    #         context: .
+    #         dockerfile: Dockerfile-Csv2RdfConverterService
+    #     image: csv2rdf-converter-service:latest
+    #     restart: unless-stopped
+    #     ports:
+    #         - 7202:7202
+    #     depends_on:
+    #         - config-server
+    #         - eureka-server
+
+    # gateway-service:
+    #     container_name: gateway-service
+    #     build:
+    #         context: .
+    #         dockerfile: Dockerfile-GatewayService
+    #     image: gateway-service:latest
+    #     restart: unless-stopped
+    #     ports:
+    #         - 8084:8084
+    #     depends_on:
+    #         - config-server
+    #         - eureka-server

@@ -3,11 +3,21 @@ server:
 spring:
     application: 
         name: configserver
+    config:
+        name: configserver
     cloud:
         config:
             server: 
                 native:
-                    search-locations: file:///D:/Git_Projekte/spring_boot_microservices/centralProperties
+                #    search-locations: file:///D:/Git_Projekte/spring_boot_microservices/centralProperties 
+                   search-locations: file:///var/lib/centralProperties
+                # git:
+                #     uri: https://github.com/Schi11er/Terraintwin-Configs
+                #     skipSslValidation: true
+                #     username: Schi11er
+                #     password: Mas19ter!Uni
+                    # clone-on-start: true
+                
     profiles:
         active: native
     security:

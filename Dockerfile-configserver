@@ -1,9 +1,7 @@
-FROM digitalgenius/alpine-jdk:latest
-LABEL maintainer="Schilling"
-COPY files/MicroserviceConfigServer.jar /opt/lib/
-RUN mkdir /var/lib/config-repo
-COPY config-repo /var/lib/config-repo
-ENTRYPOINT ["/usr/bin/java"]
-CMD ["-jar", "/opt/lib/MicroserviceConfigServer.jar"]
-VOLUME /var/lib/config-repo
-EXPOSE 9090
+FROM alpine-jdk:base
+COPY files/ConfigServer.jar /opt/lib/
+RUN mkdir /var/lib/centralProperties
+COPY centralProperties /var/lib/centralProperties
+CMD ["java", "-jar", "/opt/lib/ConfigServer.jar"]
+VOLUME /var/lib/centralProperties
+EXPOSE 8888
