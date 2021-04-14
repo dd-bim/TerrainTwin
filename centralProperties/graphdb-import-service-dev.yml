@@ -3,7 +3,7 @@ server:
      
 springdoc:
     api-docs:
-        path: /terraintwin/graphdbimport/v3/api-docs
+        path: /graphdbimport/v3/api-docs
     swagger-ui: 
-        path: /terraintwin/graphdbimport/swagger-ui.html
+        path: /graphdbimport/swagger-ui.html
         operationsSorter: method

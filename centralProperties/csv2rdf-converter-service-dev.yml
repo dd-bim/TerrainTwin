@@ -3,7 +3,7 @@ server:
            
 springdoc:
     api-docs:
-        path: /terraintwin/csv2rdf/v3/api-docs
+        path: /csv2rdf/v3/api-docs
     swagger-ui: 
-        path: /terraintwin/csv2rdf/swagger-ui.html
+        path: /csv2rdf/swagger-ui.html
         operationsSorter: method

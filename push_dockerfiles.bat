@@ -1,7 +1,7 @@
-@REM docker tag configserver schi11er/tt_configserver
-@REM docker push schi11er/tt_configserver
-@REM docker tag eurekaserver schi11er/tt_eurekaserver
-@REM docker push schi11er/tt_eurekaserver
+docker tag configserver schi11er/tt_configserver
+docker push schi11er/tt_configserver
+docker tag eurekaserver schi11er/tt_eurekaserver
+docker push schi11er/tt_eurekaserver
 docker tag gateway-service schi11er/tt_gateway-service
 docker push schi11er/tt_gateway-service
 docker tag csv2rdf-converter-service schi11er/tt_csv2rdf-converter-service

@@ -3,10 +3,7 @@ server:
 
 springdoc:
     api-docs:
-        path: /terraintwin/minioupload/v3/api-docs
+        path: /minioupload/v3/api-docs
     swagger-ui: 
-        path: /terraintwin/minioupload/swagger-ui.html
+        path: /minioupload/swagger-ui.html
         operationsSorter: method
-
-domain:
-    url: http://localhost

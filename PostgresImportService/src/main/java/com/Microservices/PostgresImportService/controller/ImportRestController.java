@@ -11,7 +11,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
@@ -21,9 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 @RefreshScope
 @RestController
 @Slf4j
-@RequestMapping("/terraintwin")
 @CrossOrigin(origins = "http://localhost:8084")
-@Tag(name = "Postgres Importer", description = "Import Files from MinIO Object Storage into postgres database", externalDocs = @ExternalDocumentation(url = "/terraintwin/postgresimport", description = "Interface"))
+@Tag(name = "Postgres Importer", description = "Import Files from MinIO Object Storage into postgres database", externalDocs = @ExternalDocumentation(url = "/postgresimport", description = "Interface"))
 public class ImportRestController {
 
   @Autowired

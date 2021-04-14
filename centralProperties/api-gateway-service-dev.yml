@@ -8,30 +8,32 @@ spring:
                 - id: graphdbimport-service
                   uri: lb://graphdb-import-service
                   predicates:
-                      - Path=/terraintwin/graphdbimport/**
+                      - Path=/graphdbimport/**
                 - id: csv2rdf-service
                   uri: lb://csv2rdf-converter-service
                   predicates:
-                      - Path=/terraintwin/csv2rdf/**
+                      - Path=/csv2rdf/**
                 - id: minioupload-service
                   uri: lb://minio-upload-service
                   predicates:
-                      - Path=/terraintwin/minioupload/**
+                      - Path=/minioupload/**
                 - id: postgresimport-service
                   uri: lb://postgres-import-service
                   predicates:
-                      - Path=/terraintwin/postgresimport/**
+                      - Path=/postgresimport/**
                 - id: openapi
                   uri: http://localhost:${server.port}
                   predicates:
                       - Path=/v3/api-docs/**
                   filters:
-                      - RewritePath=/v3/api-docs/(?<path>.*), /terraintwin/$\{path}/v3/api-docs
+                      - RewritePath=/v3/api-docs/(?<path>.*), /$\{path}/v3/api-docs
+                      # - RewritePath=/v3/api-docs/(?<path>.*), /$\{path}/v3/api-docs
+                      # - RewritePath= /(?<path.*>), /v3/api-docs/$\{path}
 
 
 springdoc:
   api-docs: 
     path: /v3/api-docs
   swagger-ui: 
-    path: /terraintwin/swagger-ui.html 
+    path: /swagger-ui.html 
     operationsSorter: method

@@ -3,9 +3,9 @@ server:
 
 springdoc:
     api-docs:
-        path: /terraintwin/postgresimport/v3/api-docs
+        path: /postgresimport/v3/api-docs
     swagger-ui: 
-        path: /terraintwin/postgresimport/swagger-ui.html
+        path: /postgresimport/swagger-ui.html
         operationsSorter: method
 
 spring:
