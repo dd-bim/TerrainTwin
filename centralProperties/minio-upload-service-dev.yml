@@ -1,14 +1,12 @@
 server:
     port: 7204
 
-eureka:
-    client:
-        serviceUrl:
-            defaultZone: http://localhost:9091/eureka
-            
 springdoc:
     api-docs:
         path: /terraintwin/minioupload/v3/api-docs
     swagger-ui: 
         path: /terraintwin/minioupload/swagger-ui.html
         operationsSorter: method
+
+domain:
+    url: http://localhost

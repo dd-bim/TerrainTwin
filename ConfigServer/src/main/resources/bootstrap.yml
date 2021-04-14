@@ -1,0 +1,33 @@
+server:
+    port: 8888
+spring:
+    application: 
+        name: configserver
+    cloud:
+        config:
+            server: 
+                native:
+                    search-locations: file:///var/lib/centralProperties, file:///D:/Git_Projekte/terraintwin-microservice-sammlung/centralProperties
+                # git:
+                #     uri: https://github.com/Schi11er/Terraintwin-Configs
+                #     # skipSslValidation: true
+                #     skip-ssl-validation: true
+                #     username: Schi11er
+                #     password: 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
+                #     # clone-on-start: true
+                # native:
+                #     searchLocations: file:///${GIT_REPO}
+                
+    profiles:
+        active: native
+    security:
+        user:
+            name: configserver
+            password: s3cr3tconfigs
+
+eureka:
+    client:
+        registerWithEureka: true
+        fetchRegistry: true
+        serviceUrl:
+            defaultZone: http://eurekaserver:9091/eureka

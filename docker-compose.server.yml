@@ -1,0 +1,69 @@
+version: '3.8'
+services:
+    configserver:
+        container_name: configserver
+        hostname: configserver
+        image: schi11er/tt_configserver:latest
+        restart: unless-stopped
+        ports:
+            - 8888:8888
+        networks:
+            - terraintwin_microservices
+
+    eurekaserver:
+        container_name: eurekaserver
+        image: schi11er/tt_eurekaserver:latest
+        restart: unless-stopped
+        ports:
+            - 9091:9091
+        networks:
+            - terraintwin_microservices
+
+    minio-upload-service:
+        container_name: minio-upload-service
+        image: schi11er/tt_minio-upload-service:latest
+        restart: unless-stopped
+        ports:
+            - 7204:7204
+        networks:
+            - terraintwin_microservices
+            
+    graphdb-import-service:
+        container_name: graphdb-import-service
+        image: schi11er/tt_graphdb-import-service:latest
+        restart: unless-stopped
+        ports:
+            - 7201:7201
+        networks:
+            - terraintwin_microservices
+
+    postgres-import-service:
+        container_name: postgres-import-service
+        image: schi11er/tt_postgres-import-service:latest
+        restart: unless-stopped
+        ports:
+            - 7203:7203
+        networks:
+            - terraintwin_microservices
+
+    csv2rdf-converter-service:
+        container_name: csv2rdf-converter-service
+        image: schi11er/tt_csv2rdf-converter-service:latest
+        restart: unless-stopped
+        ports:
+            - 7202:7202
+        networks:
+            - terraintwin_microservices
+
+    gateway-service:
+        container_name: gateway-service
+        image: schi11er/tt_gateway-service:latest
+        restart: unless-stopped
+        ports:
+            - 8084:8084
+        networks:
+            - terraintwin_microservices
+
+networks:
+    terraintwin_microservices:
+        driver: bridge

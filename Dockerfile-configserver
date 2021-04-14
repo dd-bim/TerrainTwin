@@ -1,7 +1,8 @@
 FROM alpine-jdk:base
-COPY files/ConfigServer.jar /opt/lib/
+COPY files/ConfigServer-1.0.jar /opt/lib/
 RUN mkdir /var/lib/centralProperties
 COPY centralProperties /var/lib/centralProperties
-CMD ["java", "-jar", "/opt/lib/ConfigServer.jar"]
+CMD ["java", "-jar", "/opt/lib/ConfigServer-1.0.jar"]
 VOLUME /var/lib/centralProperties
+
 EXPOSE 8888

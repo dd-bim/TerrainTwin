@@ -1,0 +1,17 @@
+spring:
+    application:
+        name: minio-upload-service
+    profiles:
+        active: dev
+    cloud:
+        config:
+            uri: http://configserver:8888
+            username: configserver
+            password: s3cr3tconfigs
+
+eureka:
+    client:
+        registerWithEureka: true
+        fetchRegistry: false
+        serviceUrl:
+            defaultZone: http://eurekaserver:9091/eureka

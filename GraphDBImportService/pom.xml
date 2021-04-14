@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>com.Microservices</groupId>
 	<artifactId>GraphDBImportService</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<name>GraphDBImportService</name>
 	<description>Connection to GraphDB</description>
 
@@ -48,6 +48,10 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-config</artifactId>
 		</dependency>
+		<dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>

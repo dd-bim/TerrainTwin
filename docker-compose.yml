@@ -1,24 +1,37 @@
 version: '3.8'
 services:
-    config-server:
-        container_name: config-server
+    configserver:
+        container_name: configserver
+        hostname: configserver
         build:
             context: .
             dockerfile: Dockerfile-ConfigServer
-        image: config-server:latest
-        # restart: unless-stopped
+        image: configserver:latest
+        restart: unless-stopped
         ports:
             - 8888:8888
+        networks:
+            - terraintwin_microservices
+        # healthcheck:
+        #     test: ["CMD", "curl", "http://localhost:8888/login"]
+        #     # ["CMD", "curl", "http://localhost:8888/actuator/health"]
+        #         # "curl --fail localhost:8888/actuator/health | grep UP || exit 1"
+        #     interval: 20s
+        #     timeout: 10s
+        #     retries: 5
+        #     start_period: 5s
 
-    eureka-server:
-        container_name: eureka-server
+    eurekaserver:
+        container_name: eurekaserver
         build:
             context: .
             dockerfile: Dockerfile-EurekaServer
-        image: eureka-server:latest
-        # restart: unless-stopped
+        image: eurekaserver:latest
+        restart: unless-stopped
         ports:
             - 9091:9091
+        networks:
+            - terraintwin_microservices
 
     minio-upload-service:
         container_name: minio-upload-service
@@ -29,58 +42,94 @@ services:
         restart: unless-stopped
         ports:
             - 7204:7204
-        depends_on:
-            - config-server
-            - eureka-server
+        # depends_on: 
+        #     - configserver
+        #     - eurekaserver
+            # configserver: 
+            #     condition: service_healthy
+            # eurekaserver:
+            #     condition: service_healthy
+        networks:
+            - terraintwin_microservices
+        # healthcheck:
+        #     test: ["CMD", "curl", "http://localhost:7204/actuator/health"]
+        #     interval: 5s
+        #     timeout: 5s
+        #     retries: 3
+        #     start_period: 1s
+        # environment:
+        #     WAIT_HOSTS: configserver:8888
+            
+    graphdb-import-service:
+        container_name: graphdb-import-service
+        build:
+            context: .
+            dockerfile: Dockerfile-GraphDBImportService
+        image: graphdb-import-service:latest
+        restart: unless-stopped
+        ports:
+            - 7201:7201
+        networks:
+            - terraintwin_microservices
+        # depends_on:
+        #     - configserver
+        #     - eurekaserver
 
-    # graphdb-import-service:
-    #     container_name: graphdb-import-service
-    #     build:
-    #         context: .
-    #         dockerfile: Dockerfile-GraphDBImportService
-    #     image: graphdb-import-service:latest
-    #     restart: unless-stopped
-    #     ports:
-    #         - 7201:7201
-    #     depends_on:
-    #         - config-server
-    #         - eureka-server
+    postgres-import-service:
+        container_name: postgres-import-service
+        build:
+            context: .
+            dockerfile: Dockerfile-PostgresImportService
+        image: postgres-import-service:latest
+        restart: unless-stopped
+        ports:
+            - 7203:7203
+        networks:
+            - terraintwin_microservices
+        # depends_on:
+        #     - configserver
+        #     - eurekaserver
 
-    # postgres-import-service:
-    #     container_name: postgres-import-service
-    #     build:
-    #         context: .
-    #         dockerfile: Dockerfile-PostgresImportService
-    #     image: postgres-import-service:latest
-    #     restart: unless-stopped
-    #     ports:
-    #         - 7203:7203
-    #     depends_on:
-    #         - config-server
-    #         - eureka-server
+    csv2rdf-converter-service:
+        container_name: csv2rdf-converter-service
+        build:
+            context: .
+            dockerfile: Dockerfile-Csv2RdfConverterService
+        image: csv2rdf-converter-service:latest
+        restart: unless-stopped
+        ports:
+            - 7202:7202
+        networks:
+            - terraintwin_microservices
+        # depends_on:
+        #     - configserver
+        #     - eurekaserver
 
-    # csv2rdf-converter-service:
-    #     container_name: csv2rdf-converter-service
-    #     build:
-    #         context: .
-    #         dockerfile: Dockerfile-Csv2RdfConverterService
-    #     image: csv2rdf-converter-service:latest
-    #     restart: unless-stopped
-    #     ports:
-    #         - 7202:7202
-    #     depends_on:
-    #         - config-server
-    #         - eureka-server
+    gateway-service:
+        container_name: gateway-service
+        build:
+            context: .
+            dockerfile: Dockerfile-GatewayService
+        image: gateway-service:latest
+        restart: always
+        ports:
+            - 8084:8084
+        networks:
+            - terraintwin_microservices
+        # depends_on:
+        #     - configserver
+        #     - eurekaserver
+            # configserver: 
+            #     condition: service_healthy
+            # eurekaserver:
+            #     condition: service_healthy
+        # healthcheck:
+        #     test: ["CMD", "curl", "http://localhost:8084/v3/api-docs"]
+        #     interval: 5s
+        #     timeout: 5s
+        #     retries: 5
+        #     start_period: 80s
 
-    # gateway-service:
-    #     container_name: gateway-service
-    #     build:
-    #         context: .
-    #         dockerfile: Dockerfile-GatewayService
-    #     image: gateway-service:latest
-    #     restart: unless-stopped
-    #     ports:
-    #         - 8084:8084
-    #     depends_on:
-    #         - config-server
-    #         - eureka-server
+networks:
+    terraintwin_microservices:
+        driver: bridge

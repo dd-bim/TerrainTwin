@@ -1,39 +1,33 @@
 server:
     port: 8084
 
-eureka:
-    client:
-        serviceUrl:
-            defaultZone: http://localhost:9091/eureka
-#       register-with-eureka: true
-#       fetch-registry: true
-
 spring:
-  cloud:
-    gateway:
-      routes:
-      - id: graphdbimport-service
-        uri: lb://GRAPHDB-IMPORT-SERVICE
-        predicates:
-        - Path=/terraintwin/graphdbimport/**
-      - id: csv2rdf-service
-        uri: lb://CSV2RDF-CONVERTER-SERVICE
-        predicates:
-        - Path=/terraintwin/csv2rdf/**
-      - id: minioupload-service
-        uri: lb://MINIO-UPLOAD-SERVICE
-        predicates:
-        - Path=/terraintwin/minioupload/**
-      - id: postgresimport-service
-        uri: lb://POSTGRES-IMPORT-SERVICE
-        predicates:
-        - Path=/terraintwin/postgresimport/**
-      - id: openapi
-        uri: http://localhost:${server.port}
-        predicates:
-        - Path=/v3/api-docs/**
-        filters:
-        - RewritePath=/v3/api-docs/(?<path>.*), /terraintwin/$\{path}/v3/api-docs
+    cloud:
+        gateway:
+            routes:
+                - id: graphdbimport-service
+                  uri: lb://graphdb-import-service
+                  predicates:
+                      - Path=/terraintwin/graphdbimport/**
+                - id: csv2rdf-service
+                  uri: lb://csv2rdf-converter-service
+                  predicates:
+                      - Path=/terraintwin/csv2rdf/**
+                - id: minioupload-service
+                  uri: lb://minio-upload-service
+                  predicates:
+                      - Path=/terraintwin/minioupload/**
+                - id: postgresimport-service
+                  uri: lb://postgres-import-service
+                  predicates:
+                      - Path=/terraintwin/postgresimport/**
+                - id: openapi
+                  uri: http://localhost:${server.port}
+                  predicates:
+                      - Path=/v3/api-docs/**
+                  filters:
+                      - RewritePath=/v3/api-docs/(?<path>.*), /terraintwin/$\{path}/v3/api-docs
+
 
 springdoc:
   api-docs: 

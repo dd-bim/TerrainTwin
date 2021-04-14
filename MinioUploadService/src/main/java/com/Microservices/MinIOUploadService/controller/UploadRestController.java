@@ -31,12 +31,13 @@ import io.minio.errors.ServerException;
 import io.minio.errors.XmlParserException;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RefreshScope
 @RestController
 @RequestMapping("/terraintwin")
-@CrossOrigin(origins = "http://localhost:8084")
+@CrossOrigin(origins = {"http://localhost:8084", "http://localhost:7204"})
 @Tag(name = "MinIO Uploader", description = "Upload files and metadata to the MinIO Object Storage", externalDocs = @ExternalDocumentation(url = "/terraintwin/minioupload", description = "Interface"))
 public class UploadRestController {
 
@@ -50,6 +51,7 @@ public class UploadRestController {
   private String secret_key;
 
   @GetMapping("/minioupload/createbucket/{bucket}")
+  // @Operation(security= @SecurityRequirement(name = "basicAuth"))
   public String create(@PathVariable String bucket) throws Exception {
     UploadService minio = new UploadService(url, port, access_key, secret_key);
     String results = minio.createBucket(bucket);
@@ -66,6 +68,7 @@ public class UploadRestController {
   @PostMapping(path = "/minioupload/upload")
   @Operation(summary = "Upload a file with metadata.",
   description = "If type is DTM use the metadata in DIN 18740-6 additionally, else ignore them. <br><br> All metadata in DIN SPEC 91391-2 and DIN 18740-6 are optional.")
+  // , security= @SecurityRequirement(name = "basicAuth")
   public String uploadFileUI(@RequestBody Upload meta) throws InvalidKeyException, ErrorResponseException,
       InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException, ServerException,
       XmlParserException, IllegalArgumentException, IOException {
