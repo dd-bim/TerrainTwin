@@ -12,10 +12,12 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinitionLocator;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.reactive.config.CorsRegistry;
+import org.springframework.web.reactive.config.WebFluxConfigurer;
 
 @EnableDiscoveryClient
 @SpringBootApplication
-public class GatewayServiceApplication {
+public class GatewayServiceApplication implements WebFluxConfigurer{
 
 	public static void main(String[] args) {
 		SpringApplication.run(GatewayServiceApplication.class, args);
@@ -40,4 +42,10 @@ public class GatewayServiceApplication {
 				});
 		return groups;
 	}
+
+	@Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS").allowedOrigins("*");
+    }
 }

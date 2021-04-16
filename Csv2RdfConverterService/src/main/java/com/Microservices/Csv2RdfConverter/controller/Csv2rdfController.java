@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +21,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RefreshScope
 @RestController
-@CrossOrigin(origins = { "http://localhost:8084", "http://host.docker.internal:7202" })
 @Tag(name = "Csv2Rdf Converter", description = "Convert csv files to rdf")
 public class Csv2rdfController {
 

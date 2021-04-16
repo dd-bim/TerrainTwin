@@ -27,6 +27,11 @@ services:
             - 7204:7204
         networks:
             - terraintwin_microservices
+        environment:
+            - minio.url=http://terrain.dd-bim.org
+            - minio.port=9000
+            - minio.access_key=AKIAIOSFODNN7EXAMPLE
+            - minio.secret_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
             
     graphdb-import-service:
         container_name: graphdb-import-service
@@ -36,6 +41,14 @@ services:
             - 7201:7201
         networks:
             - terraintwin_microservices
+        environment:
+            - minio.url=http://terrain.dd-bim.org
+            - minio.port=9000
+            - minio.access_key=AKIAIOSFODNN7EXAMPLE
+            - minio.secret_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+            - graphdb.url=https://terrain.dd-bim.org/graphdb
+            - graphdb.username=graphdb
+            - graphdb.password=123456
 
     postgres-import-service:
         container_name: postgres-import-service
@@ -45,6 +58,15 @@ services:
             - 7203:7203
         networks:
             - terraintwin_microservices
+        environment:
+            - minio.url=http://terrain.dd-bim.org
+            - minio.port=9000
+            - minio.access_key=AKIAIOSFODNN7EXAMPLE
+            - minio.secret_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+            - postgres.url=//terrain.dd-bim.org
+            - postgres.database.name=tt
+            - postgres.database.username=terraintwin
+            - postgres.database.password=123456
 
     csv2rdf-converter-service:
         container_name: csv2rdf-converter-service
