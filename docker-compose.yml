@@ -62,10 +62,10 @@ services:
         # environment:
         #     WAIT_HOSTS: configserver:8888
         environment:
-            - minio.url=http://terrain.dd-bim.org
-            - minio.port=9000
-            - minio.access_key=AKIAIOSFODNN7EXAMPLE
-            - minio.secret_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+            - minio.url=${MINIO_URL}
+            - minio.port=${MINIO_PORT}
+            - minio.access_key=${MINIO_ACCESS_KEY}
+            - minio.secret_key=${MINIO_SECRET_KEY}
             
     graphdb-import-service:
         container_name: graphdb-import-service
@@ -82,13 +82,13 @@ services:
             - configserver
             - eurekaserver
         environment:
-            - minio.url=http://terrain.dd-bim.org
-            - minio.port=9000
-            - minio.access_key=AKIAIOSFODNN7EXAMPLE
-            - minio.secret_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-            - graphdb.url=https://terrain.dd-bim.org/graphdb
-            - graphdb.username=graphdb
-            - graphdb.password=123456
+            - minio.url=${MINIO_URL}
+            - minio.port=${MINIO_PORT}
+            - minio.access_key=${MINIO_ACCESS_KEY}
+            - minio.secret_key=${MINIO_SECRET_KEY}
+            - graphdb.url=${GRAPHDB_URL}
+            - graphdb.username=${GRAPHDB_USERNAME}
+            - graphdb.password=${GRAPHDB_PASSWORD}
 
     postgres-import-service:
         container_name: postgres-import-service
@@ -105,14 +105,14 @@ services:
             - configserver
             - eurekaserver
         environment:
-            - minio.url=http://terrain.dd-bim.org
-            - minio.port=9000
-            - minio.access_key=AKIAIOSFODNN7EXAMPLE
-            - minio.secret_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-            - postgres.url=//terrain.dd-bim.org
-            - postgres.database.name=tt
-            - postgres.database.username=terraintwin
-            - postgres.database.password=123456
+            - minio.url=${MINIO_URL}
+            - minio.port=${MINIO_PORT}
+            - minio.access_key=${MINIO_ACCESS_KEY}
+            - minio.secret_key=${MINIO_SECRET_KEY}
+            - postgres.url=${POSTGRES_URL}
+            - postgres.database.name=${POSTGRES_DATABASE}
+            - postgres.database.username=${POSTGRES_DATABASE_USERNAME}
+            - postgres.database.password=${POSTGRES_DATABASE_PASSWORD}/
 
     csv2rdf-converter-service:
         container_name: csv2rdf-converter-service

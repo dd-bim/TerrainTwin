@@ -7,8 +7,3 @@ springdoc:
     swagger-ui: 
         path: /minioupload/swagger-ui.html
         operationsSorter: method
-
-eureka:
-    client:
-        healthcheck:
-            enabled: true

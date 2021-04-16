@@ -8,11 +8,5 @@ spring:
             uri: http://configserver:8888
             username: configserver
             password: s3cr3tconfigs
-
-eureka:
-    client:
-        registerWithEureka: true
-        fetchRegistry: true
-        serviceUrl:
-            defaultZone: http://eurekaserver:9091/eureka
+            fail-fast: true
             
