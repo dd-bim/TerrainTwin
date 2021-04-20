@@ -1,4 +1,4 @@
 FROM alpine-jdk:base
-COPY files/MinIOUploadService-1.0.jar /opt/lib/
+COPY MinIOUploadService/target/MinIOUploadService-1.0.jar /opt/lib/
 CMD ["java", "-jar", "/opt/lib/MinIOUploadService-1.0.jar"]
 EXPOSE 7204

@@ -1,4 +1,4 @@
 FROM alpine-jdk:base
-COPY files/PostgresImportService-1.0.jar /opt/lib/
+COPY PostgresImportService/target/PostgresImportService-1.0.jar /opt/lib/
 CMD ["java", "-jar", "/opt/lib/PostgresImportService-1.0.jar"]
 EXPOSE 7203

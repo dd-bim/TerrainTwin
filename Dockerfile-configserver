@@ -1,5 +1,5 @@
 FROM alpine-jdk:base
-COPY files/ConfigServer-1.0.jar /opt/lib/
+COPY ConfigServer/target/ConfigServer-1.0.jar /opt/lib/
 RUN mkdir /var/lib/centralProperties
 COPY centralProperties /var/lib/centralProperties
 CMD ["java", "-jar", "/opt/lib/ConfigServer-1.0.jar"]

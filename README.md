@@ -1,8 +1,8 @@
-# Microservice Architektur TerrainTwin
+# Microservice Architektur TerrainTwin 
 
-Die Microservie Architektur verbindet Programme und Funktionen für das Projekt TerrainTwin und stellt diese über eine einheitlich über eine REST-Schnittstelle bereit. 
+Die Microservie Architektur (MSA) verbindet Programme und Funktionen für das Projekt TerrainTwin und stellt diese über eine einheitlich über eine REST-Schnittstelle bereit. 
 
-- Grundlage für die Microservice Architektur ist das Spring Boot Framework (Java)
+- Grundlage für die MSA ist das Spring Boot Framework (Java)
 - für die Veröffentlichung der REST-API wird OpenAPI 3 verwendet 
 - dieses [Tutorial](https://t2informatik.de/blog/softwareentwicklung/microservices-mit-spring-boot-und-docker-erstellen-teil-1/) wird als Grundlage verwendet
 
@@ -11,7 +11,7 @@ Die Microservie Architektur verbindet Programme und Funktionen für das Projekt 
 ![Architektur](images/Architektur.PNG)
 
 ### Komponenten
-[Discovery Server](#discovery-server)  
+[Discovery/Eureka Server](#discovery/eureka-server)  
 [Config Server](#config-server)  
 [Gateway Service](#gateway-service)  
 [MinIO Upload Service](#minio-upload-service)  
@@ -20,7 +20,7 @@ Die Microservie Architektur verbindet Programme und Funktionen für das Projekt 
 [Postgres Import Service](#postgres-import-service)   
 ... to be continued.
 
-#### Discovery Server (Port:`9091`)
+#### Discovery/Eureka Server (Port:`9091`)
 
 - dient als Manager-Dienst
 - bei ihm registrieren sich alle Instanzen der Microservices
@@ -36,12 +36,12 @@ Die Microservie Architektur verbindet Programme und Funktionen für das Projekt 
 - Änderungen der Eigenschaften werden an alle Microservices übermittelt, ohne diese neu starten zu müssen
 - Dateien liegen in einem lokalen Ordner centralProperties oder in einem gleichnamigen Git-Repository
 - Datei `application.yml` kann von jedem Service gelesen werden
-- enthält alle Zugangsdaten, die die Microservices verwenden
+- enthält Angaben zur Registrierung beim Eureka/Discovery Server
 - kann generell für Eigenschaften genutzt werden, die von allen Services genutzt werden 
 - für jeden Service wird Eigenschaftsdatei mit der Struktur servicename-profile.yml bereitgestellt
 - diese enthält z.B. den Port, über den der Service zugänglich ist sowie die Definition der REST-Schnittstelle
-- Zugang zu Config Server ist mit Benutzername, Passwort geschützt, welche in der `application.yml` des Server definiert werden
-- jeder Service enthält ebenfalls eine `application.yml`, in der die URL sowie die Zugangsdaten angegeben werden
+- Zugang zu Config Server ist mit Benutzername, Passwort geschützt, welche in der `bootstrap.yml` des Servers definiert werden
+- jeder Service enthält ebenfalls eine `bootstrap.yml`, in der die URL sowie die Zugangsdaten angegeben werden
 
 
 #### Gateway Service (Port:`8084`)
@@ -57,6 +57,7 @@ Die Microservie Architektur verbindet Programme und Funktionen für das Projekt 
 - Hochladen von Dateien
 - Hochladen einer Datei + Angabe von Metadaten sowie deren Upload als Json-Datei
 - alle Metadaten sind optional
+- Metadaten werden definirt nach DIN SPEC 91391-2 und DIN 18740-6
 - HTML-Interface verfügbar
 
 **Metadatenstruktur inklusive Angabe des Dateipfades und des Zielordners:**
@@ -148,20 +149,20 @@ Die Microservie Architektur verbindet Programme und Funktionen für das Projekt 
         - domain/model
         - service
       - resources
-        - application.yml
+        - bootstrap.yml
 
 ### Funktionsweise Code
-- Application.java enthält die Main-Class zum starten der Anwendung und die allgemeine API Definition
-- domain/model enthält Klassen und deren Methoden
-- service enthält die Funktionalität des Services
-- controller enthält die REST-Schnittstellen Definitionen sowie teilweise Schnittstellen für Nutzung des Service über eine HTML-Datei im Browser bzw. eine GUI
-- application.yml enthält Einstellungen zu Discovery und Config Server
-- jede Komponete wir mit der jeweiligen Application.java gestartet
+- `Application.java` enthält die Main-Class zum starten der Anwendung und die allgemeine API Definition
+- `domain/model` enthält Klassen und deren Methoden
+- `service` enthält die Funktionalität des Services
+- `controller` enthält die REST-Schnittstellen Definitionen sowie teilweise Schnittstellen für Nutzung des Service über eine HTML-Datei im Browser bzw. eine GUI
+- `bootstrap.yml` enthält Einstellungen zu Discovery und Config Server
+- jede Komponete wir mit der jeweiligen `Application.java` gestartet
 - Server werden zuerst gestartet, der Gateway Service zuletzt 
-- Services registrieren sich beim Discovery Server
 - Services loggen sich im Config Server ein und laden dort befindliche Eigenschaftsdatein, je nach aktivem Profil
+- Services registrieren sich mit diesen beim Discovery Server
 - Gateway Server stellt durch Routing alle Services über einen Port(`8084`) bereit 
-- geroutete API Definitionen der einzelnen Services werden in der GatewayServiceApplication.java gesammelt und als gebündelte REST-API bereitgestellt
+- geroutete API Definitionen der einzelnen Services werden in der `GatewayServiceApplication.java` gesammelt und als gebündelte REST-API bereitgestellt
 
 ## REST-API
 
@@ -172,6 +173,97 @@ Die Microservie Architektur verbindet Programme und Funktionen für das Projekt 
 
 ![Gateway-Swagger](images/Gateway_Swagger.PNG)
 
+## Bereitstellung der Microservice Architektur mittels Docker
+
+- JAR-Dateien für jedes Projekt erstellen
+- im Root-Verzeichnis der MSA Dockerfile erstellen, welches das Docker Image eines Linux Servers (Alpine) inklusive OpenJDK 15 (Java) enthält (z.B. mohit0193/15-jdk-alpine)
+- Dockerfile ausführen, um ein Basis-Image zu erstellen (Vorteil: bei Update von Alpine oder OpenJDK muss nur Basis-Image geändert werden)
+```schell script
+$ docker build -t alpine-jdk:base .
+```
+- Dockerfiles für jede Komponente der MSA erstellen:
+  - als Basis wird immer das erstellte Basis-Image verwendet
+  - JAR-Datei wird intern unter /opt/lib abgelegt
+  - Befehl zum Ausführen der JAR-Datei mit Java
+  - Port, über den jeder Container Daten nach außen bereitstellt
+
+```schell script
+FROM alpine-jdk:base
+COPY MinIOUplaodService/target/MinIOUploadService-1.0.jar /opt/lib/
+CMD ["java", "-jar", "/opt/lib/MinIOUploadService-1.0.jar"]
+EXPOSE 7204
+```
+
+- Erstellen der Images durch Buil der Dockerfiles:
+```schell script
+$ docker build -f [Dockerfile-Name] -t [Image-Name] .
+```
+- alternativ Build über eine `docker-compose.build.yml`-Datei (funktioniert nur lokal im Projekt):
+```schell script
+version: '3.8'
+services:
+    configserver:
+        container_name: configserver
+        hostname: configserver
+        build:
+            context: .
+            dockerfile: Dockerfile-ConfigServer
+        image: configserver:latest 
+        ...
+```
+```schell script
+$ docker-compose -f docker-compose.build.yml up -d
+```
+- startet zu jedem Image auch einen Container
+- für beliebige Verwendung der Images Upload in den [Docker Hub](https://hub.docker.com/u/schi11er)
+- Beispiel zum herunterladen eines Images von Docker Hub:
+```schell script
+$ docker pull schi11er/tt_configserver:latest
+```
+- oder besser über eine `docker-compose.yml`-Datei
+- diese regelt: 
+  - den Download aller Images von Docker Hub und Start der Container (`image`) 
+  - das Verhalten bei Fehlern (`restart`)
+  - das Port-Mapping zwischen Container und Außenwelt (`ports`)
+  - die Verknüpfung untereinander (`networks`)
+  - Abhängikeiten untereinander (`depends_on`)
+  - sowie ggf. Verwaltung von Variablen (`environment`)
+  - Variablen, z.B. Zugangsdaten, werden in einer `.env`-Datei definiert
+```schell script
+version: '3.8'
+services:
+...
+    minio-upload-service:
+        container_name: minio-upload-service
+        image: schi11er/tt_minio-upload-service:latest
+        restart: unless-stopped
+        ports:
+            - 7204:7204
+        networks:
+            - terraintwin_microservices
+        depends_on: 
+            - configserver
+            - eurekaserver
+        environment:
+            - minio.url=${MINIO_URL}
+            - minio.port=${MINIO_PORT}
+            - minio.access_key=${MINIO_ACCESS_KEY}
+            - minio.secret_key=${MINIO_SECRET_KEY}
+
+... weitere Container
+```
+
+## Installation auf Linux Server
+
+- [Docker](https://docs.docker.com/engine/install/) und [Docker-Compose](https://docs.docker.com/compose/install/) installieren
+- Installationsordner erstellen (z.B. /var/opt/microservices)
+- `docker-compose.yml` in Ordner kopieren 
+- `.env`-Datei mit Zugangsdaten anlegen
+- Container starten:
+```schell script
+$ docker-compose up -d
+```
+
 ## weitere hilfreiche Quellen:
 
 ### Microservices:
@@ -180,7 +272,8 @@ https://spring.io/microservices
 https://spring.io/blog/2015/07/14/microservices-with-spring  
 https://spring.io/guides/tutorials/rest/  
 https://medium.com/an-idea/spring-boot-microservices-api-gateway-e9dbcd4bb754
-https://programmingtechie.com/2021/03/25/spring-boot-microservices-project-tutorial-part-2/#Centralized_Configuration_using_Spring_Cloud_Config_Server
+https://programmingtechie.com/2021/03/25/spring-boot-microservices-project-tutorial-part-2/#Centralized_Configuration_using_Spring_Cloud_Config_Server  
+https://www.baeldung.com/spring-cloud-configuration
 
 
 ### Springdoc (Swagger 3.0.3):
@@ -188,3 +281,8 @@ https://programmingtechie.com/2021/03/25/spring-boot-microservices-project-tutor
 https://reflectoring.io/spring-boot-springdoc/  
 https://springdoc.org/#properties  
 https://piotrminkowski.com/2020/02/20/microservices-api-documentation-with-springdoc-openapi/
+
+### Docker
+https://www.baeldung.com/dockerizing-spring-boot-application
+https://cloudkul.com/blog/understanding-communication-docker-containers/
+https://docs.docker.com/compose/compose-file/compose-file-v3/

@@ -24,13 +24,13 @@ spring:
                 - id: openapi
                   uri: http://localhost:${server.port}
                   predicates:
-                      - Path=/v3/api-docs/**
+                      - Path=/terraintwin/v3/api-docs/**
                   filters:
-                      - RewritePath=/v3/api-docs/(?<path>.*), /$\{path}/v3/api-docs
+                      - RewritePath=/terraintwin/v3/api-docs/(?<path>.*), /$\{path}/v3/api-docs
 
 springdoc:
   api-docs: 
-    path: /v3/api-docs
+    path: /terraintwin/v3/api-docs
   swagger-ui: 
-    path: /swagger-ui.html 
+    path: /terraintwin/swagger-ui.html 
     operationsSorter: method

@@ -1,30 +1,25 @@
 cd ConfigServer 
 del "target\ConfigServer-1.0.jar"
 call mvn package -Dmaven.test.skip=true
-copy /Y "target\ConfigServer-1.0.jar" "..\files"
 cd ..\EurekaServer
 del "target\EurekaServer-1.0.jar" 
 call mvn package -Dmaven.test.skip=true
-copy /Y "target\EurekaServer-1.0.jar" "..\files"
 cd ..\Csv2RdfConverterService 
 del "target\Csv2RdfConverterService-1.0.jar"
 call mvn package -Dmaven.test.skip=true
-copy /Y "target\Csv2RdfConverterService-1.0.jar" "..\files"
 cd ..\MinIOUploadService 
 del "target\MinIOUploadService-1.0.jar"
 call mvn package -Dmaven.test.skip=true
-copy /Y "target\MinIOUploadService-1.0.jar" "..\files"
 cd ..\PostgresImportService 
 del "target\PostgresImportService-1.0.jar"
 call mvn package -Dmaven.test.skip=true
-copy /Y "target\PostgresImportService-1.0.jar" "..\files"
 cd ..\GraphDBImportService
 del "target\GraphDBImportService-1.0.jar"
 call mvn package -Dmaven.test.skip=true
-copy /Y "target\GraphDBImportService-1.0.jar" "..\files"
 cd ..\GatewayService
 del "target\GatewayService-1.0.jar"
 call mvn package -Dmaven.test.skip=true
-copy /Y "target\GatewayService-1.0.jar" "..\files"
 cd ..
+docker rmi configserver eurekaserver gateway-service postgres-import-service graphdb-import-service minio-upload-service csv2rdf-converter-service
+docker rmi schi11er/tt_configserver schi11er/tt_eurekaserver schi11er/tt_gateway-service schi11er/tt_postgres-import-service schi11er/tt_graphdb-import-service schi11er/tt_minio-upload-service schi11er/tt_csv2rdf-converter-service
 cmd /k
