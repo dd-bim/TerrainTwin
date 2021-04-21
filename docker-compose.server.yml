@@ -9,6 +9,8 @@ services:
             - 8888:8888
         networks:
             - terraintwin_microservices
+        volumes:
+            - ./volumes/configs:/var/lib/centralProperties
 
     eurekaserver:
         container_name: eurekaserver

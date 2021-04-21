@@ -176,12 +176,12 @@ Die Microservie Architektur (MSA) verbindet Programme und Funktionen für das Pr
 ## Bereitstellung der Microservice Architektur mittels Docker
 
 - JAR-Dateien für jedes Projekt erstellen
-- im Root-Verzeichnis der MSA Dockerfile erstellen, welches das Docker Image eines Linux Servers (Alpine) inklusive OpenJDK 15 (Java) enthält (z.B. mohit0193/15-jdk-alpine)
+- im Root-Verzeichnis der MSA Dockerfile erstellen, welches das Docker Image eines Linux Servers (Alpine) inklusive OpenJDK 15 (Java) enthält (z.B. openjdk:15-jdk-alpine3.12)
 - Dockerfile ausführen, um ein Basis-Image zu erstellen (Vorteil: bei Update von Alpine oder OpenJDK muss nur Basis-Image geändert werden)
 ```schell script
 $ docker build -t alpine-jdk:base .
 ```
-- Dockerfiles für jede Komponente der MSA erstellen:
+- Dockerfiles für jede Komponente der MSA in deren Ordner erstellen:
   - als Basis wird immer das erstellte Basis-Image verwendet
   - JAR-Datei wird intern unter /opt/lib abgelegt
   - Befehl zum Ausführen der JAR-Datei mit Java
@@ -189,8 +189,8 @@ $ docker build -t alpine-jdk:base .
 
 ```schell script
 FROM alpine-jdk:base
-COPY MinIOUplaodService/target/MinIOUploadService-1.0.jar /opt/lib/
-CMD ["java", "-jar", "/opt/lib/MinIOUploadService-1.0.jar"]
+COPY target/*.jar /opt/lib/application.jar
+CMD ["java", "-jar", "/opt/lib/application.jar"]
 EXPOSE 7204
 ```
 
@@ -207,15 +207,17 @@ services:
         hostname: configserver
         build:
             context: .
-            dockerfile: Dockerfile-ConfigServer
-        image: configserver:latest 
+        image: schi11er/tt_configserver:latest 
         ...
 ```
 ```schell script
 $ docker-compose -f docker-compose.build.yml up -d
 ```
 - startet zu jedem Image auch einen Container
-- für beliebige Verwendung der Images Upload in den [Docker Hub](https://hub.docker.com/u/schi11er)
+- für beliebige Verwendung der Images Upload in den [Docker Hub](https://hub.docker.com/u/schi11er) über:
+```schell script
+$ docker-compose push
+```  
 - Beispiel zum herunterladen eines Images von Docker Hub:
 ```schell script
 $ docker pull schi11er/tt_configserver:latest
@@ -252,12 +254,16 @@ services:
 
 ... weitere Container
 ```
+```schell script
+$ docker-compose up -d
+```
 
 ## Installation auf Linux Server
 
 - [Docker](https://docs.docker.com/engine/install/) und [Docker-Compose](https://docs.docker.com/compose/install/) installieren
 - Installationsordner erstellen (z.B. /var/opt/microservices)
 - `docker-compose.yml` in Ordner kopieren 
+- `volumes`-Ordner mit Config-Dateien für Microservices kopieren
 - `.env`-Datei mit Zugangsdaten anlegen
 - Container starten:
 ```schell script

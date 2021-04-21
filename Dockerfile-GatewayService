@@ -1,4 +1,0 @@
-FROM alpine-jdk:base
-COPY GatewayService/target/GatewayService-1.0.jar /opt/lib/
-CMD ["java", "-jar", "/opt/lib/GatewayService-1.0.jar"]
-EXPOSE 8084

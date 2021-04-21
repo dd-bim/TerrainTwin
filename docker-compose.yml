@@ -4,14 +4,16 @@ services:
         container_name: configserver
         hostname: configserver
         build:
-            context: .
-            dockerfile: Dockerfile-ConfigServer
-        image: configserver:latest
+            context: ./ConfigServer
+            #dockerfile: Dockerfile-ConfigServer
+        image: schi11er/tt_configserver:latest
         restart: unless-stopped
         ports:
             - 8888:8888
         networks:
             - terraintwin_microservices
+        volumes:
+            - ./volumes/configs:/var/lib/centralProperties
         # healthcheck:
         #     test: ["CMD", "curl", "http://localhost:8888/login"]
         #     # ["CMD", "curl", "http://localhost:8888/actuator/health"]
@@ -24,9 +26,8 @@ services:
     eurekaserver:
         container_name: eurekaserver
         build:
-            context: .
-            dockerfile: Dockerfile-EurekaServer
-        image: eurekaserver:latest
+            context: ./EurekaServer
+        image: schi11er/tt_eurekaserver:latest
         restart: unless-stopped
         ports:
             - 9091:9091
@@ -38,9 +39,8 @@ services:
     minio-upload-service:
         container_name: minio-upload-service
         build:
-            context: .
-            dockerfile: Dockerfile-MinIOUploadService
-        image: minio-upload-service:latest
+            context: ./MinIOUploadService
+        image: schi11er/tt_minio-upload-service:latest
         restart: unless-stopped
         ports:
             - 7204:7204
@@ -70,9 +70,8 @@ services:
     graphdb-import-service:
         container_name: graphdb-import-service
         build:
-            context: .
-            dockerfile: Dockerfile-GraphDBImportService
-        image: graphdb-import-service:latest
+            context: ./GraphDBImportService
+        image: schi11er/tt_graphdb-import-service:latest
         restart: unless-stopped
         ports:
             - 7201:7201
@@ -93,9 +92,8 @@ services:
     postgres-import-service:
         container_name: postgres-import-service
         build:
-            context: .
-            dockerfile: Dockerfile-PostgresImportService
-        image: postgres-import-service:latest
+            context: ./PostgresImportService
+        image: schi11er/tt_postgres-import-service:latest
         restart: unless-stopped
         ports:
             - 7203:7203
@@ -117,9 +115,8 @@ services:
     csv2rdf-converter-service:
         container_name: csv2rdf-converter-service
         build:
-            context: .
-            dockerfile: Dockerfile-Csv2RdfConverterService
-        image: csv2rdf-converter-service:latest
+            context: ./Csv2RdfConverterService
+        image: schi11er/tt_csv2rdf-converter-service:latest
         restart: unless-stopped
         ports:
             - 7202:7202
@@ -132,9 +129,8 @@ services:
     gateway-service:
         container_name: gateway-service
         build:
-            context: .
-            dockerfile: Dockerfile-GatewayService
-        image: gateway-service:latest
+            context: ./GatewayService
+        image: schi11er/tt_gateway-service:latest
         restart: unless-stopped
         ports:
             - 8084:8084
