@@ -31,6 +31,6 @@ public class PostgresImportApplication implements WebMvcConfigurer{
 
     @Bean 
     public OpenAPI springShopOpenAPI(@Value("${domain.url}") String url) {
-        return new OpenAPI().addServersItem(new Server().url(url));
+        return new OpenAPI().addServersItem(new Server().url(url)).addServersItem(new Server().url("http://localhost:7203"));
     }
 }

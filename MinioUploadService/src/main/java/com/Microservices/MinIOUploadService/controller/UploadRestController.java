@@ -14,6 +14,8 @@ import com.Microservices.MinIOUploadService.service.UploadService;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +31,8 @@ import io.minio.errors.ServerException;
 import io.minio.errors.XmlParserException;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RefreshScope
@@ -45,102 +49,133 @@ public class UploadRestController {
   @Value("${minio.secret_key}")
   private String secret_key;
 
-  @GetMapping("/minioupload/createbucket/{bucket}")
+  // https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html
+
   // @Operation(security= @SecurityRequirement(name = "basicAuth"))
-  public String create(@PathVariable String bucket) throws Exception {
-    UploadService minio = new UploadService(url, port, access_key, secret_key);
-    String results = minio.createBucket(bucket);
-    return results;
+
+  @GetMapping("/minioupload/createbucket/{bucket}")
+  @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
+  public ResponseEntity<?> create(@PathVariable String bucket) throws Exception {
+    if (bucket.matches("^[a-z0-9][a-z0-9-.]{1,61}[a-z0-9]$")) {
+      UploadService minio = new UploadService(url, port, access_key, secret_key);
+      String results = minio.createBucket(bucket);
+      return ResponseEntity.ok(results);
+    } else {
+      ;
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+          "The bucket name is not valid. The name must be at least 3 characters long, start and end with a digit or lowercase letter and contain only 'a-z', '0-9', '.' and '-''. More than one dot or hyphen in a row is also not allowed.");
+    }
   }
 
   @GetMapping("/minioupload/deletebucket/{bucket}")
-  public String delete(@PathVariable String bucket) throws Exception {
-    UploadService minio = new UploadService(url, port, access_key, secret_key);
-    String results = minio.deleteBucket(bucket);
-    return results;
+  @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
+  public ResponseEntity<?> delete(@PathVariable String bucket) throws Exception {
+    if (bucket.matches("^[a-z0-9][a-z0-9-.]{1,61}[a-z0-9]$")) {
+      UploadService minio = new UploadService(url, port, access_key, secret_key);
+      String results = minio.deleteBucket(bucket);
+      return ResponseEntity.ok(results);
+    } else {
+      ;
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+          "The bucket name is not valid. The name must be at least 3 characters long, start and end with a digit or lowercase letter and contain only 'a-z', '0-9', '.' and '-''. More than one dot or hyphen in a row is also not allowed.");
+    }
   }
 
   @PostMapping(path = "/minioupload/upload")
-  @Operation(summary = "Upload a file with metadata.",
-  description = "If type is DTM use the metadata in DIN 18740-6 additionally, else ignore them. <br><br> All metadata in DIN SPEC 91391-2 and DIN 18740-6 are optional.")
+  @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
+  @Operation(summary = "Upload a file with metadata.", description = "If type is DTM use the metadata in DIN 18740-6 additionally, else ignore them. <br><br> All metadata in DIN SPEC 91391-2 and DIN 18740-6 are optional.")
   // , security= @SecurityRequirement(name = "basicAuth")
-  public String uploadFileUI(@RequestBody Upload meta) throws InvalidKeyException, ErrorResponseException,
+  public ResponseEntity<?> uploadFileUI(@RequestBody Upload meta) throws InvalidKeyException, ErrorResponseException,
       InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException, ServerException,
       XmlParserException, IllegalArgumentException, IOException {
-    UploadService minio = new UploadService(url, port, access_key, secret_key);
-    String results = "";
-
-    // create buckets and upload files with metadata
-    Metadata metadata = meta.getMetadata();
     String bucket = meta.getBucket();
-    File file = meta.getFile();
-    UploadInfos infos = new UploadInfos(bucket, file);
-    results = minio.upload(infos);
+    if (bucket.matches("^[a-z0-9][a-z0-9-.]{1,61}[a-z0-9]$")) {
+      UploadService minio = new UploadService(url, port, access_key, secret_key);
+      String results = "";
 
-    metadata.setCreated(infos.getTimestamp());
-    metadata.setName(infos.getTimestamp() + "_" + file.getName());
-    metadata.setLocation(
-        "https://terrain.dd-bim.org" + "/minio/" + bucket + "/" + infos.getTimestamp() + "_" + file.getName());
-    metadata.setId(UUID.randomUUID());
+      // create buckets and upload files with metadata
+      Metadata metadata = meta.getMetadata();
+      File file = meta.getFile();
+      UploadInfos infos = new UploadInfos(bucket, file);
+      results = minio.upload(infos);
 
-    String ext = file.getName().split("\\.")[1];
-    switch (ext) {
-    case "ifc":
-      metadata.setMimetype("application/x-step");
-      break;
-    case "dwg":
-      metadata.setMimetype("application/acad");
-      break;
-    case "dxf":
-      metadata.setMimetype("application/dxf");
-      break;
-    case "gml":
-      metadata.setMimetype("application/gml+xml");
-      break;
-    case "ttl":
-      metadata.setMimetype("text/turtle");
-      break;
-    case "owl":
-      metadata.setMimetype("application/rdf+xml");
-      break;
-    case "xml":
-      metadata.setMimetype("application/xml");
-      break;
-    default:
-      metadata.setMimetype("");
-    }
+      metadata.setCreated(infos.getTimestamp());
+      metadata.setName(infos.getTimestamp() + "_" + file.getName());
+      metadata.setLocation(
+          "https://terrain.dd-bim.org" + "/minio/" + bucket + "/" + infos.getTimestamp() + "_" + file.getName());
+      metadata.setId(UUID.randomUUID());
 
-    MetaFile metaFile;
+      String ext = file.getName().split("\\.")[1];
+      switch (ext) {
+      case "ifc":
+        metadata.setMimetype("application/x-step");
+        break;
+      case "dwg":
+        metadata.setMimetype("application/acad");
+        break;
+      case "dxf":
+        metadata.setMimetype("application/dxf");
+        break;
+      case "gml":
+        metadata.setMimetype("application/gml+xml");
+        break;
+      case "ttl":
+        metadata.setMimetype("text/turtle");
+        break;
+      case "owl":
+        metadata.setMimetype("application/rdf+xml");
+        break;
+      case "xml":
+        metadata.setMimetype("application/xml");
+        break;
+      default:
+        metadata.setMimetype("");
+      }
 
-    // if file is a DTM, get DTM metadata and add to upload
-    if (metadata.getType().equals("DTM")) {
-      metaFile = new MetaFile(metadata, meta.getDtm());
+      MetaFile metaFile;
+
+      // if file is a DTM, get DTM metadata and add to upload
+      if (metadata.getType().equals("DTM")) {
+        metaFile = new MetaFile(metadata, meta.getDtm());
+      } else {
+        metaFile = new MetaFile(metadata);
+      }
+
+      // make JSON file from metadata
+      File metadataFile = minio.metaToJson(metaFile, file.getName());
+      // upload JSON file
+      UploadInfos metaInfos = new UploadInfos(bucket, metadataFile);
+      results += minio.upload(metaInfos);
+
+      return ResponseEntity.ok(results);
     } else {
-      metaFile = new MetaFile(metadata);
+      ;
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+          "The bucket name is not valid. The name must be at least 3 characters long, start and end with a digit or lowercase letter and contain only 'a-z', '0-9', '.' and '-''. More than one dot or hyphen in a row is also not allowed.");
     }
-
-    // make JSON file from metadata
-    File metadataFile = minio.metaToJson(metaFile, file.getName());
-    // upload JSON file
-    UploadInfos metaInfos = new UploadInfos(bucket, metadataFile);
-    results += minio.upload(metaInfos);
-
-    return results;
   }
 
   @PostMapping(path = "/minioupload/uploadFile")
   @Operation(summary = "Upload a file to MinIO without metadata.")
-  public String uploadFile(@RequestParam("file") String filepath, @RequestParam String bucket)
+  @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
+  public ResponseEntity<?> uploadFile(@RequestParam("file") String filepath, @RequestParam String bucket)
       throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException,
       InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException,
       IOException {
-    UploadService minio = new UploadService(url, port, access_key, secret_key);
-    String results = "";
+    if (bucket.matches("^[a-z0-9][a-z0-9-.]{1,61}[a-z0-9]$")) {
+      UploadService minio = new UploadService(url, port, access_key, secret_key);
+      String results = "";
 
-    File file = new File(filepath);
-    UploadInfos infos = new UploadInfos(bucket, file);
-    results = minio.upload(infos);
-    return results;
+      File file = new File(filepath);
+      UploadInfos infos = new UploadInfos(bucket, file);
+      results = minio.upload(infos);
+
+      return ResponseEntity.ok(results);
+    } else {
+      ;
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+          "The bucket name is not valid. The name must be at least 3 characters long, start and end with a digit or lowercase letter and contain only 'a-z', '0-9', '.' and '-''. More than one dot or hyphen in a row is also not allowed.");
+    }
   }
 
 }

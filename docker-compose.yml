@@ -114,7 +114,7 @@ services:
             - postgres.url=${POSTGRES_URL}
             - postgres.database.name=${POSTGRES_DATABASE}
             - postgres.database.username=${POSTGRES_DATABASE_USERNAME}
-            - postgres.database.password=${POSTGRES_DATABASE_PASSWORD}/
+            - postgres.database.password=${POSTGRES_DATABASE_PASSWORD}
 
     csv2rdf-converter-service:
         container_name: csv2rdf-converter-service
