@@ -10,7 +10,7 @@ springdoc:
 
 spring:
     datasource:
-        url: jdbc:postgresql:${postgres.url}/${postgres.database.name}
+        url: jdbc:postgresql://${postgres.url}/${postgres.database.name}
         username: ${postgres.database.username}
         password: ${postgres.database.password}
         driver-class-name: org.postgresql.Driver

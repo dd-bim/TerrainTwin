@@ -15,13 +15,16 @@ import com.Microservices.MinIOUploadService.service.UploadService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import io.minio.errors.ErrorResponseException;
 import io.minio.errors.InsufficientDataException;
@@ -31,9 +34,11 @@ import io.minio.errors.ServerException;
 import io.minio.errors.XmlParserException;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @RefreshScope
 @RestController
@@ -81,21 +86,25 @@ public class UploadRestController {
     }
   }
 
-  @PostMapping(path = "/minioupload/upload")
+  @PostMapping(path = "/minioupload/upload", consumes=MediaType.MULTIPART_FORM_DATA_VALUE)
   @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
   @Operation(summary = "Upload a file with metadata.", description = "If type is DTM use the metadata in DIN 18740-6 additionally, else ignore them. <br><br> All metadata in DIN SPEC 91391-2 and DIN 18740-6 are optional.")
   // , security= @SecurityRequirement(name = "basicAuth")
-  public ResponseEntity<?> uploadFileUI(@RequestBody Upload meta) throws InvalidKeyException, ErrorResponseException,
+  public ResponseEntity<?> uploadFileUI(@RequestPart("file") MultipartFile multiFile, @RequestParam String bucket, @RequestPart(value="metadata") MetaFile meta) //@RequestBody Upload meta
+  throws InvalidKeyException, ErrorResponseException,
       InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException, ServerException,
       XmlParserException, IllegalArgumentException, IOException {
-    String bucket = meta.getBucket();
+    //String bucket = meta.getBucket();
     if (bucket.matches("^[a-z0-9][a-z0-9-.]{1,61}[a-z0-9]$")) {
       UploadService minio = new UploadService(url, port, access_key, secret_key);
       String results = "";
 
       // create buckets and upload files with metadata
       Metadata metadata = meta.getMetadata();
-      File file = meta.getFile();
+      
+      // File file = meta.getFile();
+      // File file = minio.multipartToFile(meta.getFile());
+      File file = minio.multipartToFile(multiFile);
       UploadInfos infos = new UploadInfos(bucket, file);
       results = minio.upload(infos);
 
@@ -155,10 +164,34 @@ public class UploadRestController {
     }
   }
 
-  @PostMapping(path = "/minioupload/uploadFile")
+  // @PostMapping(path = "/minioupload/uploadFile")
+  // @Operation(summary = "Upload a file to MinIO without metadata.")
+  // @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
+  // public ResponseEntity<?> uploadFile(@RequestParam("file") String filepath, @RequestParam String bucket)
+  //     throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException,
+  //     InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException,
+  //     IOException {
+  //   if (bucket.matches("^[a-z0-9][a-z0-9-.]{1,61}[a-z0-9]$")) {
+  //     UploadService minio = new UploadService(url, port, access_key, secret_key);
+  //     String results = "";
+
+  //     File file = new File(filepath);
+  //     UploadInfos infos = new UploadInfos(bucket, file);
+  //     results = minio.upload(infos);
+
+  //     return ResponseEntity.ok(results);
+  //   } else {
+  //     ;
+  //     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+  //         "The bucket name is not valid. The name must be at least 3 characters long, start and end with a digit or lowercase letter and contain only 'a-z', '0-9', '.' and '-''. More than one dot or hyphen in a row is also not allowed.");
+  //   }
+  // }
+
+
+  @PostMapping(path = "/minioupload/uploadFile", consumes=MediaType.MULTIPART_FORM_DATA_VALUE)
   @Operation(summary = "Upload a file to MinIO without metadata.")
   @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
-  public ResponseEntity<?> uploadFile(@RequestParam("file") String filepath, @RequestParam String bucket)
+  public ResponseEntity<?> uploadFile(@RequestPart("file") MultipartFile multiFile, @RequestParam String bucket)
       throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException,
       InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException,
       IOException {
@@ -166,7 +199,7 @@ public class UploadRestController {
       UploadService minio = new UploadService(url, port, access_key, secret_key);
       String results = "";
 
-      File file = new File(filepath);
+      File file = minio.multipartToFile(multiFile);
       UploadInfos infos = new UploadInfos(bucket, file);
       results = minio.upload(infos);
 
