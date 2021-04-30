@@ -141,6 +141,7 @@ Die Microservie Architektur (MSA) verbindet Programme und Funktionen für das Pr
 
 ### allgemeine Ordnerstruktur
   - Komponentenname
+    - Dockerfile
     - pom.xml
     - src/main
       - java/com/Microservices
@@ -150,6 +151,7 @@ Die Microservie Architektur (MSA) verbindet Programme und Funktionen für das Pr
         - service
       - resources
         - bootstrap.yml
+        - ...
 
 ### Funktionsweise Code
 - `Application.java` enthält die Main-Class zum starten der Anwendung und die allgemeine API Definition
@@ -170,33 +172,45 @@ Die Microservie Architektur (MSA) verbindet Programme und Funktionen für das Pr
 - Gateway bündelt die REST-API's
 - Interfaces sind zusätzlich verlinkt
 - Requests können direkt in API über Button "Try it out" verwendet werden
+- für Requests kann Domain bei "Servers" gewählt werden. `http://localhost:port` für lokale Installation ist fest implementiert, andere Domain kann über die Variable `DOMAIN_URL` in der `.env`-Datei hinzugefügt werden
 
 ![Gateway-Swagger](images/Gateway_Swagger.PNG)
 
 ## Bereitstellung der Microservice Architektur mittels Docker
 
-- JAR-Dateien für jedes Projekt erstellen
 - im Root-Verzeichnis der MSA Dockerfile erstellen, welches das Docker Image eines Linux Servers (Alpine) inklusive OpenJDK 15 (Java) enthält (z.B. openjdk:15-jdk-alpine3.12)
-- Dockerfile ausführen, um ein Basis-Image zu erstellen (Vorteil: bei Update von Alpine oder OpenJDK muss nur Basis-Image geändert werden)
+- Dockerfile ausführen, um ein Basis-Image zu erstellen (Vorteile: bei Update von Alpine oder OpenJDK muss nur Basis-Image geändert werden, Build-Prozess ist signifikant schneller)
 ```schell script
 $ docker build -t alpine-jdk:base .
 ```
+- zweites Dockerfile mit Maven Image erstellen 
+```schell script
+$ docker build -f mvn.Dockerfile -t mvn-build:base .
+```
 - Dockerfiles für jede Komponente der MSA in deren Ordner erstellen:
-  - als Basis wird immer das erstellte Basis-Image verwendet
-  - JAR-Datei wird intern unter /opt/lib abgelegt
-  - Befehl zum Ausführen der JAR-Datei mit Java
-  - Port, über den jeder Container Daten nach außen bereitstellt
+  1. mit dem `mvn-build:base`-Image wird ein temporäres Image 
+      - in diesem wird das Projekt als `JAR`-File verpackt und intern gespeichert
+  2. `alpine-jdk:base`-Image dient als Basis für das fertige Image
+     - in diese wird die `JAR`-Datei unter /opt/lib kopiert
+     - Befehl zum Ausführen der JAR-Datei mit Java
+     - Port, über den jeder Container Daten nach außen bereitstellt
 
 ```schell script
+FROM maven:3.8-openjdk-15-slim as mvn-build
+WORKDIR /app/build
+COPY ./src ./src
+COPY pom.xml .
+RUN mvn package -Dmaven.test.skip=true
+
 FROM alpine-jdk:base
-COPY target/*.jar /opt/lib/application.jar
+COPY --from=mvn-build /app/build/target/*.jar /opt/lib/application.jar
 CMD ["java", "-jar", "/opt/lib/application.jar"]
 EXPOSE 7204
 ```
 
 - Erstellen der Images durch Buil der Dockerfiles:
 ```schell script
-$ docker build -f [Dockerfile-Name] -t [Image-Name] .
+$ docker build -t [Image-Name] .
 ```
 - alternativ Build über eine `docker-compose.build.yml`-Datei (funktioniert nur lokal im Projekt):
 ```schell script
