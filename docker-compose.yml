@@ -5,7 +5,6 @@ services:
         hostname: configserver
         build:
             context: ./ConfigServer
-            #dockerfile: Dockerfile-ConfigServer
         image: schi11er/tt_configserver:latest
         restart: unless-stopped
         ports:
@@ -47,10 +46,6 @@ services:
         depends_on: 
             - configserver
             - eurekaserver
-            # configserver: 
-            #     condition: service_healthy
-            # eurekaserver:
-            #     condition: service_healthy
         networks:
             - terraintwin_microservices
         # healthcheck:
@@ -142,14 +137,9 @@ services:
             - 8084:8084
         networks:
             - terraintwin_microservices
-           # - keycloak_network
         depends_on:
             - configserver
             - eurekaserver
-            # configserver: 
-            #     condition: service_healthy
-            # eurekaserver:
-            #     condition: service_healthy
         # healthcheck:
         #     test: ["CMD", "curl", "http://localhost:8084/v3/api-docs"]
         #     interval: 5s
@@ -191,10 +181,10 @@ services:
     #         POSTGRES_USER: keycloak
     #         POSTGRES_PASSWORD: password
 
-volumes:
-    postgres_data:
-        name: keycloak_postgres_data
-        driver: local
+# volumes:
+#     postgres_data:
+#         name: keycloak_postgres_data
+#         driver: local
 
 networks:
     terraintwin_microservices:
