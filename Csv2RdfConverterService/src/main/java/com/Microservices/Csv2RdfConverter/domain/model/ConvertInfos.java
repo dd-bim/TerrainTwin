@@ -1,5 +1,7 @@
 package com.Microservices.Csv2RdfConverter.domain.model;
 
+import java.io.File;
+
 import javax.validation.constraints.NotBlank;
 
 import lombok.Getter;
@@ -8,13 +10,13 @@ import lombok.Getter;
 public class ConvertInfos {
 
     @NotBlank
-    private String file;
+    private File file;
     private String namespace;
     private String prefix;
     private String superclass;
     private String delimiter;
 
-    public ConvertInfos(String file, String namespace, String prefix, String superclass, String delimiter) {
+    public ConvertInfos(File file, String namespace, String prefix, String superclass, String delimiter) {
         this.file = file;
         this.namespace = namespace;
         this.prefix = prefix;
@@ -26,16 +28,16 @@ public class ConvertInfos {
 
     }
 
-    public ConvertInfos(String file) {
+    public ConvertInfos(File file) {
         this.file = file;
     }
 
-    public ConvertInfos(String file, String delimiter) {
+    public ConvertInfos(File file, String delimiter) {
         this.file = file;
         this.delimiter = delimiter;
     }
 
-    public ConvertInfos(String file, String namespace, String prefix, String superclass) {
+    public ConvertInfos(File file, String namespace, String prefix, String superclass) {
         this.file = file;
         this.namespace = namespace;
         this.prefix = prefix;

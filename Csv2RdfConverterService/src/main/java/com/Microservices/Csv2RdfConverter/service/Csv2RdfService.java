@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -18,6 +19,8 @@ import org.eclipse.rdf4j.model.vocabulary.RDFS;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.Microservices.Csv2RdfConverter.domain.model.ConvertInfos;
 
 @Service
@@ -29,8 +32,8 @@ public class Csv2RdfService {
     String delimiter = ";";
     String feedback = "";
 
-    public String convert(ConvertInfos infos) {
-        File filename = new File(infos.getFile());
+    public String convert(ConvertInfos infos, int index) {
+        File filename =infos.getFile();
         if (infos.getNamespace() != null)
             namespace = infos.getNamespace();
         if (infos.getPrefix() != null)
@@ -78,7 +81,17 @@ public class Csv2RdfService {
             Model m = builder.build();
 
             // write model in turtle file
-            convFile = filename.getAbsolutePath().split(Pattern.quote("."))[0] + ".ttl";
+            if(index == 1){
+                convFile = filename.getAbsolutePath().split(Pattern.quote("."))[0] + ".ttl";
+            }
+        // convFile = filename.getAbsolutePath().split(Pattern.quote("."))[0] + ".ttl";
+            // String localfolder = System.getProperty("user.home");
+            // convFile = localfolder + "/Downloads/" +filename.getName().split(Pattern.quote("."))[0] + ".ttl";
+            // System.out.println(convFile);
+            else {
+                convFile = "/files/" + filename.getName().split(Pattern.quote("."))[0] + ".ttl"; 
+            }
+
             File file = new File(convFile);
             FileOutputStream out = new FileOutputStream(file);
             try {
@@ -96,5 +109,12 @@ public class Csv2RdfService {
             e.printStackTrace();
         }
         return feedback;
+    }
+
+    // convert multipart class file to java class file
+    public File multipartToFile(MultipartFile file) throws IllegalStateException, IOException {
+        File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename());
+        file.transferTo(convFile);
+        return convFile;
     }
 }

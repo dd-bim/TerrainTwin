@@ -249,7 +249,7 @@ public class GUI implements ActionListener {
             textArea.setText("");
 
             // convert file
-            conv.convert(new ConvertInfos(csv.getAbsolutePath(), base, prefix, superclass, delimiter));
+            conv.convert(new ConvertInfos(csv, base, prefix, superclass, delimiter), 1);
             textArea.append("File converted.");
         }
     }

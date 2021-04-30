@@ -1,0 +1,62 @@
+keycloak:
+    realm: terraintwin
+    auth-server-url: http://localhost:8090/auth
+    # ssl-required: external
+    resource: microservices
+    public-client: true
+    # bearer-only: true
+    # # credentials:
+    # #     secret: terraintwin
+    # use-resource-role-mappings: true
+    # principal-attribute: preferred_username
+    security-constraints:
+        - 
+            authRoles: 
+                - user
+                - admin
+            security-collections:
+                - 
+                    patterns:
+                        - /terraintwin/*
+        
+
+
+
+    # securityConstraints[0]:
+    #     authRoles[0]: admin
+    #     authRoles[1]: user
+    #     securityCollections[0]: 
+    #         name: insecure stuff
+    #         patterns[0]: /insecure
+
+    # securityConstraints[1]: 
+    #     authRoles[0]: admin
+    #     securityCollections[0]: 
+    #         name: admin stuff
+    #         patterns[0]: /admin
+
+# spring:
+#     # main.allow-bean-definition-overriding: true
+#     security:
+#         oauth2:
+#             client:
+#                 registration:
+#                     keycloak:
+#                         provider: keycloak
+#                         client-id: microservices
+#                         client-secret: 538702f6-553b-48f3-96fc-b323ea1734b2
+#                         authorization-grant-type: authorization_code
+#                         redirect-uri: http://localhost:${server.port}/login/oauth2/code/keycloak
+#                         # scope: openid
+#                 provider:
+#                     keycloak:
+#                         authorization-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}/protocol/openid-connect/auth
+#                         token-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}/protocol/openid-connect/token
+#                         user-info-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}/protocol/openid-connect/userinfo
+#                         # jwk-set-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}/protocol/openid-connect/certs
+#                         user-name-attribute: preferred_username
+#                         # issuer-uri: http://localhost:8090/auth/realms/terraintwin
+#                         # user-info-authentication-method: header
+#             # resourceserver:
+#             #     jwt:
+#             #         jwk-set-uri: ${keycloak.auth-server-url}/realms/${keycloak.realm}/protocol/openid-connect/certs

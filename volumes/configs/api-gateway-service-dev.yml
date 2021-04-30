@@ -4,6 +4,9 @@ server:
 spring:
     cloud:
         gateway:
+            # default-filters:
+            #     - TokenRelay
+                # - RemoveRequestHeader=Cookie
             routes:
                 - id: graphdbimport-service
                   uri: lb://graphdb-import-service

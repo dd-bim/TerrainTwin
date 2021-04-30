@@ -12,12 +12,13 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinitionLocator;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.web.reactive.config.CorsRegistry;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
 
 @EnableDiscoveryClient
 @SpringBootApplication
-public class GatewayServiceApplication implements WebFluxConfigurer{
+public class GatewayServiceApplication implements WebFluxConfigurer {
 
 	public static void main(String[] args) {
 		SpringApplication.run(GatewayServiceApplication.class, args);
@@ -44,8 +45,13 @@ public class GatewayServiceApplication implements WebFluxConfigurer{
 	}
 
 	@Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS").allowedOrigins("*");
-    }
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/**").allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+				.allowedOrigins("*");
+	}
+
+	// @Bean
+	// public ServerCodecConfigurer serverCodecConfigurer() {
+	// 	return ServerCodecConfigurer.create();
+	// }
 }

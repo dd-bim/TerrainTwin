@@ -1,6 +1,7 @@
 package com.Microservices.Csv2RdfConverter.controller;
 
-import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
 
 import com.Microservices.Csv2RdfConverter.domain.model.ConvertInfos;
 import com.Microservices.Csv2RdfConverter.service.Csv2RdfService;
@@ -8,11 +9,14 @@ import com.Microservices.Csv2RdfConverter.service.Csv2RdfService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,13 +39,33 @@ public class Csv2rdfController {
         return "csv2rdf Converter works";
     }
 
-    @PostMapping("/csv2rdf/convert")
+    @PostMapping(path = "/csv2rdf/convert", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Convert a csv file to a rdf file in turtle sysntax.", description = "Possible value combinations in request body:<br><br> file <br> file, delimiter <br> file, namespace, prefix, superclass <br> all")
     @ApiResponse(responseCode = "200", description = "Conversion performed successfully", content = @Content)
     @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
     @ApiResponse(responseCode = "404", description = "Service not found", content = @Content)
-    public ResponseEntity<?> createRDF(@Valid @RequestBody ConvertInfos infos) {
-        String feedback = converter.convert(infos);
+    public ResponseEntity<?> createRDF(@RequestParam("file") MultipartFile multiFile,
+            @RequestParam(required = false) String delimiter, @RequestParam(required = false) String namespace,
+            @RequestParam(required = false) String prefix, @RequestParam(required = false) String superclass)
+            throws IllegalStateException, IOException {
+        // @Valid @RequestBody ConvertInfos infos) {
+        ConvertInfos infos = new ConvertInfos();
+        File file = converter.multipartToFile(multiFile);
+        String f = multiFile.getOriginalFilename();
+        System.out.println(f);
+        if (delimiter != null && namespace != null && prefix != null && superclass != null) {
+            infos = new ConvertInfos(file, namespace, prefix, superclass, delimiter);
+        } else if (delimiter == null && namespace == null && prefix == null && superclass == null) {
+            infos = new ConvertInfos(file);
+        } else if (namespace == null && prefix == null && superclass == null) {
+            infos = new ConvertInfos(file, delimiter);
+        } else if (delimiter == null) {
+            infos = new ConvertInfos(file, namespace, prefix, superclass);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("This is not a valid value combination.");
+        }
+
+        String feedback = converter.convert(infos, 0);
         if (feedback.contains("400")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(feedback);
         } else {

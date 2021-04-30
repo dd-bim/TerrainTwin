@@ -91,7 +91,7 @@ public class UploadRestController {
   // @Schema(implementation = Metadata.class))})
   // @ApiResponse(responseCode = "200", content = {@Content(schema =
   // @Schema(implementation = DTM.class))})
-  public ResponseEntity<?> uploadFileUI(@RequestParam(name = "file") MultipartFile multiFile,
+  public ResponseEntity<?> uploadFileUI(@RequestParam("file") MultipartFile multiFile,
       @RequestParam String bucket, @RequestPart(name = "metadata for all (DIN SPEC 91391-2)") String meta1,
       @RequestPart(name = "additional metadata for dtm (DIN 18740-6)", required = false) String meta2)
       throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException,
@@ -169,7 +169,7 @@ public class UploadRestController {
   @PostMapping(path = "/minioupload/uploadFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @Operation(summary = "Upload a file to MinIO without metadata.")
   @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
-  public ResponseEntity<?> uploadFile(@RequestParam(name = "file", required = true) MultipartFile multiFile,
+  public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile multiFile,
       @RequestParam String bucket) throws InvalidKeyException, ErrorResponseException, InsufficientDataException,
       InternalException, InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException,
       IllegalArgumentException, IOException {
