@@ -8,6 +8,8 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -24,6 +26,13 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.Microservices.Csv2RdfConverter.domain.model.ConvertInfos;
 import com.Microservices.Csv2RdfConverter.service.Csv2RdfService;
+
+import io.minio.errors.ErrorResponseException;
+import io.minio.errors.InsufficientDataException;
+import io.minio.errors.InternalException;
+import io.minio.errors.InvalidResponseException;
+import io.minio.errors.ServerException;
+import io.minio.errors.XmlParserException;
 
 public class GUI implements ActionListener {
 
@@ -249,7 +258,13 @@ public class GUI implements ActionListener {
             textArea.setText("");
 
             // convert file
-            conv.convert(new ConvertInfos(csv, base, prefix, superclass, delimiter), 1);
+            try {
+                conv.convert(new ConvertInfos(csv, base, prefix, superclass, delimiter), 1);
+            } catch (InvalidKeyException | ErrorResponseException | InsufficientDataException | InternalException
+                    | InvalidResponseException | NoSuchAlgorithmException | ServerException | XmlParserException
+                    | IllegalArgumentException e) {
+                e.printStackTrace();
+            }
             textArea.append("File converted.");
         }
     }

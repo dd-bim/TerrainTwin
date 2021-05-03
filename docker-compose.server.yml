@@ -134,6 +134,10 @@ services:
             start_period: 10s
         environment:
             - domain.url=${DOMAIN_URL}
+            - minio.url=${MINIO_URL}
+            - minio.port=${MINIO_PORT}
+            - minio.access_key=${MINIO_ACCESS_KEY}
+            - minio.secret_key=${MINIO_SECRET_KEY}
 
     gateway-service:
         container_name: gateway-service

@@ -16,7 +16,7 @@ import io.swagger.v3.oas.models.servers.Server;
 
 @EnableDiscoveryClient
 @SpringBootApplication
-@OpenAPIDefinition(info = @Info(title = "Csv2RdfConverter API", description = "Documentation", version = "v1.0", license = @License(name = "Apache 2.0", url = "http://www.apache.org/licenses/")))
+@OpenAPIDefinition(info = @Info(title = "Csv2RdfConverter API", description = "Converted TURTLE files are uploaded to a MinIO Object Storage", version = "v1.0", license = @License(name = "Apache 2.0", url = "http://www.apache.org/licenses/")))
 
 public class Csv2RdfConverterApplication implements WebMvcConfigurer{
 

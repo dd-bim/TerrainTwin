@@ -52,14 +52,19 @@ Die Microservie Architektur (MSA) verbindet Programme und Funktionen für das Pr
 
 #### MinIO Upload Service (Port:`7204`)
 
+Der MinioUploader kann zum hochladen von Dateien auf einen MinIO Object Storage über den Browser verwendet werden. 
+Zu jeder Datei kann eine `JSON`-Datei mit Metadaten erstellt und ebenfalls in den Object Storage hochgeladen werden. Einige Metadaten können über die Eingabemaske eingetragen werden. Die Angabe der Metadaten basiert auf der _DIN SPEC 91391-2:2019-04_. Für DGM können nocheinmal weitere Metadaten basierend auf den Anforderungen des Projektantrages zu TerrainTwin hinzugefügt werden. 
+Außerdem können Projektordner und deren Inhalt gelöscht werden.
+
+Funktionen im Überblick:
 - Erstellen von Buckets im MinIO Object Storage
 - Löschen von Buckets mit samt deren enthaltenen Dateien
 - Hochladen von Dateien
 - Hochladen einer Datei + Angabe von Metadaten sowie deren Upload als Json-Datei
 - alle Metadaten sind optional
-- Metadaten werden definirt nach DIN SPEC 91391-2 und DIN 18740-6
+- Metadaten werden definiert nach DIN SPEC 91391-2 und DIN 18740-6
 - HTML-Interface verfügbar
-
+  
 **Metadatenstruktur inklusive Angabe des Dateipfades und des Zielordners:**
 ```schell script
 {
@@ -99,6 +104,8 @@ Die Microservie Architektur (MSA) verbindet Programme und Funktionen für das Pr
 
 #### GraphDB Import Service (Port:`7201`)
 
+Mit diesem Service können semantische Dateien in den Formaten `.ttl`, `.xml/rdf` und `.owl` aus einem MinIO Object Storage in ein GraphDB Repository importiert werden. Neben diesen Dateien werden auch alle `JSON`-Dateien, die Metadaten enthalten, in `RDF` umgewandelt und die Metadaten in das GraphDB Repository importiert.
+
 - Angabe eines MinIO Bucket als Quellordner und eines GraphDB Repositories als Zieldatenbank
 - Ordner wird nach serialisierten RDF-Dateien mit den Endungen `.ttl`, `.rdf`, `.owl` durchsucht und diese werden nach GraphDB importiert
 - `JSON`-Dateien mit "_metadata_" im Namen werden als Triple in `Turtle`-Syntax serialisiert und in die Datenbank geschrieben
@@ -110,13 +117,13 @@ Die Microservie Architektur (MSA) verbindet Programme und Funktionen für das Pr
 
 #### Csv2Rdf Converter Service (Port:`7202`)
 
-- convertiert lokale `CSV`-Dateien in mit `Turtle` serialisierte `RDF`-Dateien
+- konvertiert lokale `CSV`-Dateien in mit `Turtle` serialisierte `RDF`-Dateien
+- `.ttl`-Dateien werden in einen MinIO Object Storage hochgeladen
 - möglich ist die Eingabe von:
   - file
   - file, delimiter
   - file, namespace, prefix, superclass 
   - file, namespace, prefix, superclass, delimiter
-- file ist der Dateipfad
 - Standard-Delimiter: ;
 - Standard-Namespace: http://example.org/Sachdaten/
 - Standard-Präfix: ns 
@@ -124,8 +131,8 @@ Die Microservie Architektur (MSA) verbindet Programme und Funktionen für das Pr
 - Werte der Kopfzeile der CSV-Tabelle werden als DatatypeProperties der Superklasse interpretiert
 - jede Zeile wird als Ressource mit eindeutiger ID aus der Spalte ID erzeugt
 - jeder Ressource werden die weiteren Attribute als Instanzen ihrer jeweiligen DatatypeProperties angehangen
-- Tripel werden als `Turtle` serialisiert und am Ort der Quelldatei als Datei gespeichert
-- `GUI` für lokale Ausführung verfügbar
+- Tripel werden als `Turtle` serialisiert und im agegebenen Bucket gespeichert
+- `GUI` für lokale Ausführung mit Speicherung im Verzeichnis der Ausgangsdatei verfügbar
 
 #### Postgres Import Service (Port:`7203`)
 
