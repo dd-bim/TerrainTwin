@@ -5,6 +5,8 @@ import com.Microservices.PostgresImportService.repositories.SurfaceRepository;
 import com.Microservices.PostgresImportService.repositories.TINRepository;
 import com.Microservices.PostgresImportService.service.MinIOConnection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -14,10 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Controller
-@Slf4j
 @CrossOrigin(origins = "http://localhost:8084")
 public class ImportController {
 
@@ -27,6 +26,8 @@ public class ImportController {
   TINRepository tinRepository;
   @Autowired
   BreaklinesRepository blRepository;
+
+  Logger log = LoggerFactory.getLogger(ImportController.class);
 
   @Value("${minio.url}")
   private String url;

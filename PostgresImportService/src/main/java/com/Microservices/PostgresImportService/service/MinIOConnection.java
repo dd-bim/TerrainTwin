@@ -10,6 +10,8 @@ import com.Microservices.PostgresImportService.repositories.SurfaceRepository;
 import com.Microservices.PostgresImportService.repositories.TINRepository;
 
 import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.minio.GetObjectArgs;
 import io.minio.ListObjectsArgs;
@@ -17,10 +19,10 @@ import io.minio.MinioClient;
 import io.minio.Result;
 import io.minio.errors.MinioException;
 import io.minio.messages.Item;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public class MinIOConnection {
+
+    Logger log = LoggerFactory.getLogger(MinIOConnection.class);
 
     // Connect to MinIO server
     MinioClient client;

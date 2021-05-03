@@ -7,11 +7,14 @@ import java.io.InputStreamReader;
 import com.Microservices.PostgresImportService.repositories.SurfaceRepository;
 import com.Microservices.PostgresImportService.schemas.Surfaces;
 
-import au.com.bytecode.opencsv.CSVReader;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Slf4j
+import au.com.bytecode.opencsv.CSVReader;
+
 public class ReadWrite {  
+
+    Logger log = LoggerFactory.getLogger(ReadWrite.class);
     
     // Imports WKT data from CSV and writes them into a database
     public String importWKT(InputStream stream, SurfaceRepository repository) throws NumberFormatException, IOException {

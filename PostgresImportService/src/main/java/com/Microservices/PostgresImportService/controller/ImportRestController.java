@@ -5,6 +5,8 @@ import com.Microservices.PostgresImportService.repositories.SurfaceRepository;
 import com.Microservices.PostgresImportService.repositories.TINRepository;
 import com.Microservices.PostgresImportService.service.MinIOConnection;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -14,11 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
 
 @RefreshScope
 @RestController
-@Slf4j
 @Tag(name = "Postgres Importer", description = "Import Files from MinIO Object Storage into postgres database", externalDocs = @ExternalDocumentation(url = "/postgresimport", description = "Interface"))
 public class ImportRestController {
 
@@ -28,6 +28,8 @@ public class ImportRestController {
   TINRepository tinRepository;
   @Autowired
   BreaklinesRepository blRepository;
+
+  Logger log = LoggerFactory.getLogger(ImportRestController.class);
 
   @Value("${minio.url}")
   private String url;

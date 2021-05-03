@@ -4,5 +4,7 @@ eureka:
         fetchRegistry: true
         serviceUrl:
             defaultZone: http://eurekaserver:9091/eureka
-        # healthcheck:
-        #     enabled: true
+
+logging:
+    level: 
+        root: INFO #  TRACE DEBUG INFO WARN ERROR

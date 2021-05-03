@@ -18,6 +18,8 @@ import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.manager.RemoteRepositoryManager;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.minio.GetObjectArgs;
 import io.minio.ListObjectsArgs;
@@ -25,14 +27,13 @@ import io.minio.MinioClient;
 import io.minio.Result;
 import io.minio.errors.MinioException;
 import io.minio.messages.Item;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public class ImportService {
 
     MinioClient client;
     RepositoryConnection connection;
     RemoteRepositoryManager manager;
+    Logger log = LoggerFactory.getLogger(ImportService.class);
 
     // Connect to MinIO and GraphDB
     public ImportService(String url, String port, String access_key, String secret_key, String graphdb_url,
@@ -52,8 +53,11 @@ public class ImportService {
         // Connect to a repository
         try {
             connection = manager.getRepository(repo).getConnection();
+            log.info("Connected to GraphDB");
         } catch (Exception e) {
-            return results += "Could not connect to GraphDB. Possibly the repository does not exist.";
+            String msg = "Could not connect to GraphDB. Possibly the repository does not exist.";
+            log.error(msg, e);
+            return results += msg ;
         }
 
         // Lists objects information

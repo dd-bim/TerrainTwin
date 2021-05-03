@@ -12,10 +12,12 @@ import com.Microservices.PostgresImportService.repositories.TINRepository;
 import com.Microservices.PostgresImportService.schemas.Breaklines;
 import com.Microservices.PostgresImportService.schemas.TIN;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Slf4j
 public class ImportLandXML {
+
+    Logger log = LoggerFactory.getLogger(ImportLandXML.class);
 
     ArrayList<String> breaklines = new ArrayList<String>();
     HashMap<Integer,String> points = new HashMap<Integer,String>();
