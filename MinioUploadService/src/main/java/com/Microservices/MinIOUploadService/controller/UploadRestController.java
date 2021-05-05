@@ -6,6 +6,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
+import com.Microservices.MinIOUploadService.connection.MinIOConnection;
 import com.Microservices.MinIOUploadService.domain.model.DTM;
 import com.Microservices.MinIOUploadService.domain.model.MetaFile;
 import com.Microservices.MinIOUploadService.domain.model.Metadata;
@@ -59,7 +60,8 @@ public class UploadRestController {
   @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
   public ResponseEntity<?> create(@PathVariable String bucket) throws Exception {
     if (bucket.matches("^[a-z0-9][a-z0-9-.]{1,61}[a-z0-9]$")) {
-      UploadService minio = new UploadService(url, port, access_key, secret_key);
+      MinIOConnection connect = new MinIOConnection();
+      UploadService minio = new UploadService(connect.connection(url, port, access_key, secret_key));
       String results = minio.createBucket(bucket);
       return ResponseEntity.ok(results);
     } else {
@@ -73,7 +75,8 @@ public class UploadRestController {
   @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
   public ResponseEntity<?> delete(@PathVariable String bucket) throws Exception {
     if (bucket.matches("^[a-z0-9][a-z0-9-.]{1,61}[a-z0-9]$")) {
-      UploadService minio = new UploadService(url, port, access_key, secret_key);
+      MinIOConnection connect = new MinIOConnection();
+      UploadService minio = new UploadService(connect.connection(url, port, access_key, secret_key));
       String results = minio.deleteBucket(bucket);
       return ResponseEntity.ok(results);
     } else {
@@ -91,14 +94,15 @@ public class UploadRestController {
   // @Schema(implementation = Metadata.class))})
   // @ApiResponse(responseCode = "200", content = {@Content(schema =
   // @Schema(implementation = DTM.class))})
-  public ResponseEntity<?> uploadFileUI(@RequestParam("file") MultipartFile multiFile,
-      @RequestParam String bucket, @RequestPart(name = "metadata for all (DIN SPEC 91391-2)") String meta1,
+  public ResponseEntity<?> uploadFileUI(@RequestParam("file") MultipartFile multiFile, @RequestParam String bucket,
+      @RequestPart(name = "metadata for all (DIN SPEC 91391-2)") String meta1,
       @RequestPart(name = "additional metadata for dtm (DIN 18740-6)", required = false) String meta2)
       throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException,
       InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException,
       IOException {
     if (bucket.matches("^[a-z0-9][a-z0-9-.]{1,61}[a-z0-9]$")) {
-      UploadService minio = new UploadService(url, port, access_key, secret_key);
+      MinIOConnection connect = new MinIOConnection();
+      UploadService minio = new UploadService(connect.connection(url, port, access_key, secret_key));
       String results = "";
       ObjectMapper mapper = new ObjectMapper();
       Metadata metadata = mapper.readValue(meta1, Metadata.class);
@@ -116,29 +120,29 @@ public class UploadRestController {
 
       String ext = file.getName().split("\\.")[1];
       switch (ext) {
-      case "ifc":
-        metadata.setMimetype("application/x-step");
-        break;
-      case "dwg":
-        metadata.setMimetype("application/acad");
-        break;
-      case "dxf":
-        metadata.setMimetype("application/dxf");
-        break;
-      case "gml":
-        metadata.setMimetype("application/gml+xml");
-        break;
-      case "ttl":
-        metadata.setMimetype("text/turtle");
-        break;
-      case "owl":
-        metadata.setMimetype("application/rdf+xml");
-        break;
-      case "xml":
-        metadata.setMimetype("application/xml");
-        break;
-      default:
-        metadata.setMimetype("");
+        case "ifc":
+          metadata.setMimetype("application/x-step");
+          break;
+        case "dwg":
+          metadata.setMimetype("application/acad");
+          break;
+        case "dxf":
+          metadata.setMimetype("application/dxf");
+          break;
+        case "gml":
+          metadata.setMimetype("application/gml+xml");
+          break;
+        case "ttl":
+          metadata.setMimetype("text/turtle");
+          break;
+        case "owl":
+          metadata.setMimetype("application/rdf+xml");
+          break;
+        case "xml":
+          metadata.setMimetype("application/xml");
+          break;
+        default:
+          metadata.setMimetype("");
       }
 
       MetaFile metaFile;
@@ -169,12 +173,13 @@ public class UploadRestController {
   @PostMapping(path = "/minioupload/uploadFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @Operation(summary = "Upload a file to MinIO without metadata.")
   @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
-  public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile multiFile,
-      @RequestParam String bucket) throws InvalidKeyException, ErrorResponseException, InsufficientDataException,
-      InternalException, InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException,
-      IllegalArgumentException, IOException {
+  public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile multiFile, @RequestParam String bucket)
+      throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException,
+      InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException,
+      IOException {
     if (bucket.matches("^[a-z0-9][a-z0-9-.]{1,61}[a-z0-9]$")) {
-      UploadService minio = new UploadService(url, port, access_key, secret_key);
+      MinIOConnection connect = new MinIOConnection();
+      UploadService minio = new UploadService(connect.connection(url, port, access_key, secret_key));
       String results = "";
 
       File file = minio.multipartToFile(multiFile);

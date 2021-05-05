@@ -1,7 +1,10 @@
 package com.Microservices.GraphDBImportService.controller;
 
+import com.Microservices.GraphDBImportService.connection.GraphDBConnection;
+import com.Microservices.GraphDBImportService.connection.MinIOConnection;
 import com.Microservices.GraphDBImportService.service.ImportService;
 
+import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,16 +39,26 @@ public class ImportController {
     return "index";
   }
 
-  // get folder and use them
+  // get bucket and use them
   @GetMapping("/graphdbimport/send")
-  public String send(@RequestParam(name = "MinIO-Bucket", defaultValue = "kein Ordner gewählt") String folder,
+  public String send(@RequestParam(name = "MinIO-Bucket", defaultValue = "kein Ordner gewählt") String bucket,
       @RequestParam(name = "GraphDB-Repository", defaultValue = "kein Repository gewählt") String repo, Model model)
       throws Exception {
     String results = "";
+    MinIOConnection connect = new MinIOConnection();
+    GraphDBConnection dbConnect = new GraphDBConnection();
 
-    ImportService minio = new ImportService(url, port, access_key, secret_key, graphdb_url, graphdb_username, graphdb_password);
-    results += minio.getFiles(folder, repo, url);
+    try {
+      // Connect to a repository
+      RepositoryConnection graphdb = dbConnect.connection(graphdb_url, graphdb_username, graphdb_password, repo);
 
+      // import files
+      ImportService minio = new ImportService(connect.connection(url, port, access_key, secret_key), graphdb);
+      results += minio.getFiles(bucket, url);
+    } 
+    catch (Exception e) {
+      results += "Could not connect to GraphDB. Possibly the repository does not exist.";
+    }
     model.addAttribute("erg", results);
 
     return "index";

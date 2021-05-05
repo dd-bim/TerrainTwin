@@ -1,9 +1,10 @@
 package com.Microservices.PostgresImportService.controller;
 
+import com.Microservices.PostgresImportService.connection.MinIOConnection;
 import com.Microservices.PostgresImportService.repositories.BreaklinesRepository;
 import com.Microservices.PostgresImportService.repositories.SurfaceRepository;
 import com.Microservices.PostgresImportService.repositories.TINRepository;
-import com.Microservices.PostgresImportService.service.MinIOConnection;
+import com.Microservices.PostgresImportService.service.CheckFiles;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,8 @@ public class ImportRestController {
   public String send(@PathVariable String bucket) throws Exception {
     log.info("Start import of geometries into postgres database");
 
-    MinIOConnection minio = new MinIOConnection(url,port,access_key, secret_key);
+    MinIOConnection connect = new MinIOConnection();
+    CheckFiles minio = new CheckFiles(connect.connection(url, port, access_key, secret_key));
     String results = minio.getFiles(bucket, tinRepository, blRepository, repository);
 
     return results;

@@ -20,17 +20,15 @@ import io.minio.Result;
 import io.minio.errors.MinioException;
 import io.minio.messages.Item;
 
-public class MinIOConnection {
+// check, which file are in bucket
+public class CheckFiles {
 
-    Logger log = LoggerFactory.getLogger(MinIOConnection.class);
-
-    // Connect to MinIO server
+    Logger log = LoggerFactory.getLogger(CheckFiles.class);
     MinioClient client;
-    public MinIOConnection(String url, String port, String access_key, String secret_key) {
-        client = MinioClient.builder().endpoint(url + ":" + port)
-                .credentials(access_key, secret_key).build();
-    }
 
+    public CheckFiles(MinioClient client) {
+        this.client = client;
+    }
 
     // get files of spezified bucket,
     public String getFiles(String bucket, TINRepository tinRepository, BreaklinesRepository blRepository,
@@ -69,7 +67,7 @@ public class MinIOConnection {
                             .getObject(GetObjectArgs.builder().bucket(bucket).object(filename).build())) {
 
                         // Insert surfaces into database
-                        ReadWrite readwrite = new ReadWrite();
+                        ImportWKT readwrite = new ImportWKT();
                         results += "\n" + filename + ": " + readwrite.importWKT(TXTStream, repository);
 
                     } catch (IOException e) {

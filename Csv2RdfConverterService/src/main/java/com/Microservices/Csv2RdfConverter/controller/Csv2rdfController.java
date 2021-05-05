@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
+import com.Microservices.Csv2RdfConverter.connection.MinIOConnection;
 import com.Microservices.Csv2RdfConverter.domain.model.ConvertInfos;
 import com.Microservices.Csv2RdfConverter.service.Csv2RdfService;
 
@@ -65,7 +66,8 @@ public class Csv2rdfController {
             @RequestParam(required = false) String prefix, @RequestParam(required = false) String superclass)
             throws IllegalStateException, IOException, InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException {
         ConvertInfos infos = new ConvertInfos();
-        Csv2RdfService converter = new Csv2RdfService(url, port, access_key, secret_key);
+        MinIOConnection connect = new MinIOConnection();
+        Csv2RdfService converter = new Csv2RdfService(connect.connection(url, port, access_key, secret_key));
         File file = converter.multipartToFile(multiFile);
         String f = multiFile.getOriginalFilename();
         System.out.println(f);

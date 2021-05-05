@@ -153,6 +153,7 @@ Mit diesem Service können semantische Dateien in den Formaten `.ttl`, `.xml/rdf
     - src/main
       - java/com/Microservices
         - ...Application.java
+        - connection
         - controller
         - domain/model
         - service

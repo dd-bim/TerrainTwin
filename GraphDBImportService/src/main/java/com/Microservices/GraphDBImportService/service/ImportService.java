@@ -15,7 +15,6 @@ import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.util.ModelBuilder;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
-import org.eclipse.rdf4j.repository.manager.RemoteRepositoryManager;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
 import org.slf4j.Logger;
@@ -32,33 +31,19 @@ public class ImportService {
 
     MinioClient client;
     RepositoryConnection connection;
-    RemoteRepositoryManager manager;
     Logger log = LoggerFactory.getLogger(ImportService.class);
 
     // Connect to MinIO and GraphDB
-    public ImportService(String url, String port, String access_key, String secret_key, String graphdb_url,
-            String graphdb_username, String graphdb_password) {
-        client = MinioClient.builder().endpoint(url + ":" + port).credentials(access_key, secret_key).build();
+    public ImportService(MinioClient client, RepositoryConnection connection) {
 
-        manager = new RemoteRepositoryManager(graphdb_url);
-        manager.setUsernameAndPassword(graphdb_username, graphdb_password);
-        manager.init();
+        this.client = client;
+        this.connection = connection;
     }
 
     // get files of spezified bucket,
-    public String getFiles(String bucket, String repo, String url) throws Exception {
+    public String getFiles(String bucket, String url) throws Exception {
         String results = "";
         String filename = "";
-
-        // Connect to a repository
-        try {
-            connection = manager.getRepository(repo).getConnection();
-            log.info("Connected to GraphDB");
-        } catch (Exception e) {
-            String msg = "Could not connect to GraphDB. Possibly the repository does not exist.";
-            log.error(msg, e);
-            return results += msg ;
-        }
 
         // Lists objects information
         try {

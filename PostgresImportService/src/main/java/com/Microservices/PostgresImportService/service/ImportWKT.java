@@ -12,9 +12,9 @@ import org.slf4j.LoggerFactory;
 
 import au.com.bytecode.opencsv.CSVReader;
 
-public class ReadWrite {  
+public class ImportWKT {  
 
-    Logger log = LoggerFactory.getLogger(ReadWrite.class);
+    Logger log = LoggerFactory.getLogger(ImportWKT.class);
     
     // Imports WKT data from CSV and writes them into a database
     public String importWKT(InputStream stream, SurfaceRepository repository) throws NumberFormatException, IOException {

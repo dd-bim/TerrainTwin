@@ -6,6 +6,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
+import com.Microservices.MinIOUploadService.connection.MinIOConnection;
 import com.Microservices.MinIOUploadService.domain.model.DTM;
 import com.Microservices.MinIOUploadService.domain.model.MetaFile;
 import com.Microservices.MinIOUploadService.domain.model.Metadata;
@@ -53,7 +54,8 @@ public class UploadController {
       Model model) throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException,
       InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException,
       IOException {
-    UploadService minio = new UploadService(url, port, access_key, secret_key);
+    MinIOConnection connect = new MinIOConnection();
+    UploadService minio = new UploadService(connect.connection(url, port, access_key, secret_key));
     String results = "";
     String action = data.get("action");
     String bucket = data.get("bucket");

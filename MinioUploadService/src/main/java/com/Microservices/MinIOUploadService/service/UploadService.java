@@ -33,11 +33,10 @@ public class UploadService {
 
     MinioClient client;
 
-    // Connect to MinIO
-    public UploadService(String url, String port, String access_key, String secret_key) {
-        client = MinioClient.builder().endpoint(url + ":" + port)
-                .credentials(access_key, secret_key).build();
+    public UploadService(MinioClient client) {
+        this.client = client;
     }
+
     // Upload file to given bucket name
     public String upload(UploadInfos infos) throws InvalidKeyException, ErrorResponseException,
             InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException,
@@ -46,7 +45,8 @@ public class UploadService {
         String bucket = infos.getBucket();
         String path = infos.getPath().replaceAll("\\\\", "/");
         System.out.println(path);
-        if (path.startsWith("/")) path = path.replaceFirst("/","");
+        if (path.startsWith("/"))
+            path = path.replaceFirst("/", "");
         String fn[] = path.split("/");
         String filename = infos.getTimestamp() + "_" + fn[fn.length - 1];
 
@@ -109,7 +109,6 @@ public class UploadService {
         File file = new File(System.getProperty("java.io.tmpdir") + "/" + filename.split("\\.")[0] + "_metadata.json");
         ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(file, metaFile);
-        
 
         return file;
     }

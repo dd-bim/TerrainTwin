@@ -58,8 +58,8 @@ public class Csv2RdfService {
     }
 
     // Connect to MinIO
-    public Csv2RdfService(String url, String port, String access_key, String secret_key) {
-        client = MinioClient.builder().endpoint(url + ":" + port).credentials(access_key, secret_key).build();
+    public Csv2RdfService(MinioClient client) {
+        this.client = client;
     }
 
     public String convert(ConvertInfos infos, int index) throws InvalidKeyException, ErrorResponseException,
