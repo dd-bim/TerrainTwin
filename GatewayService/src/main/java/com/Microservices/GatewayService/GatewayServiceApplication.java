@@ -12,7 +12,6 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinitionLocator;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.web.reactive.config.CorsRegistry;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
 
@@ -50,8 +49,4 @@ public class GatewayServiceApplication implements WebFluxConfigurer {
 				.allowedOrigins("*");
 	}
 
-	// @Bean
-	// public ServerCodecConfigurer serverCodecConfigurer() {
-	// 	return ServerCodecConfigurer.create();
-	// }
 }

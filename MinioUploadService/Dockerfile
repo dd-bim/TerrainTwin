@@ -1,4 +1,4 @@
-FROM maven:3.8-openjdk-15-slim as mvn-build
+FROM mvn-build:base as mvn-build
 WORKDIR /app/build
 COPY ./src ./src
 COPY pom.xml .
