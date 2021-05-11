@@ -2,7 +2,7 @@ package com.Microservices.PostgresImportService.controller;
 
 import com.Microservices.PostgresImportService.connection.MinIOConnection;
 import com.Microservices.PostgresImportService.repositories.BreaklinesRepository;
-import com.Microservices.PostgresImportService.repositories.SurfaceRepository;
+import com.Microservices.PostgresImportService.repositories.PolygonRepository;
 import com.Microservices.PostgresImportService.repositories.TINRepository;
 import com.Microservices.PostgresImportService.service.CheckFiles;
 
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ImportController {
 
   @Autowired
-  SurfaceRepository repository;
+  PolygonRepository repository;
   @Autowired
   TINRepository tinRepository;
   @Autowired

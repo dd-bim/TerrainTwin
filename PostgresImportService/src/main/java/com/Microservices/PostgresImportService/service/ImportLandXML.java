@@ -25,19 +25,19 @@ public class ImportLandXML {
 
     public String importTIN(InputStream stream, TINRepository repository, BreaklinesRepository blRepository) 
     throws Exception{
-        String results = "TIN has been imported. ";
+        String results = "TINs have been imported. ";
         int srid = 25832;
         
         readFile(stream);
 
-        TIN tin = new TIN(buildWkt(),srid);
+        TIN tin = new TIN("SRID=" + srid + ";" + buildWkt());
         repository.save(tin);
-        log.info("'ID: "+tin.getTin_id()+", WKT: "+tin.getGeometry()+", SRID: "+tin.getSrid()+"'");
+        log.info("'ID: "+tin.getTin_id()+", WKT: "+tin.getGeometry()+"'");
 
         for (int i = 0; i < breaklines.size(); i++){
-            Breaklines bl = new Breaklines(getBreaklines(i),srid,tin.getTin_id());
+            Breaklines bl = new Breaklines(tin.getTin_id(), "SRID=" + srid + ";" + getBreaklines(i));
             blRepository.save(bl);
-            log.info("'ID: "+bl.getBl_id()+", WKT: "+bl.getGeometry()+", SRID: "+tin.getSrid()+", tin_id: "+bl.getTin_id()+"'");
+            log.info("'ID: "+bl.getBl_id()+", WKT: "+bl.getGeometry()+", tin_id: "+bl.getTin_id()+"'");
         }
         
         return results;
@@ -82,7 +82,7 @@ public class ImportLandXML {
             }
             String[] q = points.get(face[0]).split(" ");
             s = s + q[1] + " " + q[0] + " " + q[2] + ")), ";
-            System.out.println(s);
+            // System.out.println(s);
             wkt.append(s);            
         }
         wkt.setLength(wkt.length()-2);

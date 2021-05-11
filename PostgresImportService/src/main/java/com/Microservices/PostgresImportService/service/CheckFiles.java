@@ -6,7 +6,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 import com.Microservices.PostgresImportService.repositories.BreaklinesRepository;
-import com.Microservices.PostgresImportService.repositories.SurfaceRepository;
+import com.Microservices.PostgresImportService.repositories.PolygonRepository;
 import com.Microservices.PostgresImportService.repositories.TINRepository;
 
 import org.apache.commons.io.FilenameUtils;
@@ -32,7 +32,7 @@ public class CheckFiles {
 
     // get files of spezified bucket,
     public String getFiles(String bucket, TINRepository tinRepository, BreaklinesRepository blRepository,
-            SurfaceRepository repository) throws Exception {
+            PolygonRepository repository) throws Exception {
         String results = "";
         String filename = "";
 

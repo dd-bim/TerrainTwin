@@ -2,7 +2,7 @@ package com.Microservices.PostgresImportService.controller;
 
 import com.Microservices.PostgresImportService.connection.MinIOConnection;
 import com.Microservices.PostgresImportService.repositories.BreaklinesRepository;
-import com.Microservices.PostgresImportService.repositories.SurfaceRepository;
+import com.Microservices.PostgresImportService.repositories.PolygonRepository;
 import com.Microservices.PostgresImportService.repositories.TINRepository;
 import com.Microservices.PostgresImportService.service.CheckFiles;
 
@@ -24,7 +24,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class ImportRestController {
 
   @Autowired
-  SurfaceRepository repository;
+  PolygonRepository repository;
   @Autowired
   TINRepository tinRepository;
   @Autowired

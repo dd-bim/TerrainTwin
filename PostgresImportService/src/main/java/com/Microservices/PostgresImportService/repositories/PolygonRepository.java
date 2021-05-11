@@ -1,11 +1,11 @@
 package com.Microservices.PostgresImportService.repositories;
 
-import com.Microservices.PostgresImportService.schemas.Surfaces;
+import com.Microservices.PostgresImportService.schemas.Polygon;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface SurfaceRepository extends CrudRepository<Surfaces, Integer> {
+public interface PolygonRepository extends CrudRepository<Polygon, Integer> {
 
 }
