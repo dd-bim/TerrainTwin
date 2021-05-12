@@ -14,33 +14,40 @@ import com.Microservices.PostgresImportService.schemas.TIN;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ImportLandXML {
+
+    @Autowired
+    TINRepository tinRepository;
+
+    @Autowired
+    BreaklinesRepository blRepository;
 
     Logger log = LoggerFactory.getLogger(ImportLandXML.class);
 
     ArrayList<String> breaklines = new ArrayList<String>();
-    HashMap<Integer,String> points = new HashMap<Integer,String>();
+    HashMap<Integer, String> points = new HashMap<Integer, String>();
     ArrayList<int[]> faces = new ArrayList<int[]>();
 
-    public String importTIN(InputStream stream, TINRepository repository, BreaklinesRepository blRepository) 
-    throws Exception{
-        String results = "TINs have been imported. ";
-        int srid = 25832;
-        
+    public String importTIN(InputStream stream) throws Exception {
+
+        int srid = 25832; // muss noch variabel gestaltet werden
         readFile(stream);
 
         TIN tin = new TIN("SRID=" + srid + ";" + buildWkt());
-        repository.save(tin);
-        log.info("'ID: "+tin.getTin_id()+", WKT: "+tin.getGeometry()+"'");
+        tinRepository.save(tin);
+        log.info("'ID: " + tin.getTin_id() + ", WKT: " + tin.getGeometry() + "'");
 
-        for (int i = 0; i < breaklines.size(); i++){
+        for (int i = 0; i < breaklines.size(); i++) {
             Breaklines bl = new Breaklines(tin.getTin_id(), "SRID=" + srid + ";" + getBreaklines(i));
             blRepository.save(bl);
-            log.info("'ID: "+bl.getBl_id()+", WKT: "+bl.getGeometry()+", tin_id: "+bl.getTin_id()+"'");
+            log.info("'ID: " + bl.getBl_id() + ", WKT: " + bl.getGeometry() + ", tin_id: " + bl.getTin_id() + "'");
         }
-        
-        return results;
+
+        return "TINs have been imported.";
     }
 
     private void readFile(InputStream in) throws Exception {
@@ -48,20 +55,21 @@ public class ImportLandXML {
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         XMLStreamReader streamReader = inputFactory.createXMLStreamReader(in);
 
-        while (streamReader.hasNext()){
-            if(streamReader.isStartElement()){
-            
-                if (streamReader.getLocalName().equals("PntList3D")){
+        while (streamReader.hasNext()) {
+            if (streamReader.isStartElement()) {
+
+                if (streamReader.getLocalName().equals("PntList3D")) {
                     breaklines.add(streamReader.getElementText());
                 }
 
-                if (streamReader.getLocalName().equals("P")){
+                if (streamReader.getLocalName().equals("P")) {
                     points.put(Integer.parseInt(streamReader.getAttributeValue(0)), streamReader.getElementText());
                 }
 
-                if (streamReader.getLocalName().equals("F")){
-                    String [] face = streamReader.getElementText().split(" ");
-                    int [] intFace = new int[] {Integer.parseInt(face[0]), Integer.parseInt(face[1]), Integer.parseInt(face[2])};
+                if (streamReader.getLocalName().equals("F")) {
+                    String[] face = streamReader.getElementText().split(" ");
+                    int[] intFace = new int[] { Integer.parseInt(face[0]), Integer.parseInt(face[1]),
+                            Integer.parseInt(face[2]) };
                     faces.add(intFace);
                 }
 
@@ -70,22 +78,21 @@ public class ImportLandXML {
         }
     }
 
-    private String buildWkt(){
+    private String buildWkt() {
         log.info("Import TIN");
         StringBuilder wkt = new StringBuilder();
-        wkt.append("TIN (") ;
-        for (int[] face : faces){
-        String s = "((";    
-            for (int point : face){
+        wkt.append("TIN (");
+        for (int[] face : faces) {
+            String s = "((";
+            for (int point : face) {
                 String[] p = points.get(point).split(" ");
-                s = s + p[1] + " " + p[0] + " " + p[2] +", ";
+                s = s + p[1] + " " + p[0] + " " + p[2] + ", ";
             }
             String[] q = points.get(face[0]).split(" ");
             s = s + q[1] + " " + q[0] + " " + q[2] + ")), ";
-            // System.out.println(s);
-            wkt.append(s);            
+            wkt.append(s);
         }
-        wkt.setLength(wkt.length()-2);
+        wkt.setLength(wkt.length() - 2);
         wkt.append(" )");
         return wkt.toString();
     }
@@ -93,11 +100,11 @@ public class ImportLandXML {
     private String getBreaklines(int i) {
         log.info("Import Breakline");
         String line = "LINESTRING (";
-        String [] points = breaklines.get(i).split(" ");
-        for (int j = 0; j < points.length; j = j+3){
-            line = line + points[j+1] + " "+ points[j] + " "+ points[j+2]+ ", ";
+        String[] points = breaklines.get(i).split(" ");
+        for (int j = 0; j < points.length; j = j + 3) {
+            line = line + points[j + 1] + " " + points[j] + " " + points[j + 2] + ", ";
         }
-        line = line.substring(0, line.length()-2) + ")";
+        line = line.substring(0, line.length() - 2) + ")";
         return line;
     }
 }

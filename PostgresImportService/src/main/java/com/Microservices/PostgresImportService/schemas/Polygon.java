@@ -33,7 +33,7 @@ public class Polygon {
     // @Column(nullable = false)
     // private Integer srid;
 
-    @Column(name="geometry", nullable=false)
+    @Column(nullable=false)
     private String geometry;
 
 

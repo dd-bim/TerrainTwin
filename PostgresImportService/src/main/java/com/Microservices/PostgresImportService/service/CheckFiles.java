@@ -5,13 +5,13 @@ import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
-import com.Microservices.PostgresImportService.repositories.BreaklinesRepository;
-import com.Microservices.PostgresImportService.repositories.PolygonRepository;
-import com.Microservices.PostgresImportService.repositories.TINRepository;
+import com.Microservices.PostgresImportService.connection.MinIOConnection;
 
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import io.minio.GetObjectArgs;
 import io.minio.ListObjectsArgs;
@@ -20,21 +20,26 @@ import io.minio.Result;
 import io.minio.errors.MinioException;
 import io.minio.messages.Item;
 
-// check, which file are in bucket
+// check, which files are in bucket
+@Service
 public class CheckFiles {
+    
+    @Autowired
+    MinIOConnection connection;
+
+    @Autowired
+    ImportWKT readwrite;
+
+    @Autowired
+    ImportLandXML readTin;
 
     Logger log = LoggerFactory.getLogger(CheckFiles.class);
-    MinioClient client;
-
-    public CheckFiles(MinioClient client) {
-        this.client = client;
-    }
 
     // get files of spezified bucket,
-    public String getFiles(String bucket, TINRepository tinRepository, BreaklinesRepository blRepository,
-            PolygonRepository repository) throws Exception {
+    public String getFiles(String bucket) throws Exception {
         String results = "";
         String filename = "";
+MinioClient client = connection.connection();
 
         // Lists objects information.
         try {
@@ -51,8 +56,7 @@ public class CheckFiles {
                             .getObject(GetObjectArgs.builder().bucket(bucket).object(filename).build())) {
 
                         // Insert TIN and Breaklines into database
-                        ImportLandXML readTin = new ImportLandXML();
-                        results += "\n" + filename + ": " + readTin.importTIN(XMLStream, tinRepository, blRepository);
+                        results += "\n" + filename + ": " + readTin.importTIN(XMLStream);
 
                     } catch (IOException e) {
                         log.error(e.getMessage());
@@ -67,8 +71,7 @@ public class CheckFiles {
                             .getObject(GetObjectArgs.builder().bucket(bucket).object(filename).build())) {
 
                         // Insert surfaces into database
-                        ImportWKT readwrite = new ImportWKT();
-                        results += "\n" + filename + ": " + readwrite.importWKT(TXTStream, repository);
+                        results += "\n" + filename + ": " + readwrite.importWKT(TXTStream); //, repository
 
                     } catch (IOException e) {
                         log.error(e.getMessage());

@@ -13,32 +13,28 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name="dtm_tin", schema="terraintwinv2")
-@SQLInsert(sql = "INSERT INTO terraintwinv2.dtm_tin (geometry, tin_id) VALUES (ST_GeomFromEWKT(?),?)" )
+@Table(name = "lines", schema = "terraintwinv2")
+@SQLInsert(sql = "INSERT INTO terraintwinv2.lines (geometry, line_id, id) VALUES (ST_GeomFromEWKT(?),?,?)" )
 @Getter
 @Setter
-public class TIN {
-    
+public class Line {
+
     @Id
     @GeneratedValue(strategy= GenerationType.SEQUENCE)
-    private Integer tin_id;
+    private Integer id;
+
+    @Column(name="line_id", nullable = false)
+    private Integer l_id;
 
     @Column(nullable=false)
     private String geometry;
 
-    // @Column(nullable = false)
-    // private Integer srid;
+    protected Line(){
 
-    protected TIN() {
-
-    }
-
-    // public TIN(String geometry, Integer srid){
-    //     this.geometry = geometry;
-    //     this.srid = srid;
-    // }
-    public TIN(String geometry){
-        this.geometry = geometry;
     }
     
+    public Line(int line_id, String geometry){
+        this.l_id = line_id;
+        this.geometry = geometry;
+    }
 }

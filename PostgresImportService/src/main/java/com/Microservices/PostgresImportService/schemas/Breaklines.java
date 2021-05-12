@@ -33,7 +33,7 @@ public class Breaklines {
     @Column(nullable = false)
     private Integer tin_id;
 
-    @Column(name="geometry", nullable=false)
+    @Column(nullable=false)
     private String geometry;
   
     protected Breaklines() {
