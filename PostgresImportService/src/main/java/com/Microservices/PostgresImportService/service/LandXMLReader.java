@@ -8,8 +8,10 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
 import com.Microservices.PostgresImportService.repositories.BreaklinesRepository;
+import com.Microservices.PostgresImportService.repositories.SpecialPointsRepository;
 import com.Microservices.PostgresImportService.repositories.TINRepository;
 import com.Microservices.PostgresImportService.schemas.Breaklines;
+import com.Microservices.PostgresImportService.schemas.SpecialPoints;
 import com.Microservices.PostgresImportService.schemas.TIN;
 
 import org.slf4j.Logger;
@@ -18,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ImportLandXML {
+public class LandXMLReader {
 
     @Autowired
     TINRepository tinRepository;
@@ -26,39 +28,59 @@ public class ImportLandXML {
     @Autowired
     BreaklinesRepository blRepository;
 
-    Logger log = LoggerFactory.getLogger(ImportLandXML.class);
+    @Autowired
+    SpecialPointsRepository spRepository;
+
+    Logger log = LoggerFactory.getLogger(LandXMLReader.class);
 
     ArrayList<String> breaklines = new ArrayList<String>();
     HashMap<Integer, String> points = new HashMap<Integer, String>();
+    HashMap<Integer, String> cgpoints = new HashMap<Integer, String>();
     ArrayList<int[]> faces = new ArrayList<int[]>();
 
     public String importTIN(InputStream stream) throws Exception {
 
         int srid = 25832; // muss noch variabel gestaltet werden
+        int blCount = 0;
         readFile(stream);
 
-        TIN tin = new TIN("SRID=" + srid + ";" + buildWkt());
+
+
+        TIN tin = new TIN("SRID=" + srid + ";" + buildWktTIN());
         tinRepository.save(tin);
         log.info("'ID: " + tin.getTin_id() + ", WKT: " + tin.getGeometry() + "'");
 
         for (int i = 0; i < breaklines.size(); i++) {
             Breaklines bl = new Breaklines(tin.getTin_id(), "SRID=" + srid + ";" + getBreaklines(i));
             blRepository.save(bl);
+            blCount++;
             log.info("'ID: " + bl.getBl_id() + ", WKT: " + bl.getGeometry() + ", tin_id: " + bl.getTin_id() + "'");
         }
 
-        return "TINs have been imported.";
+        cgpoints.forEach((key, value) -> {
+            SpecialPoints spPoint = new SpecialPoints(key, tin.getTin_id() ,
+            "SRID=" + srid + ";POINTZ (" + value + ")");
+            spRepository.save(spPoint);
+        });
+
+        return "TIN with " + blCount + " Breaklines and " + cgpoints.size() + " special points has been imported.";
     }
 
+    // file has only one TIN
     private void readFile(InputStream in) throws Exception {
 
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         XMLStreamReader streamReader = inputFactory.createXMLStreamReader(in);
 
+        String element = "";
         while (streamReader.hasNext()) {
             if (streamReader.isStartElement()) {
 
-                if (streamReader.getLocalName().equals("PntList3D")) {
+                if (streamReader.getLocalName().equals("CgPoint")) {
+                    cgpoints.put(Integer.parseInt(streamReader.getAttributeValue(0)), streamReader.getElementText());
+                }
+
+                if (element.equals("Breakline") && streamReader.getLocalName().equals("PntList3D")) {
                     breaklines.add(streamReader.getElementText());
                 }
 
@@ -72,13 +94,13 @@ public class ImportLandXML {
                             Integer.parseInt(face[2]) };
                     faces.add(intFace);
                 }
-
+                element = streamReader.getLocalName();
             }
             streamReader.next();
         }
     }
 
-    private String buildWkt() {
+    private String buildWktTIN() {
         log.info("Import TIN");
         StringBuilder wkt = new StringBuilder();
         wkt.append("TIN (");

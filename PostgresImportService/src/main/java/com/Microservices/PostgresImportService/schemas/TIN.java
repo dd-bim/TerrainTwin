@@ -26,17 +26,10 @@ public class TIN {
     @Column(nullable=false)
     private String geometry;
 
-    // @Column(nullable = false)
-    // private Integer srid;
-
     protected TIN() {
 
     }
 
-    // public TIN(String geometry, Integer srid){
-    //     this.geometry = geometry;
-    //     this.srid = srid;
-    // }
     public TIN(String geometry){
         this.geometry = geometry;
     }

@@ -27,9 +27,6 @@ public class Breaklines {
     @GeneratedValue(strategy= GenerationType.SEQUENCE)
     private Integer bl_id;
 
-    // @Column(nullable = false)
-    // private Integer srid;
-
     @Column(nullable = false)
     private Integer tin_id;
 
@@ -40,12 +37,6 @@ public class Breaklines {
 
     }
 
-    // public Breaklines(String geometry, Integer srid, Integer tin_id){
-    //     LOGGER.debug("Creating a breakline");
-    //     this.geometry = geometry;
-    //     this.srid = srid;
-    //     this.tin_id = tin_id;
-    // }
     public Breaklines(Integer tin_id, String geometry){
         LOGGER.debug("Creating a breakline");
         this.tin_id = tin_id;

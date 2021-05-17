@@ -13,10 +13,7 @@ import javax.persistence.GenerationType;
 import lombok.Getter;
 import lombok.Setter;
 
-// Table Schema for import insert in Postgres
-
 @Entity
-// @Table(name="surfaces_rohdaten", schema="terraintwin")
 @Table(name="polygon", schema="terraintwinv2")
 @SQLInsert(sql = "INSERT INTO terraintwinv2.polygon (geometry, polygon_id, id) VALUES (ST_GeomFromEWKT(?),?,?)" )
 @Getter
@@ -30,9 +27,6 @@ public class Polygon {
     @Column(name="polygon_id", nullable = false)
     private Integer surfaceID;
 
-    // @Column(nullable = false)
-    // private Integer srid;
-
     @Column(nullable=false)
     private String geometry;
 
@@ -41,11 +35,6 @@ public class Polygon {
 
     }
 
-    // public Surfaces(Integer surfaceID, String geometry, Integer srid) {
-    //     this.surfaceID = surfaceID;
-    //     this.geometry = geometry;
-    //     this.srid = srid;
-    // }
     public Polygon(Integer surfaceID, String geometry) {
         this.surfaceID = surfaceID;
         this.geometry = geometry;

@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 import au.com.bytecode.opencsv.CSVReader;
 
 @Service
-public class ImportWKT {
+public class TextReader {
 
     @Autowired
     PolygonRepository polygonRepo;
@@ -30,7 +30,7 @@ public class ImportWKT {
     @Autowired
     LineRepository lineRepo;
 
-    Logger log = LoggerFactory.getLogger(ImportWKT.class);
+    Logger log = LoggerFactory.getLogger(TextReader.class);
 
     // Imports WKT data from CSV and writes them into a database
     public String importWKT(InputStream stream) throws NumberFormatException, IOException {
@@ -72,6 +72,6 @@ public class ImportWKT {
             }
         }
         reader.close();
-        return pointCount + " Points, " + lineCount + " Lines, " + polygonCount + "Polygons have been imported.";
+        return pointCount + " Points, " + lineCount + " Lines, " + polygonCount + " Polygons have been imported.";
     }
 }

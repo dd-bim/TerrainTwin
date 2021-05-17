@@ -28,10 +28,10 @@ public class CheckFiles {
     MinIOConnection connection;
 
     @Autowired
-    ImportWKT readwrite;
+    TextReader readwrite;
 
     @Autowired
-    ImportLandXML readTin;
+    LandXMLReader readTin;
 
     Logger log = LoggerFactory.getLogger(CheckFiles.class);
 
@@ -64,7 +64,7 @@ MinioClient client = connection.connection();
                     }
                 }
 
-                // File with surfaces
+                // text files (csv/txt) with WKT
                 if (extension.equals("txt") || extension.equals("csv")) {
 
                     try (InputStream TXTStream = client
