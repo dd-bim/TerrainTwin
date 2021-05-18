@@ -15,7 +15,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name="polygon", schema="terraintwinv2")
-@SQLInsert(sql = "INSERT INTO terraintwinv2.polygon (geometry, polygon_id, id) VALUES (ST_GeomFromEWKT(?),?,?)" )
+@SQLInsert(sql = "INSERT INTO terraintwinv2.polygon (geometry, polygon_id, id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)" )
 @Getter
 @Setter
 public class Polygon {

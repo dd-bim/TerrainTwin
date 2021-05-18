@@ -5,11 +5,10 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
-import com.Microservices.Csv2RdfConverter.connection.MinIOConnection;
 import com.Microservices.Csv2RdfConverter.domain.model.ConvertInfos;
 import com.Microservices.Csv2RdfConverter.service.Csv2RdfService;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -36,17 +35,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Csv2Rdf Converter", description = "Convert csv files to rdf")
 public class Csv2rdfController {
 
-    // @Autowired
-    // Csv2RdfService converter;
-
-    @Value("${minio.url}")
-    private String url;
-    @Value("${minio.port}")
-    private String port;
-    @Value("${minio.access_key}")
-    private String access_key;
-    @Value("${minio.secret_key}")
-    private String secret_key;
+    @Autowired
+    Csv2RdfService converter;
 
     @GetMapping("/csv2rdf/")
     @Operation(summary = "Shows, if service works.")
@@ -66,8 +56,6 @@ public class Csv2rdfController {
             @RequestParam(required = false) String prefix, @RequestParam(required = false) String superclass)
             throws IllegalStateException, IOException, InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException {
         ConvertInfos infos = new ConvertInfos();
-        MinIOConnection connect = new MinIOConnection();
-        Csv2RdfService converter = new Csv2RdfService(connect.connection(url, port, access_key, secret_key));
         File file = converter.multipartToFile(multiFile);
         String f = multiFile.getOriginalFilename();
         System.out.println(f);

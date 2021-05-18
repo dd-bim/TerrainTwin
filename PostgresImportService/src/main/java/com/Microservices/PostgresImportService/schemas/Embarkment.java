@@ -14,7 +14,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "dtm_embarkment", schema = "terraintwinv2")
-@SQLInsert(sql = "INSERT INTO terraintwinv2.dtm_embarkment (geometry, embarkment_id, id) VALUES (ST_GeomFromEWKT(?),?,?)" )
+@SQLInsert(sql = "INSERT INTO terraintwinv2.dtm_embarkment (geometry, embarkment_id, id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)" )
 @Getter
 @Setter
 public class Embarkment {

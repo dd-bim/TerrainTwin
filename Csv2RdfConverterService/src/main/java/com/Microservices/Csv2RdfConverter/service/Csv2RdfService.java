@@ -23,6 +23,7 @@ import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,10 +38,14 @@ import io.minio.errors.InvalidResponseException;
 import io.minio.errors.ServerException;
 import io.minio.errors.XmlParserException;
 
+import com.Microservices.Csv2RdfConverter.connection.MinIOConnection;
 import com.Microservices.Csv2RdfConverter.domain.model.ConvertInfos;
 
 @Service
 public class Csv2RdfService {
+
+    @Autowired
+    MinIOConnection connection;
 
     Logger log = LoggerFactory.getLogger(Csv2RdfService.class);
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -51,20 +56,9 @@ public class Csv2RdfService {
     String delimiter = ";";
     String feedback = "";
 
-    MinioClient client;
-
-    public Csv2RdfService() {
-
-    }
-
-    // Connect to MinIO
-    public Csv2RdfService(MinioClient client) {
-        this.client = client;
-    }
-
-    public String convert(ConvertInfos infos, int index) throws InvalidKeyException, ErrorResponseException,
-            InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException,
-            ServerException, XmlParserException{
+    public String convert(ConvertInfos infos, int index)
+            throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException,
+            InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException {
         String bucket = null;
         String s = convert(infos, index, bucket);
         return s;
@@ -73,12 +67,14 @@ public class Csv2RdfService {
     public String convert(ConvertInfos infos, int index, String bucket) throws InvalidKeyException,
             ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException,
             NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException {
+        MinioClient client = connection.connection();
         File filename = infos.getFile();
 
         // check, if parameters are set
         if (infos.getNamespace() != null) {
             namespace = infos.getNamespace();
-            if (!namespace.endsWith("/")) namespace = namespace + "/";
+            if (!namespace.endsWith("/"))
+                namespace = namespace + "/";
         }
         if (infos.getPrefix() != null)
             ns = infos.getPrefix();
@@ -126,9 +122,10 @@ public class Csv2RdfService {
             String timestamp = format.format(new Date()).replaceAll(":", "-") + "_";
 
             // write model in turtle file
-            // case index 1 is for the GUI, whitch can only be used as a program on a local maschine
+            // case index 1 is for the GUI, whitch can only be used as a program on a local
+            // maschine
             // file is saved under the source directory
-            // other case is for the API 
+            // other case is for the API
             // file is saved in a MinIO Bucket
             if (index == 1) {
                 convFile = timestamp + filename.getAbsolutePath().split(Pattern.quote("."))[0] + ".ttl";
@@ -192,6 +189,7 @@ public class Csv2RdfService {
     public String createBucket(String bucket) throws InvalidKeyException, ErrorResponseException,
             InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException,
             ServerException, XmlParserException, IllegalArgumentException, IOException {
+        MinioClient client = connection.connection();
         client.makeBucket(MakeBucketArgs.builder().bucket(bucket).build());
         String results = "Bucket " + bucket + " created.\n";
         log.info(results);

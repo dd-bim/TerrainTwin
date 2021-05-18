@@ -4,13 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- <link rel="stylesheet" type="text/css" href="../static/tailwind.css" /> -->
   <link rel="stylesheet" type="text/css" th:href="@{~/tailwind.css}" />
-  <script type="module">
-    import { deleteB, upload } from "./index.js";
-    window.deleteB = deleteB;
-    window.upload = upload;
-  </script>
   <title>Minio Uploader</title>
 </head>
 
@@ -33,7 +27,7 @@
       <div class="shadow-md border border-gray-200 rounded-md px-5 pt-4 mb-5">
         <div class="mb-4">
           <div class="flex space-x-2">
-            <form th:action="@{/terraintwin/minioupload}" method="post" enctype="multipart/form-data">
+            <form th:action="@{/minioupload}" method="post" enctype="multipart/form-data">
               <label class="py-1 text-gray-700 text-sm font-bold" for="bucket">
                 Projektordner:
               </label>

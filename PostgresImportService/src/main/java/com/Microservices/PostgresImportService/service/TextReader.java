@@ -7,10 +7,11 @@ import java.io.InputStreamReader;
 import com.Microservices.PostgresImportService.repositories.LineRepository;
 import com.Microservices.PostgresImportService.repositories.PointRepository;
 import com.Microservices.PostgresImportService.repositories.PolygonRepository;
+import com.Microservices.PostgresImportService.repositories.TINRepository;
 import com.Microservices.PostgresImportService.schemas.Line;
 import com.Microservices.PostgresImportService.schemas.Point;
 import com.Microservices.PostgresImportService.schemas.Polygon;
-
+import com.Microservices.PostgresImportService.schemas.TIN;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class TextReader {
     @Autowired
     LineRepository lineRepo;
 
+    @Autowired
+    TINRepository tinRepo;
+
     Logger log = LoggerFactory.getLogger(TextReader.class);
 
     // Imports WKT data from CSV and writes them into a database
@@ -37,7 +41,7 @@ public class TextReader {
         log.info("Import WKT from CSV/TXT");
         CSVReader reader = new CSVReader(new InputStreamReader(stream), ',', '"', 1); // seperator sollte variabel sein
         String[] nextLine;
-        int pointCount = 0, lineCount = 0, polygonCount = 0;
+        int pointCount = 0, lineCount = 0, polygonCount = 0, tinCount = 0;
 
         while ((nextLine = reader.readNext()) != null) {
             if (nextLine != null) {
@@ -67,11 +71,17 @@ public class TextReader {
                     log.info("'ID: " + polygon.getId() + ", polygon_id: " + polygon.getSurfaceID() + ", geometry: "
                             + polygon.getGeometry() + "'");
                     polygonCount++;
-                }
 
+                } else if (nextLine[1].toUpperCase().contains("TIN")) {
+
+                    TIN tin = new TIN("SRID=" + Integer.parseInt(nextLine[2].trim()) + ";" + nextLine[1]);
+                    tinRepo.save(tin);
+                    tinCount++;
+                }
             }
         }
         reader.close();
-        return pointCount + " Points, " + lineCount + " Lines, " + polygonCount + " Polygons have been imported.";
+        return pointCount + " Points, " + lineCount + " Lines, " + polygonCount + " Polygons and " + tinCount
+                + " TINs have been imported.";
     }
 }

@@ -23,7 +23,7 @@ import io.minio.messages.Item;
 // check, which files are in bucket
 @Service
 public class CheckFiles {
-    
+
     @Autowired
     MinIOConnection connection;
 
@@ -39,7 +39,7 @@ public class CheckFiles {
     public String getFiles(String bucket) throws Exception {
         String results = "";
         String filename = "";
-MinioClient client = connection.connection();
+        MinioClient client = connection.connection();
 
         // Lists objects information.
         try {
@@ -71,7 +71,7 @@ MinioClient client = connection.connection();
                             .getObject(GetObjectArgs.builder().bucket(bucket).object(filename).build())) {
 
                         // Insert surfaces into database
-                        results += "\n" + filename + ": " + readwrite.importWKT(TXTStream); //, repository
+                        results += "\n" + filename + ": " + readwrite.importWKT(TXTStream);
 
                     } catch (IOException e) {
                         log.error(e.getMessage());

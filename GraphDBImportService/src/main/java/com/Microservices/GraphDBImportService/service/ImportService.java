@@ -8,6 +8,8 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
+import com.Microservices.GraphDBImportService.connection.GraphDBConnection;
+import com.Microservices.GraphDBImportService.connection.MinIOConnection;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.io.FilenameUtils;
@@ -19,6 +21,9 @@ import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import io.minio.GetObjectArgs;
 import io.minio.ListObjectsArgs;
@@ -27,125 +32,139 @@ import io.minio.Result;
 import io.minio.errors.MinioException;
 import io.minio.messages.Item;
 
+@Service
 public class ImportService {
 
-    MinioClient client;
-    RepositoryConnection connection;
+    @Autowired
+    MinIOConnection connection;
+
+    @Autowired
+    GraphDBConnection dbconnection;
+
     Logger log = LoggerFactory.getLogger(ImportService.class);
 
-    // Connect to MinIO and GraphDB
-    public ImportService(MinioClient client, RepositoryConnection connection) {
-
-        this.client = client;
-        this.connection = connection;
-    }
+    @Value("${minio.url}")
+    private String url;
+    @Value("${domain.url}")
+    private String domain;
 
     // get files of spezified bucket,
-    public String getFiles(String bucket, String url) throws Exception {
+    public String getFiles(String bucket, String repo) throws Exception {
+
         String results = "";
         String filename = "";
 
-        // Lists objects information
+        // get connection to graphdb repository
         try {
-            Iterable<Result<Item>> objects = client.listObjects(ListObjectsArgs.builder().bucket(bucket).build());
-            for (Result<Item> result : objects) {
-                filename = result.get().objectName();
-                String extension = FilenameUtils.getExtension(filename);
+            RepositoryConnection db = dbconnection.connection(repo);
 
-                if (extension.equals("ttl") || extension.equals("rdf") || extension.equals("owl")) {
+            // Lists objects information
+            try {
+                // get connection to Minio
+                MinioClient client = connection.connection();
 
-                    // get stream from given bucket and object name
-                    try (InputStream stream = client
-                            .getObject(GetObjectArgs.builder().bucket(bucket).object(filename).build())) {
+                Iterable<Result<Item>> objects = client.listObjects(ListObjectsArgs.builder().bucket(bucket).build());
+                for (Result<Item> result : objects) {
+                    filename = result.get().objectName();
+                    String extension = FilenameUtils.getExtension(filename);
 
-                        String baseURI = url + "/" + bucket + "/" + filename + "/";
+                    if (extension.equals("ttl") || extension.equals("rdf") || extension.equals("owl")) {
 
-                        // import turtle file into repository
-                        if (extension.equals("ttl")) {
-                            connection.add(stream, baseURI, RDFFormat.TURTLE);
+                        // get stream from given bucket and object name
+                        try (InputStream stream = client
+                                .getObject(GetObjectArgs.builder().bucket(bucket).object(filename).build())) {
+
+                            String baseURI = url + "/" + bucket + "/" + filename + "/";
+
+                            // import turtle file into repository
+                            if (extension.equals("ttl")) {
+                                db.add(stream, baseURI, RDFFormat.TURTLE);
+                            }
+
+                            // import rdf/xml or owl file into repository
+                            if (extension.equals("rdf") || extension.equals("owl")) {
+                                db.add(stream, baseURI, RDFFormat.RDFXML);
+                            }
+
+                            results += (filename + " importiert.") + "\n";
+
+                        } catch (IOException e) {
+                            log.error(e.getMessage());
+                            results += e.getMessage() + "\n";
                         }
+                    }
 
-                        // import rdf/xml or owl file into repository
-                        if (extension.equals("rdf") || extension.equals("owl")) {
-                            connection.add(stream, baseURI, RDFFormat.RDFXML);
+                    // check if file is metadata file
+                    if (extension.equals("json") && filename.contains("metadata")) {
+
+                        // get stream from given bucket and object name
+                        try (InputStream stream = client
+                                .getObject(GetObjectArgs.builder().bucket(bucket).object(filename).build())) {
+
+                            // get key-value-paires from json
+                            HashMap<String, Object> json = new HashMap<String, Object>();
+                            @SuppressWarnings("unchecked")
+                            HashMap<String, Object> obj = new ObjectMapper().readValue(stream, HashMap.class);
+                            obj.forEach((k, v) -> {
+                                if (v.getClass() == String.class) {
+                                    json.put(k, v);
+                                } else {
+                                    @SuppressWarnings("unchecked")
+                                    HashMap<String, Object> s = (HashMap<String, Object>) v;
+                                    json.putAll(s);
+                                }
+                            });
+
+                            // create rdf model from key-value-paires and remove all paires with empty value
+                            // standard namespace
+                            String r = domain + "/" + json.get("name").toString();
+                            String namespace = domain + "/";
+                            // specific namespace from location, if exists in metadata
+                            if (!json.get("location").toString().isEmpty()) {
+                                r = json.get("location").toString();
+                                namespace = r.replace(json.get("name").toString(), "");
+                            }
+                            String resource = r;
+
+                            json.entrySet().removeIf(entry -> "".equals(entry.getValue()));
+                            json.entrySet().removeIf(entry -> entry.getValue() == null);
+
+                            ModelBuilder builder = new ModelBuilder();
+                            builder.setNamespace("files", namespace).setNamespace("meta",
+                                    domain + "/ontology/metadaten_ontology/");
+                            json.forEach((k, v) -> {
+                                if (k.equals("type")) {
+                                    builder.add(resource, RDF.TYPE, "meta:" + v);
+                                } else {
+                                    builder.add(resource, "meta:" + k, v);
+                                }
+                            });
+                            Model m = builder.build();
+
+                            // write model in turtle file and import into repository
+                            File tmp = File.createTempFile("turtle", "tmp");
+                            FileOutputStream out = new FileOutputStream(tmp);
+                            try {
+                                Rio.write(m, out, RDFFormat.TURTLE);
+                            } finally {
+                                out.close();
+                            }
+                            db.add(tmp, namespace, RDFFormat.TURTLE);
+                            results += ("Metadaten zur Datei " + resource + " importiert.") + "\n";
+
+                        } catch (IOException e) {
+                            log.error(e.getMessage());
+                            results += e.getMessage() + "\n";
                         }
-
-                        results += (filename + " importiert.") + "\n";
-
-                    } catch (IOException e) {
-                        log.error(e.getMessage());
-                        results += e.getMessage() + "\n";
                     }
                 }
-
-                // check if file is metadata file
-                if (extension.equals("json") && filename.contains("metadata")) {
-
-                    // get stream from given bucket and object name
-                    try (InputStream stream = client
-                            .getObject(GetObjectArgs.builder().bucket(bucket).object(filename).build())) {
-
-                        // get key-value-paires from json
-                        HashMap<String, Object> json = new HashMap<String, Object>();
-                        @SuppressWarnings("unchecked")
-                        HashMap<String, Object> obj = new ObjectMapper().readValue(stream, HashMap.class);
-                        obj.forEach((k, v) -> {
-                            if (v.getClass() == String.class) {
-                                json.put(k, v);
-                            } else {
-                                @SuppressWarnings("unchecked")
-                                HashMap<String, Object> s = (HashMap<String, Object>) v;
-                                json.putAll(s);
-                            }
-                        });
-
-                        // create rdf model from key-value-paires and remove all paires with empty value
-                        // standard namespace
-                        String r = "https://terrain.dd-bim.org/" + json.get("name").toString();
-                        String namespace = "https://terrain.dd-bim.org/";
-                        // specific namespace from location, if exists in metadata
-                        if (!json.get("location").toString().isEmpty()) {
-                            r = json.get("location").toString();
-                            namespace = r.replace(json.get("name").toString(), "");
-                        }
-                        String resource = r;
-
-                        json.entrySet().removeIf(entry -> "".equals(entry.getValue()));
-                        json.entrySet().removeIf(entry -> entry.getValue() == null);
-
-                        ModelBuilder builder = new ModelBuilder();
-                        builder.setNamespace("files", namespace).setNamespace("meta",
-                                "https://terrain.dd-bim.org/ontology/metadaten_ontology/");
-                        json.forEach((k, v) -> {
-                            if (k.equals("type")) {
-                                builder.add(resource, RDF.TYPE, "meta:" + v);
-                            } else {
-                                builder.add(resource, "meta:" + k, v);
-                            }
-                        });
-                        Model m = builder.build();
-
-                        // write model in turtle file and import into repository
-                        File tmp = File.createTempFile("turtle", "tmp");
-                        FileOutputStream out = new FileOutputStream(tmp);
-                        try {
-                            Rio.write(m, out, RDFFormat.TURTLE);
-                        } finally {
-                            out.close();
-                        }
-                        connection.add(tmp, namespace, RDFFormat.TURTLE);
-                        results += ("Metadaten zur Datei " + resource + " importiert.") + "\n";
-
-                    } catch (IOException e) {
-                        log.error(e.getMessage());
-                        results += e.getMessage() + "\n";
-                    }
-                }
+            } catch (MinioException | InvalidKeyException | IllegalArgumentException | NoSuchAlgorithmException
+                    | IOException e) {
+                log.error("Error occurred: " + e.getMessage());
+                results += filename + " - Import failed: " + e.getMessage() + "\n";
             }
-        } catch (MinioException | InvalidKeyException | IllegalArgumentException | NoSuchAlgorithmException
-                | IOException e) {
-            log.error("Error occurred: " + e.getMessage());
-            results += filename + " - Import failed: " + e.getMessage() + "\n";
+        } catch (Exception e) {
+            results += "Could not connect to GraphDB. Possibly the repository does not exist.";
         }
         return results;
     }

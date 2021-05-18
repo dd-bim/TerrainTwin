@@ -5,12 +5,15 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
+import com.Microservices.MinIOUploadService.connection.MinIOConnection;
 import com.Microservices.MinIOUploadService.domain.model.MetaFile;
 import com.Microservices.MinIOUploadService.domain.model.UploadInfos;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.minio.BucketExistsArgs;
@@ -29,18 +32,17 @@ import io.minio.errors.ServerException;
 import io.minio.errors.XmlParserException;
 import io.minio.messages.Item;
 
+@Service
 public class UploadService {
 
-    MinioClient client;
-
-    public UploadService(MinioClient client) {
-        this.client = client;
-    }
+    @Autowired
+    MinIOConnection connection;
 
     // Upload file to given bucket name
     public String upload(UploadInfos infos) throws InvalidKeyException, ErrorResponseException,
             InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException,
             ServerException, XmlParserException, IllegalArgumentException, IOException {
+        MinioClient client = connection.connection();
         String results = "";
         String bucket = infos.getBucket();
         String path = infos.getPath().replaceAll("\\\\", "/");
@@ -68,6 +70,7 @@ public class UploadService {
 
     // delete bucket and it's files
     public String deleteBucket(String bucket) {
+        MinioClient client = connection.connection();
         String results = "";
         try {
             Iterable<Result<Item>> objects = client.listObjects(ListObjectsArgs.builder().bucket(bucket).build());
@@ -91,6 +94,7 @@ public class UploadService {
     public String createBucket(String bucket) throws InvalidKeyException, ErrorResponseException,
             InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException,
             ServerException, XmlParserException, IllegalArgumentException, IOException {
+        MinioClient client = connection.connection();
         client.makeBucket(MakeBucketArgs.builder().bucket(bucket).build());
         String results = "Bucket " + bucket + " created.\n";
         return results;

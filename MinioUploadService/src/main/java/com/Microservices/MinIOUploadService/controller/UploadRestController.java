@@ -6,7 +6,6 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
-import com.Microservices.MinIOUploadService.connection.MinIOConnection;
 import com.Microservices.MinIOUploadService.domain.model.DTM;
 import com.Microservices.MinIOUploadService.domain.model.MetaFile;
 import com.Microservices.MinIOUploadService.domain.model.Metadata;
@@ -14,7 +13,7 @@ import com.Microservices.MinIOUploadService.domain.model.UploadInfos;
 import com.Microservices.MinIOUploadService.service.UploadService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -45,14 +44,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "MinIO Uploader", description = "Upload files and metadata to the MinIO Object Storage", externalDocs = @ExternalDocumentation(url = "/minioupload", description = "Interface"))
 public class UploadRestController {
 
-  @Value("${minio.url}")
-  private String url;
-  @Value("${minio.port}")
-  private String port;
-  @Value("${minio.access_key}")
-  private String access_key;
-  @Value("${minio.secret_key}")
-  private String secret_key;
+  @Autowired
+  UploadService minio;
 
   // https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html
 
@@ -60,8 +53,7 @@ public class UploadRestController {
   @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
   public ResponseEntity<?> create(@PathVariable String bucket) throws Exception {
     if (bucket.matches("^[a-z0-9][a-z0-9-.]{1,61}[a-z0-9]$")) {
-      MinIOConnection connect = new MinIOConnection();
-      UploadService minio = new UploadService(connect.connection(url, port, access_key, secret_key));
+
       String results = minio.createBucket(bucket);
       return ResponseEntity.ok(results);
     } else {
@@ -75,8 +67,7 @@ public class UploadRestController {
   @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
   public ResponseEntity<?> delete(@PathVariable String bucket) throws Exception {
     if (bucket.matches("^[a-z0-9][a-z0-9-.]{1,61}[a-z0-9]$")) {
-      MinIOConnection connect = new MinIOConnection();
-      UploadService minio = new UploadService(connect.connection(url, port, access_key, secret_key));
+      
       String results = minio.deleteBucket(bucket);
       return ResponseEntity.ok(results);
     } else {
@@ -101,16 +92,13 @@ public class UploadRestController {
       InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException,
       IOException {
     if (bucket.matches("^[a-z0-9][a-z0-9-.]{1,61}[a-z0-9]$")) {
-      MinIOConnection connect = new MinIOConnection();
-      UploadService minio = new UploadService(connect.connection(url, port, access_key, secret_key));
-      String results = "";
       ObjectMapper mapper = new ObjectMapper();
       Metadata metadata = mapper.readValue(meta1, Metadata.class);
 
       // create buckets and upload files with metadata
       File file = minio.multipartToFile(multiFile);
       UploadInfos infos = new UploadInfos(bucket, file);
-      results = minio.upload(infos);
+      String results = minio.upload(infos);
 
       metadata.setCreated(infos.getTimestamp());
       metadata.setName(infos.getTimestamp() + "_" + file.getName());
@@ -178,13 +166,10 @@ public class UploadRestController {
       InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException,
       IOException {
     if (bucket.matches("^[a-z0-9][a-z0-9-.]{1,61}[a-z0-9]$")) {
-      MinIOConnection connect = new MinIOConnection();
-      UploadService minio = new UploadService(connect.connection(url, port, access_key, secret_key));
-      String results = "";
 
       File file = minio.multipartToFile(multiFile);
       UploadInfos infos = new UploadInfos(bucket, file);
-      results = minio.upload(infos);
+      String results = minio.upload(infos);
 
       return ResponseEntity.ok(results);
     } else {
