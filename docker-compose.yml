@@ -13,12 +13,15 @@ services:
             - terraintwin_microservices
         volumes:
             - ./volumes/configs:/var/lib/centralProperties
+            - ./volumes/logs/:/var/log/
         healthcheck:
             test: wget --spider http://localhost:8888/actuator/health || exit 1
             interval: 30s
             timeout: 5s
             retries: 5
             start_period: 10s
+        environment:
+            - domain.url=${DOMAIN_URL}
 
     eurekaserver:
         container_name: eurekaserver
@@ -38,6 +41,10 @@ services:
             timeout: 5s
             retries: 5
             start_period: 10s
+        environment:
+            - domain.url=${DOMAIN_URL}
+        volumes:
+            - ./volumes/logs/:/var/log/
 
     minio-upload-service:
         container_name: minio-upload-service
@@ -64,6 +71,8 @@ services:
             - minio.port=${MINIO_PORT}
             - minio.access_key=${MINIO_ACCESS_KEY}
             - minio.secret_key=${MINIO_SECRET_KEY}
+        volumes:
+            - ./volumes/logs/:/var/log/
 
             
     graphdb-import-service:
@@ -94,6 +103,8 @@ services:
             - graphdb.url=${GRAPHDB_URL}
             - graphdb.username=${GRAPHDB_USERNAME}
             - graphdb.password=${GRAPHDB_PASSWORD}
+        volumes:
+            - ./volumes/logs/:/var/log/
 
     postgres-import-service:
         container_name: postgres-import-service
@@ -124,6 +135,8 @@ services:
             - postgres.database.name=${POSTGRES_DATABASE}
             - postgres.database.username=${POSTGRES_DATABASE_USERNAME}
             - postgres.database.password=${POSTGRES_DATABASE_PASSWORD}
+        volumes:
+            - ./volumes/logs/:/var/log/
 
     csv2rdf-converter-service:
         container_name: csv2rdf-converter-service
@@ -150,6 +163,8 @@ services:
             - minio.port=${MINIO_PORT}
             - minio.access_key=${MINIO_ACCESS_KEY}
             - minio.secret_key=${MINIO_SECRET_KEY}
+        volumes:
+            - ./volumes/logs/:/var/log/
             
     gateway-service:
         container_name: gateway-service
@@ -170,7 +185,28 @@ services:
             timeout: 5s
             retries: 5
             start_period: 10s
+        environment:
+            - domain.url=${DOMAIN_URL}
+        volumes:
+            - ./volumes/logs/:/var/log/
 
+    admin-server:
+        container_name: admin-server
+        build:
+            context: ./AdminServer
+        image: schi11er/tt_admin-server:latest
+        restart: unless-stopped
+        ports:
+            - 9092:9092
+        depends_on: 
+            - eurekaserver
+        networks:
+            - terraintwin_microservices
+        environment:
+            - domain.url=${DOMAIN_URL}
+        volumes:
+            - ./volumes/logs/:/var/log/
+        
 #     keycloak:
 #         image: jboss/keycloak:10.0.2
 #         container_name: keycloak_security

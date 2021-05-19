@@ -4,7 +4,26 @@ eureka:
         fetchRegistry: true
         serviceUrl:
             defaultZone: http://eurekaserver:9091/eureka
+    # instance:
+    #     hostname: ${domain.url}
 
 logging:
     level: 
         root: INFO #  TRACE DEBUG INFO WARN ERROR
+        max-history: 5
+        max-size: 10MB
+
+spring:
+    boot:
+        admin:
+            client: 
+                url: http://admin-server:9092
+
+management:
+    endpoints:
+        web:
+            exposure:
+                include: "*"   
+    endpoint:
+        health:
+            show-details: always

@@ -1,0 +1,40 @@
+server:
+    port: 9092
+
+logging:
+    file: 
+        name: /var/log/admin-server.log
+
+spring:
+    application:
+        name: admin-server
+    # security:
+    #     user:
+    #         name: "admin"
+    #         password: "admin"
+
+    mail:
+        port: 587
+        host: smtp.gmail.com
+        username: noreply.terraintwin@gmail.com
+        password: DDbim2021
+        protocol: smtp
+        test-connection: true
+        properties:
+            mail:
+                smtp:
+                    auth: true 
+                    starttls:
+                        enable: true
+    boot:
+        admin:
+            notify:
+                mail: 
+                    enabled: true
+                    to: terraintwin.schilling@gmail.com
+    cloud:
+        config:
+            uri: http://configserver:8888
+            username: configserver
+            password: s3cr3tconfigs
+            fail-fast: true

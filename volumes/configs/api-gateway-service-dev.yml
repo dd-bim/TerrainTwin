@@ -34,3 +34,7 @@ springdoc:
   swagger-ui: 
     path: /terraintwin/swagger-ui.html 
     operationsSorter: method
+
+logging:
+    file:
+        name: /var/log/gateway-service.log

@@ -40,7 +40,11 @@ logging:
             hibernate:
                 stat: debug
                 type: trace
+    file:
+        name: /var/log/postgres-import-service.log
 
 javax:
     persistence:
         create-database-schemas: true
+
+

@@ -31,3 +31,7 @@ eureka:
         fetchRegistry: true
         serviceUrl:
             defaultZone: http://eurekaserver:9091/eureka
+
+logging:
+    file: 
+        name: /var/log/configserver.log
