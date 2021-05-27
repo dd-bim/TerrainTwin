@@ -25,7 +25,7 @@
       tempSeconds = totalSeconds;
     }, 1000);
   </script>
-  
+
 </head>
 
 <body onload="JavaScript:AutoRefresh(20000);">
@@ -59,8 +59,21 @@
                   Anzahl der Punkte:
                 </label>
                 <div id="pointCount"
-                  data-th-utext="${#strings.replace(#strings.escapeXml(pntCount),'&#10;','&lt;br&gt;')}"
-                  class="py-1 text-gray-700 text-sm"></div>
+                  data-th-utext="${pntCount}"
+                  class="py-1 text-gray-700 text-sm">
+                </div>
+                <div class="flex w-full">
+                  <label class="py-1 text-gray-700 text-sm font-bold w-1/2">
+                    2D
+                  </label>
+                  <label class="py-1 text-gray-700 text-sm font-bold w-1/2">
+                    3D
+                  </label>
+                </div>
+                <div class="flex w-full">
+                  <div id="point2dCount" data-th-utext="${pnt2d}" class="py-1 text-gray-700 text-sm w-1/2"></div>
+                  <div id="point3dCount" data-th-utext="${pnt3d}" class="py-1 text-gray-700 text-sm w-1/2"></div>
+                </div>
               </div>
               <div class="w-2/3">
                 <label class="py-1 text-gray-700 text-sm font-bold">
@@ -68,9 +81,9 @@
                 </label>
                 <table class="shadow-md border border-gray-200 mb-2 w-full">
                   <thead class="flex w-full">
-                    <tr class="text-gray-700 text-sm bg-gray-100 flex w-full">
-                      <th class="shadow-md border border-gray-200 px-5 w-1/2">point_id</th>
-                      <th class="shadow-md border border-gray-200 px-5 w-1/2">Anzahl</th>
+                    <tr class="text-gray-700 text-sm bg-table-green flex w-full">
+                      <th class="border border-gray-200 px-5 w-1/2">point_id</th>
+                      <th class="border border-gray-200 px-5 w-1/2">Anzahl</th>
                     </tr>
                   </thead>
                   <tbody class="flex flex-col overflow-auto w-full text-center max-h-20">
@@ -89,8 +102,21 @@
                   Anzahl der Linien:
                 </label>
                 <div id="lineCount"
-                  data-th-utext="${#strings.replace(#strings.escapeXml(lineCount),'&#10;','&lt;br&gt;')}"
-                  class="py-1 text-gray-700 text-sm"></div>
+                  data-th-utext="${lineCount}"
+                  class="py-1 text-gray-700 text-sm">
+                </div>
+                <div class="flex w-full">
+                  <label class="py-1 text-gray-700 text-sm font-bold w-1/2">
+                    2D
+                  </label>
+                  <label class="py-1 text-gray-700 text-sm font-bold w-1/2">
+                    3D
+                  </label>
+                </div>
+                <div class="flex w-full">
+                  <div id="line2dCount" data-th-utext="${line2d}" class="py-1 text-gray-700 text-sm w-1/2"></div>
+                  <div id="line3dCount" data-th-utext="${line3d}" class="py-1 text-gray-700 text-sm w-1/2"></div>
+                </div>
               </div>
               <div class="w-2/3">
                 <label class="py-1 text-gray-700 text-sm font-bold">
@@ -98,9 +124,9 @@
                 </label>
                 <table class="shadow-md border border-gray-200 mb-2 w-full">
                   <thead class="flex w-full">
-                    <tr class="text-gray-700 text-sm bg-gray-100 flex w-full">
-                      <th class="shadow-md border border-gray-200 px-5 w-1/2">line_id</th>
-                      <th class="shadow-md border border-gray-200 px-5 w-1/2">Anzahl</th>
+                    <tr class="text-gray-700 text-sm bg-table-green flex w-full">
+                      <th class="border border-gray-200 px-5 w-1/2">line_id</th>
+                      <th class="border border-gray-200 px-5 w-1/2">Anzahl</th>
                     </tr>
                   </thead>
                   <tbody class="flex flex-col overflow-auto w-full text-center max-h-20">
@@ -119,7 +145,7 @@
                   Anzahl der Polygone:
                 </label>
                 <div id="polygonCount"
-                  data-th-utext="${#strings.replace(#strings.escapeXml(polyCount),'&#10;','&lt;br&gt;')}"
+                  data-th-utext="${polyCount}"
                   class="py-1 text-gray-700 text-sm"></div>
               </div>
               <div class="w-2/3">
@@ -128,9 +154,9 @@
                 </label>
                 <table class="shadow-md border border-gray-200 mb-2 w-full">
                   <thead class="flex w-full">
-                    <tr class="text-gray-700 text-sm bg-gray-100 flex w-full">
-                      <th class="shadow-md border border-gray-200 px-5 w-1/2">polygon_id</th>
-                      <th class="shadow-md border border-gray-200 px-5 w-1/2">Anzahl</th>
+                    <tr class="text-gray-700 text-sm bg-table-green flex w-full">
+                      <th class="border border-gray-200 px-5 w-1/2">polygon_id</th>
+                      <th class="border border-gray-200 px-5 w-1/2">Anzahl</th>
                     </tr>
                   </thead>
                   <tbody class="flex flex-col overflow-auto w-full text-center max-h-20">
@@ -149,7 +175,7 @@
                   Anzahl der Volumenkörper:
                 </label>
                 <div id="solidCount"
-                  data-th-utext="${#strings.replace(#strings.escapeXml(solidCount),'&#10;','&lt;br&gt;')}"
+                  data-th-utext="${solidCount}"
                   class="py-1 text-gray-700 text-sm"></div>
               </div>
               <div class="w-2/3">
@@ -158,9 +184,9 @@
                 </label>
                 <table class="shadow-md border border-gray-200 mb-2 w-full">
                   <thead class="flex w-full">
-                    <tr class="text-gray-700 text-sm bg-gray-100 flex w-full">
-                      <th class="shadow-md border border-gray-200 px-5 w-1/2">solid_id</th>
-                      <th class="shadow-md border border-gray-200 px-5 w-1/2">Anzahl</th>
+                    <tr class="text-gray-700 text-sm bg-table-green flex w-full">
+                      <th class="border border-gray-200 px-5 w-1/2">solid_id</th>
+                      <th class="border border-gray-200 px-5 w-1/2">Anzahl</th>
                     </tr>
                   </thead>
                   <tbody class="flex flex-col overflow-auto w-full text-center max-h-20">
@@ -181,7 +207,7 @@
                   Anzahl der TIN's:
                 </label>
                 <div id="tinCount"
-                  data-th-utext="${#strings.replace(#strings.escapeXml(tinCount),'&#10;','&lt;br&gt;')}"
+                  data-th-utext="${tinCount}"
                   class="py-1 text-gray-700 text-sm"></div>
               </div>
               <div class="w-2/3">
@@ -190,9 +216,9 @@
                 </label>
                 <table class="shadow-md border border-gray-200 mb-2 w-full">
                   <thead class="flex w-full">
-                    <tr class="text-gray-700 text-sm bg-gray-100 flex w-full">
-                      <th class="shadow-md border border-gray-200 px-5 w-1/2">tin_id</th>
-                      <th class="shadow-md border border-gray-200 px-5 w-1/2">Anzahl</th>
+                    <tr class="text-gray-700 text-sm bg-table-green flex w-full">
+                      <th class="border border-gray-200 px-5 w-1/2">tin_id</th>
+                      <th class="border border-gray-200 px-5 w-1/2">Anzahl</th>
                     </tr>
                   </thead>
                   <tbody class="flex flex-col overflow-auto w-full text-center max-h-20">
@@ -211,7 +237,7 @@
                   Anzahl der Bruchkanten:
                 </label>
                 <div id="breaklineCount"
-                  data-th-utext="${#strings.replace(#strings.escapeXml(blCount),'&#10;','&lt;br&gt;')}"
+                  data-th-utext="${blCount}"
                   class="py-1 text-gray-700 text-sm"></div>
               </div>
               <div class="w-2/3">
@@ -220,10 +246,10 @@
                 </label>
                 <table class="shadow-md border border-gray-200 mb-2 w-full">
                   <thead class="flex w-full">
-                    <tr class="text-gray-700 text-sm bg-gray-100 flex w-full">
-                      <th class="shadow-md border border-gray-200 px-5 w-1/3">bl_id</th>
-                      <th class="shadow-md border border-gray-200 px-5 w-1/3">tin_id</th>
-                      <th class="shadow-md border border-gray-200 px-5 w-1/3">Anzahl</th>
+                    <tr class="text-gray-700 text-sm bg-table-green flex w-full">
+                      <th class="border border-gray-200 px-5 w-1/3">bl_id</th>
+                      <th class="border border-gray-200 px-5 w-1/3">tin_id</th>
+                      <th class="border border-gray-200 px-5 w-1/3">Anzahl</th>
                     </tr>
                   </thead>
                   <tbody class="flex flex-col overflow-auto w-full text-center max-h-20">
@@ -243,7 +269,7 @@
                   Anzahl der Böschungen:
                 </label>
                 <div id="embarkmentCount"
-                  data-th-utext="${#strings.replace(#strings.escapeXml(embCount),'&#10;','&lt;br&gt;')}"
+                  data-th-utext="${embCount}"
                   class="py-1 text-gray-700 text-sm"></div>
               </div>
               <div class="w-2/3">
@@ -252,10 +278,10 @@
                 </label>
                 <table class="shadow-md border border-gray-200 mb-2 w-full">
                   <thead class="flex w-full">
-                    <tr class="text-gray-700 text-sm bg-gray-100 flex w-full">
-                      <th class="shadow-md border border-gray-200 px-1 w-1/3">embarkment_id</th>
-                      <th class="shadow-md border border-gray-200 px-4 w-1/3">tin_id</th>
-                      <th class="shadow-md border border-gray-200 px-3 w-1/3">Anzahl</th>
+                    <tr class="text-gray-700 text-sm bg-table-green flex w-full">
+                      <th class="border border-gray-200 px-1 w-1/3">embarkment_id</th>
+                      <th class="border border-gray-200 px-4 w-1/3">tin_id</th>
+                      <th class="border border-gray-200 px-3 w-1/3">Anzahl</th>
                     </tr>
                   </thead>
                   <tbody class="flex flex-col overflow-auto w-full text-center max-h-20">
@@ -275,7 +301,7 @@
                   Anzahl der Spezialpunkte:
                 </label>
                 <div id="specialPointsCount"
-                  data-th-utext="${#strings.replace(#strings.escapeXml(sPntCount),'&#10;','&lt;br&gt;')}"
+                  data-th-utext="${sPntCount}"
                   class="py-1 text-gray-700 text-sm"></div>
               </div>
               <div class="w-2/3">
@@ -284,10 +310,10 @@
                 </label>
                 <table class="shadow-md border border-gray-200 mb-2 w-full">
                   <thead class="flex w-full">
-                    <tr class="text-gray-700 text-sm bg-gray-100 flex w-full">
-                      <th class="shadow-md border border-gray-200 px-5 w-1/3">point_id</th>
-                      <th class="shadow-md border border-gray-200 px-5 w-1/3">tin_id</th>
-                      <th class="shadow-md border border-gray-200 px-5 w-1/3">Anzahl</th>
+                    <tr class="text-gray-700 text-sm bg-table-green flex w-full">
+                      <th class="border border-gray-200 px-5 w-1/3">point_id</th>
+                      <th class="border border-gray-200 px-5 w-1/3">tin_id</th>
+                      <th class="border border-gray-200 px-5 w-1/3">Anzahl</th>
                     </tr>
                   </thead>
                   <tbody class="flex flex-col overflow-auto w-full text-center max-h-20">

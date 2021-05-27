@@ -884,6 +884,11 @@ select {
   background-color: rgba(250, 255, 233, var(--tw-bg-opacity));
 }
 
+.bg-table-green {
+  --tw-bg-opacity: 1;
+  background-color: rgba(154, 205, 50, var(--tw-bg-opacity));
+}
+
 .hover\:bg-button-green-2:hover {
   --tw-bg-opacity: 1;
   background-color: rgba(80, 165, 38, var(--tw-bg-opacity));
