@@ -13,11 +13,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "points", schema = "terraintwinv2")
-@SQLInsert(sql = "INSERT INTO terraintwinv2.points (geometry, point_id, id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)" )
+@Table(name = "point_2d", schema = "terraintwinv2")
+@SQLInsert(sql = "INSERT INTO terraintwinv2.point_2d (geometry, point_id, id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)" )
 @Getter
 @Setter
-public class Point {
+public class Point2D {
 
     @Id
     @GeneratedValue(strategy= GenerationType.SEQUENCE)
@@ -29,11 +29,11 @@ public class Point {
     @Column(nullable=false)
     private String geometry;
 
-    protected Point(){
+    protected Point2D(){
 
     }
     
-    public Point(int point_id, String geometry){
+    public Point2D(int point_id, String geometry){
         this.p_id = point_id;
         this.geometry = geometry;
     }

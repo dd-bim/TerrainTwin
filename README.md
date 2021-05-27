@@ -12,12 +12,14 @@ Die Microservie Architektur (MSA) verbindet Programme und Funktionen für das Pr
 
 ### Komponenten
 [Discovery/Eureka Server](#discovery/eureka-server)  
-[Config Server](#config-server)  
+[Config Server](#config-server) 
+[Admin Server](#admin-server) 
 [Gateway Service](#gateway-service)  
 [MinIO Upload Service](#minio-upload-service)  
 [GraphDB Import Service](#graphdb-import-service)  
 [Csv2Rdf Converter Service](#csv2rdf-converter-service)  
-[Postgres Import Service](#postgres-import-service)   
+[Postgres Import Service](#postgres-import-service)
+[Dashboard Service](#dashboard-service)   
 ... to be continued.
 
 #### Discovery/Eureka Server (Port:`9091`)
@@ -43,6 +45,21 @@ Die Microservie Architektur (MSA) verbindet Programme und Funktionen für das Pr
 - Zugang zu Config Server ist mit Benutzername, Passwort geschützt, welche in der `bootstrap.yml` des Servers definiert werden
 - jeder Service enthält ebenfalls eine `bootstrap.yml`, in der die URL sowie die Zugangsdaten angegeben werden
 
+#### Admin Server (Port:`9092`)
+
+- Spring Dashboard zum Monitoring aller laufenden Services
+-  Funktionen: 
+     - zeigt, ob Service ordnungsgemäß läuft (Service ist healthy/unhealthy)
+     - Anzahl der Instanzen eines Service
+     - gibt Logs aus
+     - Logging Level kann geändert werden 
+     - zeigt Endpunkte
+     - ...
+- Erweiterung mit Spring Mail ermöglicht Benachichtigungen per Mail, wenn sich Status eines Service ändert (Benachichtigung auch per Telegram, Slack, ... möglich)
+
+![Admin Server Dashboard](images/AdminServer.PNG)
+
+z.Z. noch keine Ausgabe der Logs, GraphDB Import Service ist unhealthy, obwohl er funktioniert
 
 #### Gateway Service (Port:`8084`)
 
@@ -145,6 +162,11 @@ Mit diesem Service können semantische Dateien in den Formaten `.ttl`, `.xml/rdf
 - `TXT`- und `CSV`-Dateien werden nach `WKT`-Flächen durchsucht und diese werden in die Datenbank importiert
 - HTML-Interface verfügbar
 
+#### Dashboard Service (Port:`7205`)
+
+- fasst Informationen über Geometrien der Postgres Datenbank zusammen
+- Art und Anzahl der Geometrien
+- Auflistung von Duplikaten
 
 ### allgemeine Ordnerstruktur
   - Komponentenname

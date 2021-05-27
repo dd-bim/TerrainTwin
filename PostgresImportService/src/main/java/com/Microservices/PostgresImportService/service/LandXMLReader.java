@@ -44,8 +44,6 @@ public class LandXMLReader {
         int blCount = 0;
         readFile(stream);
 
-
-
         TIN tin = new TIN("SRID=" + srid + ";" + buildWktTIN());
         tinRepository.save(tin);
         log.info("'ID: " + tin.getTin_id() + ", WKT: " + tin.getGeometry() + "'");

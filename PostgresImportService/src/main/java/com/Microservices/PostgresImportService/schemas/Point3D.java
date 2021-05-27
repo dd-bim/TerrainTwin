@@ -2,41 +2,39 @@ package com.Microservices.PostgresImportService.schemas;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.SQLInsert;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name="polygon", schema="terraintwinv2")
-@SQLInsert(sql = "INSERT INTO terraintwinv2.polygon (geometry, polygon_id, id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)" )
+@Table(name = "point_3d", schema = "terraintwinv2")
+@SQLInsert(sql = "INSERT INTO terraintwinv2.point_3d (geometry, point_id, id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)" )
 @Getter
 @Setter
-public class Polygon {
+public class Point3D {
 
     @Id
     @GeneratedValue(strategy= GenerationType.SEQUENCE)
     private Integer id;
 
-    @Column(name="polygon_id", nullable = false)
-    private Integer surfaceID;
+    @Column(name="point_id", nullable = false)
+    private Integer p_id;
 
     @Column(nullable=false)
     private String geometry;
 
-
-    protected Polygon() {
+    protected Point3D(){
 
     }
-
-    public Polygon(Integer surfaceID, String geometry) {
-        this.surfaceID = surfaceID;
+    
+    public Point3D(int point_id, String geometry){
+        this.p_id = point_id;
         this.geometry = geometry;
     }
 }
