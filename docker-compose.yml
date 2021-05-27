@@ -2,7 +2,8 @@ version: '3.8'
 services:
     configserver:
         container_name: configserver
-        hostname: configserver
+        hostname: ${DOMAIN_NAME}
+            # configserver
         build:
             context: ./ConfigServer
         image: schi11er/tt_configserver:latest
@@ -13,7 +14,7 @@ services:
             - terraintwin_microservices
         volumes:
             - ./volumes/configs:/var/lib/centralProperties
-            - ./volumes/logs/:/var/log/
+            - ./volumes/logs:/var/log
         healthcheck:
             test: wget --spider http://localhost:8888/actuator/health || exit 1
             interval: 30s
@@ -25,6 +26,7 @@ services:
 
     eurekaserver:
         container_name: eurekaserver
+        hostname: ${DOMAIN_NAME}
         build:
             context: ./EurekaServer
         image: schi11er/tt_eurekaserver:latest
@@ -44,10 +46,11 @@ services:
         environment:
             - domain.url=${DOMAIN_URL}
         volumes:
-            - ./volumes/logs/:/var/log/
+            - ./volumes/logs:/var/log
 
     minio-upload-service:
         container_name: minio-upload-service
+        hostname: ${DOMAIN_NAME}
         build:
             context: ./MinIOUploadService
         image: schi11er/tt_minio-upload-service:latest
@@ -72,11 +75,12 @@ services:
             - minio.access_key=${MINIO_ACCESS_KEY}
             - minio.secret_key=${MINIO_SECRET_KEY}
         volumes:
-            - ./volumes/logs/:/var/log/
+            - ./volumes/logs:/var/log
 
             
     graphdb-import-service:
         container_name: graphdb-import-service
+        hostname: ${DOMAIN_NAME}
         build:
             context: ./GraphDBImportService
         image: schi11er/tt_graphdb-import-service:latest
@@ -104,10 +108,11 @@ services:
             - graphdb.username=${GRAPHDB_USERNAME}
             - graphdb.password=${GRAPHDB_PASSWORD}
         volumes:
-            - ./volumes/logs/:/var/log/
+            - ./volumes/logs:/var/log
 
     postgres-import-service:
         container_name: postgres-import-service
+        hostname: ${DOMAIN_NAME}
         build:
             context: ./PostgresImportService
         image: schi11er/tt_postgres-import-service:latest
@@ -135,11 +140,13 @@ services:
             - postgres.database.name=${POSTGRES_DATABASE}
             - postgres.database.username=${POSTGRES_DATABASE_USERNAME}
             - postgres.database.password=${POSTGRES_DATABASE_PASSWORD}
+            - project.epsg=${PROJECT_EPSG}
         volumes:
-            - ./volumes/logs/:/var/log/
+            - ./volumes/logs:/var/log
 
     csv2rdf-converter-service:
         container_name: csv2rdf-converter-service
+        hostname: ${DOMAIN_NAME}
         build:
             context: ./Csv2RdfConverterService
         image: schi11er/tt_csv2rdf-converter-service:latest
@@ -164,10 +171,11 @@ services:
             - minio.access_key=${MINIO_ACCESS_KEY}
             - minio.secret_key=${MINIO_SECRET_KEY}
         volumes:
-            - ./volumes/logs/:/var/log/
+            - ./volumes/logs:/var/log
             
     gateway-service:
         container_name: gateway-service
+        hostname: ${DOMAIN_NAME}
         build:
             context: ./GatewayService
         image: schi11er/tt_gateway-service:latest
@@ -188,10 +196,11 @@ services:
         environment:
             - domain.url=${DOMAIN_URL}
         volumes:
-            - ./volumes/logs/:/var/log/
+            - ./volumes/logs:/var/log
 
     admin-server:
         container_name: admin-server
+        hostname: ${DOMAIN_NAME}
         build:
             context: ./AdminServer
         image: schi11er/tt_admin-server:latest
@@ -205,8 +214,37 @@ services:
         environment:
             - domain.url=${DOMAIN_URL}
         volumes:
-            - ./volumes/logs/:/var/log/
-        
+            - ./volumes/logs:/var/log
+   
+    dashboard-service:
+        container_name: dashboard-service
+        hostname: ${DOMAIN_NAME}
+        build:
+            context: ./DashboardService
+        image: schi11er/tt_dashboard-service:latest
+        restart: unless-stopped
+        ports:
+            - 7205:7205
+        networks:
+            - terraintwin_microservices
+        depends_on:
+            - configserver
+            - eurekaserver
+        healthcheck:
+            test: wget --spider http://localhost:7205/actuator/health || exit 1
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 20s
+        environment:
+            - domain.url=${DOMAIN_URL}
+            - postgres.url=${POSTGRES_URL}
+            - postgres.database.name=${POSTGRES_DATABASE}
+            - postgres.database.username=${POSTGRES_DATABASE_USERNAME}
+            - postgres.database.password=${POSTGRES_DATABASE_PASSWORD}
+        volumes:
+            - ./volumes/logs:/var/log
+
 #     keycloak:
 #         image: jboss/keycloak:10.0.2
 #         container_name: keycloak_security

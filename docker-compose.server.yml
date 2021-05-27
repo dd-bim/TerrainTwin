@@ -11,12 +11,15 @@ services:
             - terraintwin_microservices
         volumes:
             - ./volumes/configs:/var/lib/centralProperties
+            - ./volumes/logs/:/var/log/
         healthcheck:
             test: wget --spider http://localhost:8888/actuator/health || exit 1
             interval: 30s
             timeout: 5s
             retries: 5
             start_period: 10s
+        environment:
+            - domain.url=${DOMAIN_URL}
 
     eurekaserver:
         container_name: eurekaserver
@@ -34,6 +37,10 @@ services:
             timeout: 5s
             retries: 5
             start_period: 10s
+        environment:
+            - domain.url=${DOMAIN_URL}
+        volumes:
+            - ./volumes/logs/:/var/log/
 
     minio-upload-service:
         container_name: minio-upload-service
@@ -58,6 +65,8 @@ services:
             - minio.port=${MINIO_PORT}
             - minio.access_key=${MINIO_ACCESS_KEY}
             - minio.secret_key=${MINIO_SECRET_KEY}
+        volumes:
+            - ./volumes/logs/:/var/log/
 
             
     graphdb-import-service:
@@ -86,6 +95,8 @@ services:
             - graphdb.url=${GRAPHDB_URL}
             - graphdb.username=${GRAPHDB_USERNAME}
             - graphdb.password=${GRAPHDB_PASSWORD}
+        volumes:
+            - ./volumes/logs/:/var/log/
 
     postgres-import-service:
         container_name: postgres-import-service
@@ -114,6 +125,8 @@ services:
             - postgres.database.name=${POSTGRES_DATABASE}
             - postgres.database.username=${POSTGRES_DATABASE_USERNAME}
             - postgres.database.password=${POSTGRES_DATABASE_PASSWORD}
+        volumes:
+            - ./volumes/logs/:/var/log/
 
     csv2rdf-converter-service:
         container_name: csv2rdf-converter-service
@@ -138,6 +151,8 @@ services:
             - minio.port=${MINIO_PORT}
             - minio.access_key=${MINIO_ACCESS_KEY}
             - minio.secret_key=${MINIO_SECRET_KEY}
+        volumes:
+            - ./volumes/logs/:/var/log/
 
     gateway-service:
         container_name: gateway-service
@@ -156,6 +171,52 @@ services:
             timeout: 5s
             retries: 5
             start_period: 10s
+        environment:
+            - domain.url=${DOMAIN_URL}
+        volumes:
+            - ./volumes/logs/:/var/log/
+
+    admin-server:
+        container_name: admin-server
+        image: schi11er/tt_admin-server:latest
+        restart: unless-stopped
+        ports:
+            - 9092:9092
+        depends_on: 
+            - eurekaserver
+        networks:
+            - terraintwin_microservices
+        environment:
+            - domain.url=${DOMAIN_URL}
+        volumes:
+            - ./volumes/logs/:/var/log/
+
+    dashboard-service:
+        container_name: dashboard-service
+        image: schi11er/tt_dashboard-service:latest
+        restart: unless-stopped
+        ports:
+            - 7205:7205
+        networks:
+            - terraintwin_microservices
+        depends_on:
+            - configserver
+            - eurekaserver
+        healthcheck:
+            test: wget --spider http://localhost:7205/actuator/health || exit 1
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 20s
+        environment:
+            - domain.url=${DOMAIN_URL}
+            - postgres.url=${POSTGRES_URL}
+            - postgres.database.name=${POSTGRES_DATABASE}
+            - postgres.database.username=${POSTGRES_DATABASE_USERNAME}
+            - postgres.database.password=${POSTGRES_DATABASE_PASSWORD}
+        volumes:
+            - ./volumes/logs:/var/log
+
 
 networks:
     terraintwin_microservices:

@@ -1,0 +1,11 @@
+spring:
+    application:
+        name: dashboard-service
+    profiles:
+        active: dev
+    cloud:
+        config:
+            uri: http://configserver:8888
+            username: configserver
+            password: s3cr3tconfigs
+            fail-fast: true
