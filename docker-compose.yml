@@ -76,6 +76,9 @@ services:
             - minio.secret_key=${MINIO_SECRET_KEY}
         volumes:
             - ./volumes/logs:/var/log
+        # deploy:
+        #     mode: replicated
+        #     replicas: 2
 
             
     graphdb-import-service:

@@ -1,0 +1,14 @@
+.vscode
+.git
+.gitignore
+.env
+.env.example
+.mvn
+
+*.yml
+*.md
+
+/target
+
+mvnw
+mvnw.cmd
