@@ -11,3 +11,8 @@ springdoc:
 logging:
     file:
         name: /var/log/csv2rdf-converter-service.log
+
+management:
+    endpoint:
+        logfile:
+            external-file: /var/log/csv2rdf-converter-service.log

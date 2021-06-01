@@ -9,4 +9,3 @@ spring:
             username: configserver
             password: s3cr3tconfigs
             fail-fast: true
-            

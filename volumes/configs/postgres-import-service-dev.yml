@@ -47,4 +47,7 @@ javax:
     persistence:
         create-database-schemas: true
 
-
+management:
+    endpoint:
+        logfile:
+            external-file: /var/log/postgres-import-service.log

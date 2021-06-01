@@ -38,3 +38,8 @@ springdoc:
 logging:
     file:
         name: /var/log/gateway-service.log
+
+management:
+    endpoint:
+        logfile:
+            external-file: /var/log/gateway-service.log
