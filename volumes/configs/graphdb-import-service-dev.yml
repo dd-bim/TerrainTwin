@@ -16,3 +16,6 @@ management:
     endpoint:
         logfile:
             external-file: /var/log/graphdb-import-service.log
+    health:
+        neo4j:
+            enabled: false

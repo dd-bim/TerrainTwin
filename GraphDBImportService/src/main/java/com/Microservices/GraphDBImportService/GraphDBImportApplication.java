@@ -3,6 +3,7 @@ package com.Microservices.GraphDBImportService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.solr.SolrAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -15,7 +16,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.servers.Server;
 
 @EnableDiscoveryClient
-@SpringBootApplication
+@SpringBootApplication(exclude={SolrAutoConfiguration.class})
 @OpenAPIDefinition(info = @Info(title = "GraphDBImport API", description = "Documentation", version = "v1.0", license = @License(name = "Apache 2.0", url = "http://www.apache.org/licenses/")))
 public class GraphDBImportApplication implements WebMvcConfigurer{
 

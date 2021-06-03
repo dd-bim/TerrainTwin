@@ -81,38 +81,39 @@ services:
         #     replicas: 2
 
             
-    # graphdb-import-service:
-    #     container_name: graphdb-import-service
-    #     # hostname: ${DOMAIN_NAME}
-    #     build:
-    #         context: ./GraphDBImportService
-    #     image: schi11er/tt_graphdb-import-service:latest
-    #     restart: unless-stopped
-    #     ports:
-    #         - 7201:7201
-    #     networks:
-    #         - terraintwin_microservices
-    #     depends_on:
-    #         - configserver
-    #         - eurekaserver
-    #         # - admin-server
-    #     # healthcheck:
-    #     #     test: wget --spider http://localhost:7201/actuator/health || exit 1
-    #     #     interval: 30s
-    #     #     timeout: 5s
-    #     #     retries: 5
-    #     #     start_period: 20s
-    #     environment:
-    #         - domain.url=${DOMAIN_URL}
-    #         - minio.url=${MINIO_URL}
-    #         - minio.port=${MINIO_PORT}
-    #         - minio.access_key=${MINIO_ACCESS_KEY}
-    #         - minio.secret_key=${MINIO_SECRET_KEY}
-    #         - graphdb.url=${GRAPHDB_URL}
-    #         - graphdb.username=${GRAPHDB_USERNAME}
-    #         - graphdb.password=${GRAPHDB_PASSWORD}
-    #     volumes:
-    #         - ./volumes/logs:/var/log
+    graphdb-import-service:
+        container_name: graphdb-import-service
+        # hostname: ${DOMAIN_NAME}
+        build:
+            context: ./GraphDBImportService
+        image: schi11er/tt_graphdb-import-service:latest
+        restart: unless-stopped
+        ports:
+            - 7201:7201
+        networks:
+            - terraintwin_microservices
+        depends_on:
+            - configserver
+            - eurekaserver
+            # - admin-server
+        healthcheck:
+            test: wget --spider http://localhost:7201/actuator/health || exit 1
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 20s
+        environment:
+            - domain.url=${DOMAIN_URL}
+            - minio.url=${MINIO_URL}
+            - minio.port=${MINIO_PORT}
+            - minio.access_key=${MINIO_ACCESS_KEY}
+            - minio.secret_key=${MINIO_SECRET_KEY}
+            - graphdb.url=${GRAPHDB_URL}
+            - graphdb.username=${GRAPHDB_USERNAME}
+            - graphdb.password=${GRAPHDB_PASSWORD}
+            # - http_proxy=http://www-cache.htw-dresden.de:3128
+        volumes:
+            - ./volumes/logs:/var/log
 
     postgres-import-service:
         container_name: postgres-import-service
@@ -250,38 +251,42 @@ services:
             - ./volumes/logs:/var/log
 
 #     keycloak:
-#         image: jboss/keycloak:10.0.2
+#         image: jboss/keycloak:13.0.1
 #         container_name: keycloak_security
 #         restart: on-failure
 #         environment:
 #             KEYCLOAK_USER: admin
 #             KEYCLOAK_PASSWORD: admin
-#             DB_VENDOR: POSTGRES
+#             DB_VENDOR: postgres
 #             DB_ADDR: postgres
 #             DB_DATABASE: keycloak
 #             DB_USER: keycloak
-#             DB_SCHEMA: public
+#             # DB_SCHEMA: public
 #             DB_PASSWORD: password
 #         ports:
-#             - 8090:8090
+#             - 9095:9095
 #         volumes:
-#             - ./volumes/keycloak-server/realm-export.json:/tmp/keycloak/config/realm-export.json
+#             - ./volumes/keycloak-server:/tmp/keycloak/config
 #         command:
-#             - "-b"
-#             - "0.0.0.0"
-#             - "-Djboss.socket.binding.port-offset=10"
+# #             - "-b"
+# #             - "0.0.0.0"
+#             - "-Djboss.socket.binding.port-offset=1015"
+#         networks:
+#             - terraintwin_microservices
 #         depends_on: 
 #             - postgres
 
 #     postgres:
-#         image: postgres
+#         image: postgres:13.2
 #         volumes:
-#             - postgres_data:/var/lib/postgresql/data
+#             - ./volumes/postgres_data:/var/lib/postgresql/data
 #         restart: always
 #         environment:
 #             POSTGRES_DB: keycloak
 #             POSTGRES_USER: keycloak
 #             POSTGRES_PASSWORD: password
+#         networks:
+#             - terraintwin_microservices
 
 # volumes:
 #     postgres_data:
