@@ -16,6 +16,13 @@ import com.Microservices.PostgresImportService.schemas.Point2D;
 import com.Microservices.PostgresImportService.schemas.Point3D;
 import com.Microservices.PostgresImportService.schemas.Polygon2D;
 import com.Microservices.PostgresImportService.schemas.TIN;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.fluent.Request;
+import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,14 +51,18 @@ public class TextReader {
     @Autowired
     TINRepository tinRepo;
 
+
+    
     Logger log = LoggerFactory.getLogger(TextReader.class);
 
     // Imports WKT data from CSV and writes them into a database
-    public String importWKT(InputStream stream) throws NumberFormatException, IOException {
+    public String importWKT(InputStream stream, String path, String filename, String graphdbRepo) throws NumberFormatException, IOException {
         log.info("Import WKT from CSV/TXT");
         CSVReader reader = new CSVReader(new InputStreamReader(stream), ',', '"', 1); // seperator sollte variabel sein
         String[] nextLine;
         int pointCount = 0, lineCount = 0, polygonCount = 0, tinCount = 0, notProcessed = 0;
+
+        
 
         while ((nextLine = reader.readNext()) != null) {
             if (nextLine != null && !nextLine[0].isEmpty()) {
@@ -69,6 +80,8 @@ public class TextReader {
                             + point.getGeometry() + "'");
                     pointCount++;
 
+                    graphdbImport(point.getP_id(), point.getId(), "3DPoint", "point_3d",filename,  path, graphdbRepo);
+
                     // 2D point
                 } else if (nextLine[1].toUpperCase().contains("POINT")) {
                     Point2D point;
@@ -82,6 +95,8 @@ public class TextReader {
                     log.info("'ID: " + point.getId() + ", point_id: " + point.getP_id() + ", geometry: "
                             + point.getGeometry() + "'");
                     pointCount++;
+
+                    graphdbImport(point.getP_id(), point.getId(), "2DPoint", "point_2d",filename,  path, graphdbRepo);
 
                     // 3D line
                 } else if (nextLine[1].toUpperCase().contains("LINESTRINGZ")
@@ -98,6 +113,8 @@ public class TextReader {
                             + line.getGeometry() + "'");
                     lineCount++;
 
+                    graphdbImport(line.getL_id(), line.getId(), "3DLine", "line_3d",filename,  path, graphdbRepo);
+
                     // 2D line
                 } else if (nextLine[1].toUpperCase().contains("LINESTRING")) {
                     Line2D line;
@@ -111,6 +128,8 @@ public class TextReader {
                     log.info("'ID: " + line.getId() + ", line_id: " + line.getL_id() + ", geometry: "
                             + line.getGeometry() + "'");
                     lineCount++;
+
+                    graphdbImport(line.getL_id(), line.getId(), "2DLine", "line_2d",filename,  path, graphdbRepo);
 
                     // 2D polygon
                 } else if (nextLine[1].toUpperCase().contains("POLYGON")) {
@@ -126,6 +145,8 @@ public class TextReader {
                             + polygon.getGeometry() + "'");
                     polygonCount++;
 
+                    graphdbImport(polygon.getSurfaceID(), polygon.getId(), "2DPolygon", "polygon_2d",filename,  path, graphdbRepo);
+
                     // 3D TIN
                 } else if (nextLine[1].toUpperCase().contains("TIN")) {
 
@@ -138,8 +159,11 @@ public class TextReader {
                     tinRepo.save(tin);
                     log.info("'ID: " + tin.getTin_id() + ", geometry: " + tin.getGeometry() + "'");
                     tinCount++;
+
+                    graphdbImport(tin.getTin_id(), tin.getTin_id(), "TIN", "dtm_tin",filename,  path, graphdbRepo);
+                    
                 } else {
-                    log.error("Could not process " +nextLine[0] + ", " + nextLine[1]);
+                    log.error("Could not process " + nextLine[0] + ", " + nextLine[1]);
                     notProcessed++;
                 }
             }
@@ -148,4 +172,33 @@ public class TextReader {
         return pointCount + " Points, " + lineCount + " Lines, " + polygonCount + " Polygons and " + tinCount
                 + " TINs have been imported. \n" + notProcessed + " geometries have been not imported.";
     }
+
+    HttpResponse postRequestGraphDBImport(String json) throws ClientProtocolException, IOException {
+        return Request.Post("http://host.docker.internal:7201/graphdbimport/postgresinfos")
+                // .viaProxy(new HttpHost("myproxy", 8080))
+                .bodyString(json, ContentType.APPLICATION_JSON).execute().returnResponse();
+    }
+
+    public void graphdbImport(int originId, int id, String type, String table, String filename, String path,
+            String graphdbRepo) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode infos = mapper.createObjectNode();
+            String postgresUrl = "http://localhost:7203/postgres/" + table + "/id/" + id;
+            infos.put("originId", originId).put("id", id).put("url", postgresUrl).put("type", type)
+                    .put("filename", filename).put("path", path).put("graphdbRepo", graphdbRepo);
+            String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(infos);
+
+            HttpResponse response = postRequestGraphDBImport(json);
+
+            System.out.println(response.toString());
+            if (response.getStatusLine().getStatusCode() == 200) {
+                log.info("Import in GraphDB successfully finished.");
+            }
+
+        } catch (Exception e) {
+            log.error("HttpRequest failed. \n " + e.getMessage());
+        }
+    }
+
 }

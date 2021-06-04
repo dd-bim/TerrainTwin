@@ -11,6 +11,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import io.minio.GetObjectArgs;
@@ -33,10 +34,13 @@ public class CheckFiles {
     @Autowired
     LandXMLReader readTin;
 
+    @Value("${minio.url}")
+    private String url;
+    
     Logger log = LoggerFactory.getLogger(CheckFiles.class);
 
     // get files of spezified bucket,
-    public String getFiles(String bucket) throws Exception {
+    public String getFiles(String bucket, String graphdbRepo) throws Exception {
         String results = "";
         String filename = "";
         MinioClient client = connection.connection();
@@ -46,6 +50,7 @@ public class CheckFiles {
             Iterable<Result<Item>> objects = client.listObjects(ListObjectsArgs.builder().bucket(bucket).build());
             for (Result<Item> result : objects) {
                 filename = result.get().objectName();
+                String path = url + "/" + bucket;
                 String extension = FilenameUtils.getExtension(filename);
 
                 // LandXML File
@@ -71,7 +76,7 @@ public class CheckFiles {
                             .getObject(GetObjectArgs.builder().bucket(bucket).object(filename).build())) {
 
                         // Insert surfaces into database
-                        results += "\n" + filename + ": " + readwrite.importWKT(TXTStream);
+                        results += "\n" + filename + ": " + readwrite.importWKT(TXTStream, path, filename, graphdbRepo);
 
                     } catch (IOException e) {
                         log.error(e.getMessage());

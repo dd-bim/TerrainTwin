@@ -82,6 +82,8 @@ services:
 
             
     graphdb-import-service:
+        profiles: 
+            - import
         container_name: graphdb-import-service
         # hostname: ${DOMAIN_NAME}
         build:
@@ -116,6 +118,8 @@ services:
             - ./volumes/logs:/var/log
 
     postgres-import-service:
+        profiles: 
+            - import
         container_name: postgres-import-service
         # hostname: ${DOMAIN_NAME}
         build:

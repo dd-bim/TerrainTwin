@@ -24,11 +24,11 @@ public class ImportRestController {
   Logger log = LoggerFactory.getLogger(ImportRestController.class);
 
   // get folder and use them
-  @GetMapping("/postgresimport/bucket/{bucket}")
-  public String send(@PathVariable String bucket) throws Exception {
+  @GetMapping("/postgresimport/bucket/{bucket}/graphDbRepo/{graphDbRepo}")
+  public String send(@PathVariable String bucket, @PathVariable String graphDbRepo) throws Exception {
 
     log.info("Start import of geometries into postgres database");
-    String results = minio.getFiles(bucket);
+    String results = minio.getFiles(bucket, graphDbRepo);
 
     return results;
   }

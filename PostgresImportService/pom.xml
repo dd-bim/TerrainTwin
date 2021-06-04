@@ -109,6 +109,17 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 	  </dependency>
+
+	  <dependency>
+		<groupId>org.apache.httpcomponents</groupId>
+		<artifactId>fluent-hc</artifactId>
+		<version>4.5.13</version>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.clerezza.ext</groupId>
+		<artifactId>org.json.simple</artifactId>
+		<version>0.4</version>
+	</dependency>
 		
 	</dependencies>
 	<dependencyManagement>

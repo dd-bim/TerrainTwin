@@ -31,11 +31,11 @@ public class ImportController {
   // get folder and use them
   @PostMapping("/postgresimport")
   public String send(
-      @RequestParam(name = "folder", required = false, defaultValue = "kein Ordner gewählt") String folder, Model model)
+      @RequestParam(name = "folder", required = false, defaultValue = "kein Ordner gewählt") String folder, String repo, Model model)
       throws Exception {
 
     log.info("Start import of geometries into postgres database");
-    String results = minio.getFiles(folder);
+    String results = minio.getFiles(folder, repo);
     model.addAttribute("erg", results);
 
     return "index";

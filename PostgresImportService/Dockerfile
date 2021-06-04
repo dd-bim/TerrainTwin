@@ -2,6 +2,7 @@ FROM mvn-build:base as mvn-build
 WORKDIR /app/build
 COPY ./src ./src
 COPY pom.xml .
+RUN mvn dependency:resolve
 RUN mvn package -Dmaven.test.skip=true
 
 FROM alpine-jdk:base
