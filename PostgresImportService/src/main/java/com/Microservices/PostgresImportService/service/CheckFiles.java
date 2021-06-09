@@ -50,7 +50,7 @@ public class CheckFiles {
             Iterable<Result<Item>> objects = client.listObjects(ListObjectsArgs.builder().bucket(bucket).build());
             for (Result<Item> result : objects) {
                 filename = result.get().objectName();
-                String path = url + "/" + bucket;
+                String path = url + "/minio/" + bucket;
                 String extension = FilenameUtils.getExtension(filename);
 
                 // LandXML File
@@ -61,7 +61,7 @@ public class CheckFiles {
                             .getObject(GetObjectArgs.builder().bucket(bucket).object(filename).build())) {
 
                         // Insert TIN and Breaklines into database
-                        results += "\n" + filename + ": " + readTin.importTIN(XMLStream);
+                        results += "\n" + filename + ": " + readTin.importTIN(XMLStream, path, filename, graphdbRepo);
 
                     } catch (IOException e) {
                         log.error(e.getMessage());

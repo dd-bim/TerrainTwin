@@ -38,27 +38,31 @@ public class LandXMLReader {
     HashMap<Integer, String> cgpoints = new HashMap<Integer, String>();
     ArrayList<int[]> faces = new ArrayList<int[]>();
 
-    public String importTIN(InputStream stream) throws Exception {
+    public String importTIN(InputStream stream, String path, String filename, String graphdbRepo) throws Exception {
 
         int srid = 25832; // muss noch variabel gestaltet werden
         int blCount = 0;
         readFile(stream);
+        GraphDBImport graphdb = new GraphDBImport();
 
         TIN tin = new TIN("SRID=" + srid + ";" + buildWktTIN());
         tinRepository.save(tin);
         log.info("'ID: " + tin.getTin_id() + ", WKT: " + tin.getGeometry() + "'");
+        graphdb.graphdbImport(tin.getTin_id(), tin.getTin_id(), "TIN", "dtm_tin",filename, path, graphdbRepo);
 
         for (int i = 0; i < breaklines.size(); i++) {
             Breaklines bl = new Breaklines(tin.getTin_id(), "SRID=" + srid + ";" + getBreaklines(i));
             blRepository.save(bl);
             blCount++;
             log.info("'ID: " + bl.getBl_id() + ", WKT: " + bl.getGeometry() + ", tin_id: " + bl.getTin_id() + "'");
+            graphdb.graphdbImport(bl.getBl_id(), bl.getBl_id(), "Breakline", "dtm_breaklines",filename, path, graphdbRepo);
         }
 
         cgpoints.forEach((key, value) -> {
             SpecialPoints spPoint = new SpecialPoints(key, tin.getTin_id() ,
             "SRID=" + srid + ";POINTZ (" + value + ")");
             spRepository.save(spPoint);
+            graphdb.graphdbImport(spPoint.getId(), spPoint.getId(), "SpecialPoint", "dtm_specialpoints",filename, path, graphdbRepo);
         });
 
         return "TIN with " + blCount + " Breaklines and " + cgpoints.size() + " special points has been imported.";

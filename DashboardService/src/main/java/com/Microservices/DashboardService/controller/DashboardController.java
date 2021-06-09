@@ -7,6 +7,7 @@ import com.Microservices.DashboardService.repositories.Line3DRepository;
 import com.Microservices.DashboardService.repositories.Point2DRepository;
 import com.Microservices.DashboardService.repositories.Point3DRepository;
 import com.Microservices.DashboardService.repositories.Polygon2DRepository;
+import com.Microservices.DashboardService.repositories.Polygon3DRepository;
 import com.Microservices.DashboardService.repositories.SolidRepository;
 import com.Microservices.DashboardService.repositories.SpecialPointsRepository;
 import com.Microservices.DashboardService.repositories.TINRepository;
@@ -38,6 +39,9 @@ public class DashboardController {
 
   @Autowired
   Polygon2DRepository poly2DRepository;
+
+  @Autowired
+  Polygon3DRepository poly3DRepository;
 
   @Autowired
   SolidRepository solidRepository;
@@ -72,7 +76,11 @@ public class DashboardController {
     model.addAttribute("line2d", line2d);
     model.addAttribute("line3d", line3d);
 
-    model.addAttribute("polyCount", poly2DRepository.count());
+    int poly2d = (int) poly2DRepository.count();
+    int poly3d = (int) poly3DRepository.count();
+    model.addAttribute("polyCount", poly2d + poly3d);
+    model.addAttribute("poly2d", poly2d);
+    model.addAttribute("poly3d", poly3d);
 
     model.addAttribute("solidCount", solidRepository.count());
 
@@ -83,8 +91,6 @@ public class DashboardController {
     model.addAttribute("embCount", embRepository.count());
 
     model.addAttribute("sPntCount", sPntRepository.count());
-
-    // model.addAttribute("sPntCount", Math.random());
 
     Integer[][] pntDups1 = pnt2DRepository.getPnt2DDuplicates();
     int pnt1 = pntDups1.length;
@@ -100,7 +106,6 @@ public class DashboardController {
       pntDups[pnt1 - 1 + p2][0] = pntDups2[p2][0];
       pntDups[pnt1 - 1 + p2][1] = pntDups2[p2][1];
     }
-
     model.addAttribute("pntDups", pntDups);
 
     Integer[][] lineDups1 = line2DRepository.getLine2DDuplicates();
@@ -119,7 +124,21 @@ public class DashboardController {
     }
     model.addAttribute("lineDups", lineDups);
 
-    model.addAttribute("polyDups", poly2DRepository.getPoly2DDuplicates());
+    Integer[][] polyDups1 = poly2DRepository.getPoly2DDuplicates();
+    int poly1 = polyDups1.length;
+    Integer[][] polyDups2 = poly3DRepository.getPoly3DDuplicates();
+    int poly2 = polyDups2.length;
+
+    Integer[][] polyDups = new Integer[poly1 + poly2][2];
+    for (int l1 = 0; l1 < poly1; l1++) {
+      polyDups[l1][0] = polyDups1[l1][0];
+      polyDups[l1][1] = polyDups1[l1][1];
+    }
+    for (int l2 = 0; l2 < poly2; l2++) {
+      polyDups[poly1 - 1 + l2][0] = polyDups2[l2][0];
+      polyDups[poly1 - 1 + l2][1] = polyDups2[l2][1];
+    }
+    model.addAttribute("polyDups", polyDups);
 
     model.addAttribute("solidDups", solidRepository.getSolidDuplicates());
 

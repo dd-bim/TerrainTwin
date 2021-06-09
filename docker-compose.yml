@@ -113,9 +113,9 @@ services:
             - graphdb.url=${GRAPHDB_URL}
             - graphdb.username=${GRAPHDB_USERNAME}
             - graphdb.password=${GRAPHDB_PASSWORD}
-            # - http_proxy=http://www-cache.htw-dresden.de:3128
         volumes:
             - ./volumes/logs:/var/log
+            # - ./volumes/graphdb:/var
 
     postgres-import-service:
         profiles: 

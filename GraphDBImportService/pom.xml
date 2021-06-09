@@ -111,6 +111,7 @@
 			<artifactId>minio</artifactId>
 			<version>8.0.3</version>
 		</dependency>
+		
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

@@ -179,7 +179,7 @@ public class ImportService {
         try {
             RepositoryConnection db = dbconnection.connection(infos.getGraphdbRepo());
 
-            String namespace = infos.getPath() + "/postgres/";
+            String namespace = domain + "/postgres/";
 
             // create rdf model from data
             ModelBuilder builder = new ModelBuilder();
@@ -211,4 +211,6 @@ public class ImportService {
         }
         return results;
     }
+
+    
 }

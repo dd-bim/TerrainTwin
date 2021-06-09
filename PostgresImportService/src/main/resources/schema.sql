@@ -10,6 +10,8 @@ create table if not exists terraintwinv2.line_3d (id int PRIMARY KEY , line_id i
 
 create table if not exists terraintwinv2.polygon_2d (id int PRIMARY KEY , polygon_id int, geometry geometry(POLYGON,25832));
 
+create table if not exists terraintwinv2.polygon_3d (id int PRIMARY KEY , polygon_id int, geometry geometry(POLYGONZ,25832));
+
 create table if not exists terraintwinv2.solid (id int PRIMARY KEY , solid_id int, geometry geometry(POLYHEDRALSURFACEZ,25832));
 	
 create table if not exists terraintwinv2.dtm_tin (tin_id int PRIMARY KEY , geometry geometry(TINZ,25832));	
