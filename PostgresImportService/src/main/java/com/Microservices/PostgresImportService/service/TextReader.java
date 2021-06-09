@@ -9,20 +9,16 @@ import com.Microservices.PostgresImportService.repositories.Line3DRepository;
 import com.Microservices.PostgresImportService.repositories.Point2DRepository;
 import com.Microservices.PostgresImportService.repositories.Point3DRepository;
 import com.Microservices.PostgresImportService.repositories.Polygon2DRepository;
+import com.Microservices.PostgresImportService.repositories.Polygon3DRepository;
 import com.Microservices.PostgresImportService.repositories.TINRepository;
 import com.Microservices.PostgresImportService.schemas.Line2D;
 import com.Microservices.PostgresImportService.schemas.Line3D;
 import com.Microservices.PostgresImportService.schemas.Point2D;
 import com.Microservices.PostgresImportService.schemas.Point3D;
 import com.Microservices.PostgresImportService.schemas.Polygon2D;
+import com.Microservices.PostgresImportService.schemas.Polygon3D;
 import com.Microservices.PostgresImportService.schemas.TIN;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +28,6 @@ import au.com.bytecode.opencsv.CSVReader;
 
 @Service
 public class TextReader {
-
-    @Autowired
-    Polygon2DRepository polygon2DRepo;
 
     @Autowired
     Point2DRepository point2DRepo;
@@ -49,20 +42,25 @@ public class TextReader {
     Line3DRepository line3DRepo;
 
     @Autowired
+    Polygon2DRepository polygon2DRepo;
+
+    @Autowired
+    Polygon3DRepository polygon3DRepo;
+
+    @Autowired
     TINRepository tinRepo;
 
-
-    
     Logger log = LoggerFactory.getLogger(TextReader.class);
 
     // Imports WKT data from CSV and writes them into a database
-    public String importWKT(InputStream stream, String path, String filename, String graphdbRepo) throws NumberFormatException, IOException {
+    public String importWKT(InputStream stream, String path, String filename, String graphdbRepo)
+            throws NumberFormatException, IOException {
         log.info("Import WKT from CSV/TXT");
         CSVReader reader = new CSVReader(new InputStreamReader(stream), ',', '"', 1); // seperator sollte variabel sein
         String[] nextLine;
         int pointCount = 0, lineCount = 0, polygonCount = 0, tinCount = 0, notProcessed = 0;
-
-        
+        GraphDBImport graphdb = new GraphDBImport();
+        String gdbConn = "";
 
         while ((nextLine = reader.readNext()) != null) {
             if (nextLine != null && !nextLine[0].isEmpty()) {
@@ -80,7 +78,8 @@ public class TextReader {
                             + point.getGeometry() + "'");
                     pointCount++;
 
-                    graphdbImport(point.getP_id(), point.getId(), "3DPoint", "point_3d",filename,  path, graphdbRepo);
+                    gdbConn = graphdb.graphdbImport(point.getP_id(), point.getId(), "3DPoint", "point_3d", filename, path,
+                            graphdbRepo);
 
                     // 2D point
                 } else if (nextLine[1].toUpperCase().contains("POINT")) {
@@ -96,7 +95,8 @@ public class TextReader {
                             + point.getGeometry() + "'");
                     pointCount++;
 
-                    graphdbImport(point.getP_id(), point.getId(), "2DPoint", "point_2d",filename,  path, graphdbRepo);
+                    gdbConn = graphdb.graphdbImport(point.getP_id(), point.getId(), "2DPoint", "point_2d", filename, path,
+                            graphdbRepo);
 
                     // 3D line
                 } else if (nextLine[1].toUpperCase().contains("LINESTRINGZ")
@@ -113,7 +113,8 @@ public class TextReader {
                             + line.getGeometry() + "'");
                     lineCount++;
 
-                    graphdbImport(line.getL_id(), line.getId(), "3DLine", "line_3d",filename,  path, graphdbRepo);
+                    gdbConn = graphdb.graphdbImport(line.getL_id(), line.getId(), "3DLine", "line_3d", filename, path,
+                            graphdbRepo);
 
                     // 2D line
                 } else if (nextLine[1].toUpperCase().contains("LINESTRING")) {
@@ -129,7 +130,25 @@ public class TextReader {
                             + line.getGeometry() + "'");
                     lineCount++;
 
-                    graphdbImport(line.getL_id(), line.getId(), "2DLine", "line_2d",filename,  path, graphdbRepo);
+                    gdbConn = graphdb.graphdbImport(line.getL_id(), line.getId(), "2DLine", "line_2d", filename, path,
+                            graphdbRepo);
+
+                    // 3D polygon
+                } else if (nextLine[1].toUpperCase().contains("POLYGONZ") || nextLine[1].toUpperCase().contains("POLYGON Z")) {
+                    Polygon3D polygon;
+                    if (nextLine[1].toUpperCase().startsWith("SRID")) {
+                        polygon = new Polygon3D(Integer.parseInt(nextLine[0].trim()), nextLine[1]);
+                    } else {
+                        polygon = new Polygon3D(Integer.parseInt(nextLine[0].trim()),
+                                "SRID=" + Integer.parseInt(nextLine[2].trim()) + ";" + nextLine[1]);
+                    }
+                    polygon3DRepo.save(polygon);
+                    log.info("'ID: " + polygon.getId() + ", polygon_id: " + polygon.getSurfaceID() + ", geometry: "
+                            + polygon.getGeometry() + "'");
+                    polygonCount++;
+
+                    gdbConn = graphdb.graphdbImport(polygon.getSurfaceID(), polygon.getId(), "3DPolygon", "polygon_3d", filename,
+                            path, graphdbRepo);
 
                     // 2D polygon
                 } else if (nextLine[1].toUpperCase().contains("POLYGON")) {
@@ -145,7 +164,9 @@ public class TextReader {
                             + polygon.getGeometry() + "'");
                     polygonCount++;
 
-                    graphdbImport(polygon.getSurfaceID(), polygon.getId(), "2DPolygon", "polygon_2d",filename,  path, graphdbRepo);
+                    gdbConn = graphdb.graphdbImport(polygon.getSurfaceID(), polygon.getId(), "2DPolygon", "polygon_2d", filename,
+                            path, graphdbRepo);
+
 
                     // 3D TIN
                 } else if (nextLine[1].toUpperCase().contains("TIN")) {
@@ -160,8 +181,9 @@ public class TextReader {
                     log.info("'ID: " + tin.getTin_id() + ", geometry: " + tin.getGeometry() + "'");
                     tinCount++;
 
-                    graphdbImport(tin.getTin_id(), tin.getTin_id(), "TIN", "dtm_tin",filename,  path, graphdbRepo);
-                    
+                    gdbConn = graphdb.graphdbImport(tin.getTin_id(), tin.getTin_id(), "TIN", "dtm_tin", filename, path,
+                            graphdbRepo);
+
                 } else {
                     log.error("Could not process " + nextLine[0] + ", " + nextLine[1]);
                     notProcessed++;
@@ -170,35 +192,7 @@ public class TextReader {
         }
         reader.close();
         return pointCount + " Points, " + lineCount + " Lines, " + polygonCount + " Polygons and " + tinCount
-                + " TINs have been imported. \n" + notProcessed + " geometries have been not imported.";
-    }
-
-    HttpResponse postRequestGraphDBImport(String json) throws ClientProtocolException, IOException {
-        return Request.Post("http://host.docker.internal:7201/graphdbimport/postgresinfos")
-                // .viaProxy(new HttpHost("myproxy", 8080))
-                .bodyString(json, ContentType.APPLICATION_JSON).execute().returnResponse();
-    }
-
-    public void graphdbImport(int originId, int id, String type, String table, String filename, String path,
-            String graphdbRepo) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            ObjectNode infos = mapper.createObjectNode();
-            String postgresUrl = "http://localhost:7203/postgres/" + table + "/id/" + id;
-            infos.put("originId", originId).put("id", id).put("url", postgresUrl).put("type", type)
-                    .put("filename", filename).put("path", path).put("graphdbRepo", graphdbRepo);
-            String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(infos);
-
-            HttpResponse response = postRequestGraphDBImport(json);
-
-            System.out.println(response.toString());
-            if (response.getStatusLine().getStatusCode() == 200) {
-                log.info("Import in GraphDB successfully finished.");
-            }
-
-        } catch (Exception e) {
-            log.error("HttpRequest failed. \n " + e.getMessage());
-        }
+                + " TINs have been imported. \n" + notProcessed + " geometries have been not imported.\n" + gdbConn;
     }
 
 }
