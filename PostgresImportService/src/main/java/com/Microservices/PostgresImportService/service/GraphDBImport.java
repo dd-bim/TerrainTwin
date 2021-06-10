@@ -1,6 +1,7 @@
 package com.Microservices.PostgresImportService.service;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -16,14 +17,14 @@ public class GraphDBImport {
 
     Logger log = LoggerFactory.getLogger(GraphDBImport.class);
 
-    public String graphdbImport(int originId, int id, String type, String table, String filename, String path,
+    public String graphdbImport(int originId, UUID id, String type, String table, String filename, String path,
             String graphdbRepo) {
                 String conn = "";
         try {
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode infos = mapper.createObjectNode();
             String postgresUrl = "http://localhost:7203/postgres/" + table + "/id/" + id;
-            infos.put("originId", originId).put("id", id).put("url", postgresUrl).put("type", type)
+            infos.put("originId", originId).put("id", id.toString()).put("url", postgresUrl).put("type", type)
                     .put("filename", filename).put("path", path).put("graphdbRepo", graphdbRepo);
             String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(infos);
 

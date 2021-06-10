@@ -1,9 +1,10 @@
 package com.Microservices.PostgresImportService.schemas;
 
+import java.util.UUID;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -24,11 +25,11 @@ public class Breaklines {
     private static Logger LOGGER = LoggerFactory.getLogger(Breaklines.class);
     
     @Id
-    @GeneratedValue(strategy= GenerationType.SEQUENCE)
-    private Integer bl_id;
+    @GeneratedValue
+    private UUID bl_id;
 
     @Column(nullable = false)
-    private Integer tin_id;
+    private UUID tin_id;
 
     @Column(nullable=false)
     private String geometry;
@@ -37,7 +38,7 @@ public class Breaklines {
 
     }
 
-    public Breaklines(Integer tin_id, String geometry){
+    public Breaklines(UUID tin_id, String geometry){
         LOGGER.debug("Creating a breakline");
         this.tin_id = tin_id;
         this.geometry = geometry;

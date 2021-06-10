@@ -1,6 +1,7 @@
 package com.Microservices.PostgresImportService.repositories;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.Microservices.PostgresImportService.schemas.Breaklines;
 
@@ -9,7 +10,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BreaklinesRepository extends CrudRepository<Breaklines, Integer> {
+public interface BreaklinesRepository extends CrudRepository<Breaklines, UUID> {
   
     @Query(value="select * from terraintwin.breaklines_rohdaten", nativeQuery = true )
     List<Breaklines> getBreaklines();

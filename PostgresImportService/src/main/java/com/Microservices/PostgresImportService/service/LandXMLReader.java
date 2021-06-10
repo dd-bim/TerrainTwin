@@ -48,21 +48,21 @@ public class LandXMLReader {
         TIN tin = new TIN("SRID=" + srid + ";" + buildWktTIN());
         tinRepository.save(tin);
         log.info("'ID: " + tin.getTin_id() + ", WKT: " + tin.getGeometry() + "'");
-        graphdb.graphdbImport(tin.getTin_id(), tin.getTin_id(), "TIN", "dtm_tin",filename, path, graphdbRepo);
+        graphdb.graphdbImport(-1, tin.getTin_id(), "TIN", "dtm_tin",filename, path, graphdbRepo);
 
         for (int i = 0; i < breaklines.size(); i++) {
             Breaklines bl = new Breaklines(tin.getTin_id(), "SRID=" + srid + ";" + getBreaklines(i));
             blRepository.save(bl);
             blCount++;
             log.info("'ID: " + bl.getBl_id() + ", WKT: " + bl.getGeometry() + ", tin_id: " + bl.getTin_id() + "'");
-            graphdb.graphdbImport(bl.getBl_id(), bl.getBl_id(), "Breakline", "dtm_breaklines",filename, path, graphdbRepo);
+            graphdb.graphdbImport(-1, bl.getBl_id(), "Breakline", "dtm_breaklines",filename, path, graphdbRepo);
         }
 
         cgpoints.forEach((key, value) -> {
             SpecialPoints spPoint = new SpecialPoints(key, tin.getTin_id() ,
             "SRID=" + srid + ";POINTZ (" + value + ")");
             spRepository.save(spPoint);
-            graphdb.graphdbImport(spPoint.getId(), spPoint.getId(), "SpecialPoint", "dtm_specialpoints",filename, path, graphdbRepo);
+            graphdb.graphdbImport(-1, spPoint.getId(), "SpecialPoint", "dtm_specialpoints",filename, path, graphdbRepo);
         });
 
         return "TIN with " + blCount + " Breaklines and " + cgpoints.size() + " special points has been imported.";

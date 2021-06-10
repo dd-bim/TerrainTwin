@@ -1,9 +1,10 @@
 package com.Microservices.PostgresImportService.schemas;
 
+import java.util.UUID;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -14,26 +15,26 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "point_3d", schema = "terraintwinv2")
-@SQLInsert(sql = "INSERT INTO terraintwinv2.point_3d (geometry, point_id, id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)" )
+@SQLInsert(sql = "INSERT INTO terraintwinv2.point_3d (geometry, point_id, id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)")
 @Getter
 @Setter
 public class Point3D {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.SEQUENCE)
-    private Integer id;
+    @GeneratedValue
+    private UUID id;
 
-    @Column(name="point_id", nullable = false)
+    @Column(name = "point_id", nullable = false)
     private Integer p_id;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String geometry;
 
-    protected Point3D(){
+    protected Point3D() {
 
     }
-    
-    public Point3D(int point_id, String geometry){
+
+    public Point3D(int point_id, String geometry) {
         this.p_id = point_id;
         this.geometry = geometry;
     }

@@ -10,6 +10,7 @@ import com.Microservices.PostgresImportService.repositories.Point2DRepository;
 import com.Microservices.PostgresImportService.repositories.Point3DRepository;
 import com.Microservices.PostgresImportService.repositories.Polygon2DRepository;
 import com.Microservices.PostgresImportService.repositories.Polygon3DRepository;
+import com.Microservices.PostgresImportService.repositories.SolidRepository;
 import com.Microservices.PostgresImportService.repositories.TINRepository;
 import com.Microservices.PostgresImportService.schemas.Line2D;
 import com.Microservices.PostgresImportService.schemas.Line3D;
@@ -17,6 +18,7 @@ import com.Microservices.PostgresImportService.schemas.Point2D;
 import com.Microservices.PostgresImportService.schemas.Point3D;
 import com.Microservices.PostgresImportService.schemas.Polygon2D;
 import com.Microservices.PostgresImportService.schemas.Polygon3D;
+import com.Microservices.PostgresImportService.schemas.Solid;
 import com.Microservices.PostgresImportService.schemas.TIN;
 
 import org.slf4j.Logger;
@@ -50,6 +52,9 @@ public class TextReader {
     @Autowired
     TINRepository tinRepo;
 
+    @Autowired
+    SolidRepository solidRepo;
+
     Logger log = LoggerFactory.getLogger(TextReader.class);
 
     // Imports WKT data from CSV and writes them into a database
@@ -58,7 +63,7 @@ public class TextReader {
         log.info("Import WKT from CSV/TXT");
         CSVReader reader = new CSVReader(new InputStreamReader(stream), ',', '"', 1); // seperator sollte variabel sein
         String[] nextLine;
-        int pointCount = 0, lineCount = 0, polygonCount = 0, tinCount = 0, notProcessed = 0;
+        int pointCount = 0, lineCount = 0, polygonCount = 0, solidCount = 0, tinCount = 0, notProcessed = 0;
         GraphDBImport graphdb = new GraphDBImport();
         String gdbConn = "";
 
@@ -167,7 +172,6 @@ public class TextReader {
                     gdbConn = graphdb.graphdbImport(polygon.getSurfaceID(), polygon.getId(), "2DPolygon", "polygon_2d", filename,
                             path, graphdbRepo);
 
-
                     // 3D TIN
                 } else if (nextLine[1].toUpperCase().contains("TIN")) {
 
@@ -181,8 +185,25 @@ public class TextReader {
                     log.info("'ID: " + tin.getTin_id() + ", geometry: " + tin.getGeometry() + "'");
                     tinCount++;
 
-                    gdbConn = graphdb.graphdbImport(tin.getTin_id(), tin.getTin_id(), "TIN", "dtm_tin", filename, path,
+                    gdbConn = graphdb.graphdbImport(-1, tin.getTin_id(), "TIN", "dtm_tin", filename, path,
                             graphdbRepo);
+
+                    // solid
+                } else if (nextLine[1].toUpperCase().contains("POLYHEDRALSURFACE")) {
+                    Solid solid;
+                    if (nextLine[1].toUpperCase().startsWith("SRID")) {
+                        solid = new Solid(Integer.parseInt(nextLine[0].trim()), nextLine[1]);
+                    } else {
+                        solid = new Solid(Integer.parseInt(nextLine[0].trim()),
+                                "SRID=" + Integer.parseInt(nextLine[2].trim()) + ";" + nextLine[1]);
+                    }
+                    solidRepo.save(solid);
+                    log.info("'ID: " + solid.getId() + ", solid_id: " + solid.getS_id() + ", geometry: "
+                            + solid.getGeometry() + "'");
+                    solidCount++;
+
+                    gdbConn = graphdb.graphdbImport(solid.getS_id(), solid.getId(), "Solid", "solid", filename,
+                            path, graphdbRepo);
 
                 } else {
                     log.error("Could not process " + nextLine[0] + ", " + nextLine[1]);
@@ -191,7 +212,7 @@ public class TextReader {
             }
         }
         reader.close();
-        return pointCount + " Points, " + lineCount + " Lines, " + polygonCount + " Polygons and " + tinCount
+        return pointCount + " Points, " + lineCount + " Lines, " + polygonCount + " Polygons," + solidCount + " Solids and " + tinCount
                 + " TINs have been imported. \n" + notProcessed + " geometries have been not imported.\n" + gdbConn;
     }
 
