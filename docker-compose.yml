@@ -147,9 +147,9 @@ services:
             - minio.secret_key=${MINIO_SECRET_KEY}
             - postgres.url=${POSTGRES_URL}
             - postgres.database.name=${POSTGRES_DATABASE}
-            - postgres.database.username=${POSTGRES_DATABASE_USERNAME}
-            - postgres.database.password=${POSTGRES_DATABASE_PASSWORD}
-            - project.epsg=${PROJECT_EPSG}
+            - postgres.database.username=${POSTGRES_USERNAME}
+            - postgres.database.password=${POSTGRES_PASSWORD}
+            # - project.epsg=${PROJECT_EPSG}
         volumes:
             - ./volumes/logs:/var/log
 
@@ -249,8 +249,8 @@ services:
             - domain.url=${DOMAIN_URL}
             - postgres.url=${POSTGRES_URL}
             - postgres.database.name=${POSTGRES_DATABASE}
-            - postgres.database.username=${POSTGRES_DATABASE_USERNAME}
-            - postgres.database.password=${POSTGRES_DATABASE_PASSWORD}
+            - postgres.database.username=${POSTGRES_USERNAME}
+            - postgres.database.password=${POSTGRES_PASSWORD}
         volumes:
             - ./volumes/logs:/var/log
 
@@ -296,6 +296,54 @@ services:
 #     postgres_data:
 #         name: keycloak_postgres_data
 #         driver: local
+
+#     graphdb-database:
+#         image: ghcr.io/dd-bim/graphdb:9.4.1-free
+#         restart: unless-stopped
+#         ports:
+#         - ${GRAPHDB_PORT:-7200}:7200
+#         volumes:
+#         - ./volumes/graphdb:/opt/graphdb/home:Z
+
+#     postgres-database:
+#         image: postgis/postgis:13-3.0-alpine
+#         restart: unless-stopped
+#         environment:
+#         - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+#         - POSTGRES_USER=${POSTGRES_USERNAME}
+#         - POSTGRES_DB=${POSTGRES_DATABASE}
+#         - PGDATA=/var/lib/postgresql/data/pgdata
+#         ports:
+#         - ${POSTGRES_PORT:-5432}:5432
+#         volumes:
+#         - ./volumes/postgres:/var/lib/postgresql/data:Z
+
+#     minio-storage:
+#         image: minio/minio:RELEASE.2020-11-12T22-33-34Z
+#         restart: unless-stopped
+#         ports:
+#         - ${MINIO_PORT:-9000}:9000
+#         environment:
+#         - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+#         - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+#         volumes:
+#         - ./volumes/minio:/data:Z
+#         command: ["server", "/data"]
+
+#     pgadmin-interface:
+#         image: dpage/pgadmin4:5.3
+#         restart: unless-stopped
+#         environment:
+#         - PGADMIN_DEFAULT_EMAIL=${PGADMIN_USERMAIL}
+#         - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+#         ports:
+#         - ${PGADMIN_PORT:-5433}:80
+#         volumes:
+#         - ./volumes/pgadmin:/var/lib/pgadmin:Z
+#         # - pgadmin:/var/lib/pgadmin
+
+# # volumes:
+# #     pgadmin:
 
 networks:
     terraintwin_microservices:

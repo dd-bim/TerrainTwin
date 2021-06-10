@@ -42,7 +42,7 @@ public class GraphDBImport {
     }
 
     HttpResponse postRequestGraphDBImport(String json) throws ClientProtocolException, IOException {
-        return Request.Post("http://host.docker.internal:7201/graphdbimport/postgresinfos")
+        return Request.Post("http://172.17.0.1:7201/graphdbimport/postgresinfos")  //http://host.docker.internal:7201/graphdbimport/postgresinfos
                 // .viaProxy(new HttpHost("myproxy", 8080))
                 .bodyString(json, ContentType.APPLICATION_JSON).execute().returnResponse();
     }

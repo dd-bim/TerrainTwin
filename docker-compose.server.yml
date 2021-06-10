@@ -80,12 +80,12 @@ services:
         depends_on:
             - configserver
             - eurekaserver
-        # healthcheck:
-        #     test: wget --spider http://localhost:7201/actuator/health || exit 1
-        #     interval: 30s
-        #     timeout: 5s
-        #     retries: 5
-        #     start_period: 20s
+        healthcheck:
+            test: wget --spider http://localhost:7201/actuator/health || exit 1
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 20s
         environment:
             - domain.url=${DOMAIN_URL}
             - minio.url=${MINIO_URL}
@@ -123,8 +123,8 @@ services:
             - minio.secret_key=${MINIO_SECRET_KEY}
             - postgres.url=${POSTGRES_URL}
             - postgres.database.name=${POSTGRES_DATABASE}
-            - postgres.database.username=${POSTGRES_DATABASE_USERNAME}
-            - postgres.database.password=${POSTGRES_DATABASE_PASSWORD}
+            - postgres.database.username=${POSTGRES_USERNAME}
+            - postgres.database.password=${POSTGRES_PASSWORD}
         volumes:
             - ./volumes/logs/:/var/log/
 
@@ -212,11 +212,10 @@ services:
             - domain.url=${DOMAIN_URL}
             - postgres.url=${POSTGRES_URL}
             - postgres.database.name=${POSTGRES_DATABASE}
-            - postgres.database.username=${POSTGRES_DATABASE_USERNAME}
-            - postgres.database.password=${POSTGRES_DATABASE_PASSWORD}
+            - postgres.database.username=${POSTGRES_USERNAME}
+            - postgres.database.password=${POSTGRES_PASSWORD}
         volumes:
             - ./volumes/logs:/var/log
-
 
 networks:
     terraintwin_microservices:

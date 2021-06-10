@@ -2,6 +2,7 @@ Microservice Architecture:
 
     ☐ Docker + Dockercon Zusammenfassung
     ☐ Testdaten in System bekommen
+    ☐ Paper Idee
 
     ☐ DGM Ausgabe über WCS/WFS
     ☐ ID's einheitlich gestalten
@@ -13,19 +14,27 @@ Microservice Architecture:
     ☐ GitLab Projekte vereinigen
     ☐ Dokumentation erweitern 
     ☐ Docker-Stack (Postgres DB, GraphDB, MinIO Object Storage) + Datacat in Microservice-Architektur einbinden
-
+    ☐ Sachdaten und Geometrie in einer CSV/TXT
+    ☐ allgemeines Projekt anlegen (Bucket, Schema, Repository)
     ☐ 3D-Objekte verwenden
-    ☐ Paper Idee
+    ☐ Nginx Proxy Container
+
+    
 
 
     Postgres-Import-Service:
-        ☐ EPSG Codes in Tabellendefinition und Insert Befehlen variabel gestalten
+        ☐ EPSG Codes und Schemaname in Tabellendefinition und Insert Befehlen variabel gestalten
         ☐ REST Schnittstelle für Postgres hinzufügen
         ☐ allgemeineren Namen für Service find
         ☐ direkter Import DGM für Rückschreiben durch LandplanOS?
+        ☐ DXF Import
+        ☐ GML Import 
+        ☐ mehrere TINs aus einer LandXML Datei einlesen können 
+        ☐ Was ist mit Multi- Point/Line/Polygon Geometrien?
 
     MinIO-Upload-Service:
         ☐ Validierung Daten bei MinIO Upload
+        ☐ File Upload Größe ändern
     
     GraphDB-Import-Service:
         ☐ Repositories über REST/automatisch neu erstellen (FreeSailRepository)
@@ -43,3 +52,5 @@ Microservice Architecture:
         ☐ Dockerfile mit Microsoft Image
         ☐ REST Schnittstelle zur Übergabe einer JSON an IfcTerrainCommand 
         
+    Dashboard-Service:
+        ☐ Bountingbox für Elemente gesamt ausgeben
