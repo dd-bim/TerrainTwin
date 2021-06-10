@@ -1,5 +1,7 @@
 package com.Microservices.DashboardService.schemas;
 
+import java.util.UUID;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -8,8 +10,6 @@ import javax.persistence.Table;
 import org.hibernate.annotations.SQLInsert;
 
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,8 +21,8 @@ import lombok.Setter;
 public class Polygon2D {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.SEQUENCE)
-    private Integer id;
+    @GeneratedValue
+    private UUID id;
 
     @Column(name="polygon_id", nullable = false)
     private Integer surfaceID;

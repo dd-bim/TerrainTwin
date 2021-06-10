@@ -142,13 +142,13 @@ public class DashboardController {
 
     model.addAttribute("solidDups", solidRepository.getSolidDuplicates());
 
-    model.addAttribute("tinDups", tinRepository.getTINDuplicates());
+    // model.addAttribute("tinDups", tinRepository.getTINDuplicates());
 
-    model.addAttribute("blDups", blRepository.getBlDuplicates());
+    // model.addAttribute("blDups", blRepository.getBlDuplicates());
 
-    model.addAttribute("embDups", embRepository.getEmbDuplicates());
+    // model.addAttribute("embDups", embRepository.getEmbDuplicates());
 
-    model.addAttribute("sPntDups", sPntRepository.getSPntDuplicates());
+    // model.addAttribute("sPntDups", sPntRepository.getSPntDuplicates());
 
     return "index";
   }

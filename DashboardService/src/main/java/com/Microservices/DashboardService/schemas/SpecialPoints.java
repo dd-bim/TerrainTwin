@@ -1,9 +1,10 @@
 package com.Microservices.DashboardService.schemas;
 
+import java.util.UUID;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -20,14 +21,14 @@ import lombok.Setter;
 public class SpecialPoints {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.SEQUENCE)
-    private Integer id;
+    @GeneratedValue
+    private UUID id;
 
     @Column(name="point_id", nullable = false)
     private Integer sp_id;
 
     @Column(name="tin_id", nullable=false)
-    private Integer tin_id;
+    private UUID tin_id;
 
     @Column(nullable=false)
     private String geometry;
@@ -36,7 +37,7 @@ public class SpecialPoints {
 
     }
     
-    public SpecialPoints(int point_id, Integer tin_id, String geometry){
+    public SpecialPoints(int point_id, UUID tin_id, String geometry){
         this.sp_id = point_id;
         this.tin_id = tin_id;
         this.geometry = geometry;
