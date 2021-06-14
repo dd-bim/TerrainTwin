@@ -13,19 +13,19 @@ Microservice Architecture:
     ☐ Ontologie TerrainTwin
     ☐ GitLab Projekte vereinigen
     ☐ Dokumentation erweitern 
-    ☐ Docker-Stack (Postgres DB, GraphDB, MinIO Object Storage) + Datacat in Microservice-Architektur einbinden
+    ✔ Docker-Stack (Postgres DB, GraphDB, MinIO Object Storage) einbinden @done (14.6.2021, 08:40:26)
+    ☐ Datacat in Microservice-Architektur einbinden
     ☐ Sachdaten und Geometrie in einer CSV/TXT
     ☐ allgemeines Projekt anlegen (Bucket, Schema, Repository)
     ☐ 3D-Objekte verwenden
     ☐ Nginx Proxy Container
-
+    ☐ Geoserver Docker
     
-
 
     Postgres-Import-Service:
         ☐ EPSG Codes und Schemaname in Tabellendefinition und Insert Befehlen variabel gestalten
         ☐ REST Schnittstelle für Postgres hinzufügen
-        ☐ allgemeineren Namen für Service find
+        ☐ allgemeineren Namen für Service finden
         ☐ direkter Import DGM für Rückschreiben durch LandplanOS?
         ☐ DXF Import
         ☐ GML Import 

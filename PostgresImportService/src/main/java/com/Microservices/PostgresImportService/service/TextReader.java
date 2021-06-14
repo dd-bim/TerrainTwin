@@ -212,7 +212,7 @@ public class TextReader {
             }
         }
         reader.close();
-        return pointCount + " Points, " + lineCount + " Lines, " + polygonCount + " Polygons," + solidCount + " Solids and " + tinCount
+        return pointCount + " Points, " + lineCount + " Lines, " + polygonCount + " Polygons, " + solidCount + " Solids and " + tinCount
                 + " TINs have been imported. \n" + notProcessed + " geometries have been not imported.\n" + gdbConn;
     }
 
