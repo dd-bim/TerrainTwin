@@ -1,7 +1,7 @@
 Microservice Architecture:
 
-    ☐ Docker + Dockercon Zusammenfassung
-    ☐ Testdaten in System bekommen
+    ✔ Docker + Dockercon Zusammenfassung @done (15.6.2021, 11:58:34)
+    ✔ Testdaten in System bekommen @done (15.6.2021, 12:04:23)
     ☐ Paper Idee
 
     ☐ DGM Ausgabe über WCS/WFS
@@ -25,6 +25,7 @@ Microservice Architecture:
     Postgres-Import-Service:
         ☐ EPSG Codes und Schemaname in Tabellendefinition und Insert Befehlen variabel gestalten
         ☐ REST Schnittstelle für Postgres hinzufügen
+            ✔ über ID als EWKT ausgeben lassen @done (15.6.2021, 12:06:49)
         ☐ allgemeineren Namen für Service finden
         ☐ direkter Import DGM für Rückschreiben durch LandplanOS?
         ☐ DXF Import

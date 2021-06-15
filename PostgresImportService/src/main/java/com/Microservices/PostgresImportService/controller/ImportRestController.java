@@ -1,5 +1,8 @@
 package com.Microservices.PostgresImportService.controller;
 
+import java.util.UUID;
+
+import com.Microservices.PostgresImportService.repositories.TINRepository;
 import com.Microservices.PostgresImportService.service.CheckFiles;
 
 import org.slf4j.Logger;
@@ -21,6 +24,9 @@ public class ImportRestController {
   @Autowired
   CheckFiles minio;
 
+  @Autowired
+  TINRepository tinRepository;
+
   Logger log = LoggerFactory.getLogger(ImportRestController.class);
 
   // get folder and use them
@@ -32,4 +38,14 @@ public class ImportRestController {
 
     return results;
   }
+
+    // get folder and use them
+    @GetMapping("/postgresexport/DGM/id/{id}")
+    public String getDGM(@PathVariable UUID id) throws Exception {
+  
+    String geom = tinRepository.getTINGeometry(id);
+  
+
+      return geom;
+    }
 }
