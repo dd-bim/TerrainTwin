@@ -61,22 +61,42 @@ public class TextReader {
     public String importWKT(InputStream stream, String path, String filename, String graphdbRepo)
             throws NumberFormatException, IOException {
         log.info("Import WKT from CSV/TXT");
-        CSVReader reader = new CSVReader(new InputStreamReader(stream), ',', '"', 1); // seperator sollte variabel sein
+        CSVReader reader;
+        try {
+            reader = new CSVReader(new InputStreamReader(stream), ';', '"', 0); //beginnt bei zweiter Zeile, da erste Zeile Tabellenkopf sein sollte
+        } catch (Exception e) {
+            reader = new CSVReader(new InputStreamReader(stream), ',', '"', 0); // seperator sollte variabel sein
+        }
+        
         String[] nextLine;
         int pointCount = 0, lineCount = 0, polygonCount = 0, solidCount = 0, tinCount = 0, notProcessed = 0;
         GraphDBImport graphdb = new GraphDBImport();
         String gdbConn = "";
 
+        int idRow = -1;
+        int wktRow = -1;
+        int epsgRow = -1;
+        nextLine =reader.readNext();
+        for (int j = 0; j < nextLine.length; j++) {
+            if (nextLine[j].toLowerCase().contains("id")){
+                idRow = j;
+            } else if (nextLine[j].toLowerCase().contains("wkt") || nextLine[j].toLowerCase().contains("geometry")) {
+                wktRow = j;
+            } else if (nextLine[j].toLowerCase().contains("epsg")){
+                epsgRow = j;
+            }
+        }
+System.out.println( idRow + ", " + wktRow + ", " + epsgRow);
         while ((nextLine = reader.readNext()) != null) {
-            if (nextLine != null && !nextLine[0].isEmpty()) {
+            if (nextLine != null && !nextLine[idRow].isEmpty()) {
                 // 3D point
-                if (nextLine[1].toUpperCase().contains("POINTZ") || nextLine[1].toUpperCase().contains("POINT Z")) {
+                if (nextLine[wktRow].toUpperCase().contains("POINTZ") || nextLine[wktRow].toUpperCase().contains("POINT Z")) {
                     Point3D point;
-                    if (nextLine[1].toUpperCase().startsWith("SRID")) {
-                        point = new Point3D(Integer.parseInt(nextLine[0].trim()), nextLine[1]);
+                    if (nextLine[wktRow].toUpperCase().startsWith("SRID")) {
+                        point = new Point3D(Integer.parseInt(nextLine[idRow].trim()), nextLine[wktRow]);
                     } else {
-                        point = new Point3D(Integer.parseInt(nextLine[0].trim()),
-                                "SRID=" + Integer.parseInt(nextLine[2].trim()) + ";" + nextLine[1]);
+                        point = new Point3D(Integer.parseInt(nextLine[idRow].trim()),
+                                "SRID=" + Integer.parseInt(nextLine[epsgRow].trim()) + ";" + nextLine[wktRow]);
                     }
                     point3DRepo.save(point);
                     log.info("'ID: " + point.getId() + ", point_id: " + point.getP_id() + ", geometry: "
@@ -87,13 +107,13 @@ public class TextReader {
                             graphdbRepo);
 
                     // 2D point
-                } else if (nextLine[1].toUpperCase().contains("POINT")) {
+                } else if (nextLine[wktRow].toUpperCase().contains("POINT")) {
                     Point2D point;
-                    if (nextLine[1].toUpperCase().startsWith("SRID")) {
-                        point = new Point2D(Integer.parseInt(nextLine[0].trim()), nextLine[1]);
+                    if (nextLine[wktRow].toUpperCase().startsWith("SRID")) {
+                        point = new Point2D(Integer.parseInt(nextLine[idRow].trim()), nextLine[wktRow]);
                     } else {
-                        point = new Point2D(Integer.parseInt(nextLine[0].trim()),
-                                "SRID=" + Integer.parseInt(nextLine[2].trim()) + ";" + nextLine[1]);
+                        point = new Point2D(Integer.parseInt(nextLine[idRow].trim()),
+                                "SRID=" + Integer.parseInt(nextLine[epsgRow].trim()) + ";" + nextLine[wktRow]);
                     }
                     point2DRepo.save(point);
                     log.info("'ID: " + point.getId() + ", point_id: " + point.getP_id() + ", geometry: "
@@ -104,14 +124,14 @@ public class TextReader {
                             graphdbRepo);
 
                     // 3D line
-                } else if (nextLine[1].toUpperCase().contains("LINESTRINGZ")
-                        || nextLine[1].toUpperCase().contains("LINESTRING Z")) {
+                } else if (nextLine[wktRow].toUpperCase().contains("LINESTRINGZ")
+                        || nextLine[wktRow].toUpperCase().contains("LINESTRING Z")) {
                     Line3D line;
-                    if (nextLine[1].toUpperCase().startsWith("SRID")) {
-                        line = new Line3D(Integer.parseInt(nextLine[0].trim()), nextLine[1]);
+                    if (nextLine[wktRow].toUpperCase().startsWith("SRID")) {
+                        line = new Line3D(Integer.parseInt(nextLine[idRow].trim()), nextLine[wktRow]);
                     } else {
-                        line = new Line3D(Integer.parseInt(nextLine[0].trim()),
-                                "SRID=" + Integer.parseInt(nextLine[2].trim()) + ";" + nextLine[1]);
+                        line = new Line3D(Integer.parseInt(nextLine[idRow].trim()),
+                                "SRID=" + Integer.parseInt(nextLine[epsgRow].trim()) + ";" + nextLine[wktRow]);
                     }
                     line3DRepo.save(line);
                     log.info("'ID: " + line.getId() + ", line_id: " + line.getL_id() + ", geometry: "
@@ -122,13 +142,13 @@ public class TextReader {
                             graphdbRepo);
 
                     // 2D line
-                } else if (nextLine[1].toUpperCase().contains("LINESTRING")) {
+                } else if (nextLine[wktRow].toUpperCase().contains("LINESTRING")) {
                     Line2D line;
-                    if (nextLine[1].toUpperCase().startsWith("SRID")) {
-                        line = new Line2D(Integer.parseInt(nextLine[0].trim()), nextLine[1]);
+                    if (nextLine[wktRow].toUpperCase().startsWith("SRID")) {
+                        line = new Line2D(Integer.parseInt(nextLine[idRow].trim()), nextLine[wktRow]);
                     } else {
-                        line = new Line2D(Integer.parseInt(nextLine[0].trim()),
-                                "SRID=" + Integer.parseInt(nextLine[2].trim()) + ";" + nextLine[1]);
+                        line = new Line2D(Integer.parseInt(nextLine[idRow].trim()),
+                                "SRID=" + Integer.parseInt(nextLine[epsgRow].trim()) + ";" + nextLine[wktRow]);
                     }
                     line2DRepo.save(line);
                     log.info("'ID: " + line.getId() + ", line_id: " + line.getL_id() + ", geometry: "
@@ -139,13 +159,13 @@ public class TextReader {
                             graphdbRepo);
 
                     // 3D polygon
-                } else if (nextLine[1].toUpperCase().contains("POLYGONZ") || nextLine[1].toUpperCase().contains("POLYGON Z")) {
+                } else if (nextLine[wktRow].toUpperCase().contains("POLYGONZ") || nextLine[wktRow].toUpperCase().contains("POLYGON Z")) {
                     Polygon3D polygon;
-                    if (nextLine[1].toUpperCase().startsWith("SRID")) {
-                        polygon = new Polygon3D(Integer.parseInt(nextLine[0].trim()), nextLine[1]);
+                    if (nextLine[wktRow].toUpperCase().startsWith("SRID")) {
+                        polygon = new Polygon3D(Integer.parseInt(nextLine[idRow].trim()), nextLine[wktRow]);
                     } else {
-                        polygon = new Polygon3D(Integer.parseInt(nextLine[0].trim()),
-                                "SRID=" + Integer.parseInt(nextLine[2].trim()) + ";" + nextLine[1]);
+                        polygon = new Polygon3D(Integer.parseInt(nextLine[idRow].trim()),
+                                "SRID=" + Integer.parseInt(nextLine[epsgRow].trim()) + ";" + nextLine[wktRow]);
                     }
                     polygon3DRepo.save(polygon);
                     log.info("'ID: " + polygon.getId() + ", polygon_id: " + polygon.getSurfaceID() + ", geometry: "
@@ -156,13 +176,13 @@ public class TextReader {
                             path, graphdbRepo);
 
                     // 2D polygon
-                } else if (nextLine[1].toUpperCase().contains("POLYGON")) {
+                } else if (nextLine[wktRow].toUpperCase().contains("POLYGON")) {
                     Polygon2D polygon;
-                    if (nextLine[1].toUpperCase().startsWith("SRID")) {
-                        polygon = new Polygon2D(Integer.parseInt(nextLine[0].trim()), nextLine[1]);
+                    if (nextLine[wktRow].toUpperCase().startsWith("SRID")) {
+                        polygon = new Polygon2D(Integer.parseInt(nextLine[idRow].trim()), nextLine[wktRow]);
                     } else {
-                        polygon = new Polygon2D(Integer.parseInt(nextLine[0].trim()),
-                                "SRID=" + Integer.parseInt(nextLine[2].trim()) + ";" + nextLine[1]);
+                        polygon = new Polygon2D(Integer.parseInt(nextLine[idRow].trim()),
+                                "SRID=" + Integer.parseInt(nextLine[epsgRow].trim()) + ";" + nextLine[wktRow]);
                     }
                     polygon2DRepo.save(polygon);
                     log.info("'ID: " + polygon.getId() + ", polygon_id: " + polygon.getSurfaceID() + ", geometry: "
@@ -173,13 +193,13 @@ public class TextReader {
                             path, graphdbRepo);
 
                     // 3D TIN
-                } else if (nextLine[1].toUpperCase().contains("TIN")) {
+                } else if (nextLine[wktRow].toUpperCase().contains("TIN")) {
 
                     TIN tin;
-                    if (nextLine[1].toUpperCase().startsWith("SRID")) {
-                        tin = new TIN(nextLine[1]);
+                    if (nextLine[wktRow].toUpperCase().startsWith("SRID")) {
+                        tin = new TIN(nextLine[wktRow]);
                     } else {
-                        tin = new TIN("SRID=" + Integer.parseInt(nextLine[2].trim()) + ";" + nextLine[1]);
+                        tin = new TIN("SRID=" + Integer.parseInt(nextLine[epsgRow].trim()) + ";" + nextLine[wktRow]);
                     }
                     tinRepo.save(tin);
                     log.info("'ID: " + tin.getTin_id() + ", geometry: " + tin.getGeometry() + "'");
@@ -189,13 +209,13 @@ public class TextReader {
                             graphdbRepo);
 
                     // solid
-                } else if (nextLine[1].toUpperCase().contains("POLYHEDRALSURFACE")) {
+                } else if (nextLine[wktRow].toUpperCase().contains("POLYHEDRALSURFACE")) {
                     Solid solid;
-                    if (nextLine[1].toUpperCase().startsWith("SRID")) {
-                        solid = new Solid(Integer.parseInt(nextLine[0].trim()), nextLine[1]);
+                    if (nextLine[wktRow].toUpperCase().startsWith("SRID")) {
+                        solid = new Solid(Integer.parseInt(nextLine[idRow].trim()), nextLine[wktRow]);
                     } else {
-                        solid = new Solid(Integer.parseInt(nextLine[0].trim()),
-                                "SRID=" + Integer.parseInt(nextLine[2].trim()) + ";" + nextLine[1]);
+                        solid = new Solid(Integer.parseInt(nextLine[idRow].trim()),
+                                "SRID=" + Integer.parseInt(nextLine[epsgRow].trim()) + ";" + nextLine[wktRow]);
                     }
                     solidRepo.save(solid);
                     log.info("'ID: " + solid.getId() + ", solid_id: " + solid.getS_id() + ", geometry: "
@@ -206,7 +226,7 @@ public class TextReader {
                             path, graphdbRepo);
 
                 } else {
-                    log.error("Could not process " + nextLine[0] + ", " + nextLine[1]);
+                    log.error("Could not process " + nextLine[idRow] + ", " + nextLine[wktRow]);
                     notProcessed++;
                 }
             }

@@ -49,17 +49,18 @@ public class GraphDBConnection {
         RemoteRepositoryManager manager = new RemoteRepositoryManager(graphdb_url);
         manager.setUsernameAndPassword(graphdb_username, graphdb_password);
         manager.init();
-        RepositoryConnection connection;
-        try {
-            connection = manager.getRepository(repo).getConnection();
-        } catch (Exception r) {
-            log.info(r.getMessage());
-            log.info(repo + " didn't exist. Trying to create it.");
-            SailImplConfig backendConfig = new MemoryStoreConfig(true);
-            RepositoryImplConfig repositoryTypeSpec = new
-            SailRepositoryConfig(backendConfig);
-            RepositoryConfig repConfig = new RepositoryConfig(repo, repositoryTypeSpec);
-            manager.addRepositoryConfig(repConfig);
+        // RepositoryConnection connection;
+        RepositoryConnection connection = manager.getRepository(repo).getConnection();
+        // try {
+        //     connection = manager.getRepository(repo).getConnection();
+        // } catch (Exception r) {
+        //     log.info(r.getMessage());
+            // log.info(repo + " didn't exist. Trying to create it.");
+            // SailImplConfig backendConfig = new MemoryStoreConfig(true);
+            // RepositoryImplConfig repositoryTypeSpec = new
+            // SailRepositoryConfig(backendConfig);
+            // RepositoryConfig repConfig = new RepositoryConfig(repo, repositoryTypeSpec);
+            // manager.addRepositoryConfig(repConfig);
 
 
 //             RepositoryManager repositoryManager = new LocalRepositoryManager(new File("."));
@@ -91,11 +92,12 @@ public class GraphDBConnection {
 // Process process = Runtime.getRuntime().exec("curl -X POST https://terrain.dd-bim.org/graphdb/rest/repositories -H 'Content-Type: multipart/form-data' -F \"config=@/var/repo-defaults.ttl\" -u graphdb:123456");
 // System.out.println(process.info().toString() + process.exitValue());
 
-log.info("Created new repository " + repo + ".");
-            connection = manager.getRepository(repo).getConnection();
-        }
-        log.info("Connected to repository " + repo + ".");
-        System.out.println("test2");
+// log.info("Created new repository " + repo + ".");
+            // connection = manager.getRepository(repo).getConnection();
+
+        // }
+        // log.info("Connected to repository " + repo + ".");
+
         return connection;
     }
 }
