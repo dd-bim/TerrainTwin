@@ -107,7 +107,9 @@ public class ImportService {
                             @SuppressWarnings("unchecked")
                             HashMap<String, Object> obj = new ObjectMapper().readValue(stream, HashMap.class);
                             obj.forEach((k, v) -> {
-                                if (v.getClass() == String.class) {
+                                if (v == null) {
+                                }
+                                else if (v.getClass() == String.class) {
                                     json.put(k, v);
                                 } else {
                                     @SuppressWarnings("unchecked")
