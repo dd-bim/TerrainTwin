@@ -34,7 +34,7 @@ Microservice Architecture:
         ☐ Was ist mit Multi- Point/Line/Polygon Geometrien?
 
     MinIO-Upload-Service:
-        ☐ Validierung Daten bei MinIO Upload
+        ☐ Check der Dateien/Daten bei MinIO Upload
         ☐ File Upload Größe ändern
     
     GraphDB-Import-Service:

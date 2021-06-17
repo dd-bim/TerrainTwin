@@ -1,6 +1,6 @@
 # Microservice Architektur TerrainTwin 
 
-Die Microservie Architektur (MSA) verbindet Programme und Funktionen für das Projekt TerrainTwin und stellt diese über eine einheitlich über eine REST-Schnittstelle bereit. 
+Die Microservie Architektur (MSA) verbindet Programme und Funktionen für das Projekt TerrainTwin und stellt diese einheitlich über eine REST-Schnittstelle bereit. 
 
 - Grundlage für die MSA ist das Spring Boot Framework (Java)
 - für die Veröffentlichung der REST-API wird OpenAPI 3 verwendet 
@@ -336,3 +336,204 @@ https://piotrminkowski.com/2020/02/20/microservices-api-documentation-with-sprin
 https://www.baeldung.com/dockerizing-spring-boot-application
 https://cloudkul.com/blog/understanding-communication-docker-containers/
 https://docs.docker.com/compose/compose-file/compose-file-v3/
+
+# TerrainTwin Test-Installation
+
+## Übersicht
+
+* `./docs`: Allgemeine Informationen, Notizen und Anleitungen im Projekt TerrainTwin.
+* `./volumes`: Lokale Laufzeitdaten der docker-compose-Konfiguration ([Docker bind mounts](https://docs.docker.com/storage/bind-mounts/)).
+* `./.env.example`: Beispiel für die notwendige Konfigurationsdatei `.env`.
+* `./docker-compose.yml`: Docker-Stack der in TerrainTwin genutzten Komponenten für lokale Tests.
+* `./docker-compose.example.yml`: Zusätzliche Komponenten für Test und Debugging.
+
+## Konfiguration
+
+**Vor dem ersten Ausführen muss der Stack für die eigene Arbeitsumgebung
+angepasst werden.** 
+
+Hierfür dient die zu erstellende (unter Linux/macOS versteckte) Datei `.env`
+im Projektverzeichnis (ausgehend von der Datei `docker-compose.yml`).
+
+Für eine einfache Erstkonfiguration kann die Beispieldatei `.env.example` zu `.env` kopiert
+und angepasst werden.
+
+Insbesondere im Hochschulnetzwerk müssen eventuell die Proxy-Einstellungen angepasst werden: https://docs.docker.com/network/proxy/
+
+**Geplante Komponenten**
+
+- [ ] IMA / Keycloak-Service für Single-Sign-On / Autorisierung
+- [x] File / Object-Store für Originaldaten
+- [ ] Import-Service für File-Upload zur Verarbeitung
+- [ ] OWL-Import
+- [ ] (Message Bus / JMS) für asynchronen Austausch (Apache Camel für Routing prüfen)
+- [x] PostgreSQL / PostGIS für 2D/3D-Berechnungen, Speicherung von Geodaten
+- [ ] Geoserver / OGC-Server für Rasterausgabe / OGC-Services
+- [x] GraphDB für Speicherung und Verknüpfen von Semantischen Informationen
+- [ ] OpenBIM-Server / BIMServer für IFC-Abfragen/Ausgabe (als Schnittstelle zu LandPlan?)
+- [ ] (Proxy-Server zum Konsolidieren der Ports)
+
+**Optionale Komponenten für Tests / Experimente**
+
+- [x] pgAdmin
+
+**Import-Konverter**
+
+- [ ] CSV
+- [ ] (Shapefile)
+- [ ] TIN / Raster
+- [ ] LandXML
+- [ ] IFC / Step
+- [ ] IFCxml
+- [ ] GML / CityGML
+
+## Hilfe und Dokumentation
+
+Zum Ausführen der Konfiguration ist eine lokale Docker-Installation notwendig.
+Das CLI-Tool docker-compose wird bei der Installation i.d.R. mitgeliefert.
+
+* [Docker](https://docs.docker.com)
+* [Docker CLI & docker-compose](https://docs.docker.com/compose/reference/overview/)
+
+Neben durch Dritte bereitgestellte Container, nutzt die Konfiguration auch einen
+GraphDB-Container der unter einer freien Lizenz selbst erstellt werden muss. Um zu verhindern,
+dass jeder Nutzer diesen Container lokal erstellen muss, wird ein Image unter der zentralen
+Github Container Registry bereitgestellt:
+
+ * **Projekt**: https://github.com/dd-bim/graphdb-docker
+ * **Container**: https://github.com/orgs/dd-bim/packages/container/package/graphdb
+ 
+Da die Lizenzbedingungen durch den Hersteller von GraphDB etwas undurchsichtig sind,
+ist das Projekt auf *privat* gesetzt, entsprechend kann das Image zum Ausführe nur
+nach dem Login der lokalen Docker-Installation mit der Github-Registry erfolgen.
+Nur Mitglieder der Gruppe **dd-bim** erhalten Zugriff.
+
+## Login der Docker-Installation mit Github Container Registry
+
+1. Auf `github.com` einen Personal Access Token erstellen.
+    1. `Settings` > `Developer settings` > `Personal access tokens`
+    1. `Generate new token`
+    1. Namen angeben, z.B. `Arbeitsrechner`
+    1. Berechtigungen auswählen: `write:packages`, `read:packages`
+    1. `Generate token`
+2. Die lokale Docker-Installation auf github.com "einloggen".
+    1. `docker login ghcr.io -u [Github Nutzername] -p [Private access token]`
+    
+
+
+
+## Schnellstart
+
+**Hinweis**: Die Befehle beziehen sich jeweils auf das Projektverzeichnis (Verzeichnis in dem
+die `docker-compose.yml` abgelegt ist). Alle Befehl können durch weitere Optionen für
+den Anwendungsfall konfiguriert werden, bitte die Dokumentation entsprechend beachten.
+
+### Starten der Container
+
+```shell script
+$ docker-compose up -d
+```
+
+Das Flag ``-d`` bewirkt das Ausführen der Komponenten als Daemon-Prozesse im Hintergrund.
+Beim Start wird ein gemeinsames Netzwerk eingerichtet über das die konfigurierten
+Dienste miteinander interagieren können (Service-Name in `docker-compose.yml` wird zum
+Hostnamen im lokalen Netzwerk der Komponenten).
+
+Um optionale Komponenten wie pgAdmin zu starten, muss die zusätzliche Konfigurationsdatei
+`docker-compose.extra.yml` mit adressiert werden.
+
+```shell script
+$ docker-compose -f docker-compose.yml -f docker-compose.extra.yml up -d
+```
+
+### Starten nur einzelner Container
+
+```shell script
+$ docker-compose up [servicename] -d
+```
+
+### Auflisten der Container (und der Port-Mappings)
+
+````shell script
+$ docker ps
+````
+
+### Prüfen der Log-Ausgabe
+
+````shell script
+$ docker-compose logs [servicename] -f
+````
+
+### Aufrufen eines Kommandos innerhalb eines laufenden Containers
+
+````shell script
+$ docker-compose exec [servicename] bash
+````
+
+`bash` steht hier stellvertretend für ein beliebiges Kommando, dass innerhalb des Containers
+verfügbar ist. Insbesondere Alpine-Images bieten nur die `sh`-Shell.
+
+Beispielsweise kann die Postgres CLI wie folgt aufgerufen werden:
+
+```
+$ docker-compose exec postgres psql -U postgres
+```
+
+### Stoppen der Container
+
+````shell script
+$ docker-compose down
+```` 
+
+Beim Stoppen werden alle *flüchtigen* Ressourcen entfernt. Persistente Daten wie
+Datenbankverzeichnisse sind in dieser Konfiguration zur Vereinfachung als `bind mount` eingerichtet
+und werden über das Unterverzeichnis `./volumes` zur Laufzeit im jeweiligen Container
+eingerichtet.
+
+**Hinweis**: Die einzelnen Verzeichnisse unter `./volumes` sind bis auf je eine Datei `.gitignore`
+zunächst leer. Die Verzeichnisse müssen beim Start der Container verfügbar sein. Der
+Inhalt sollte aber nicht mit Git eingecheckt werden, er wird deshalb ignoriert. Zum Zurücksetzen der Daten deshalb
+bitte nur neu angelegte Daten in den Unterverzeichnissen löschen, nicht jweils die Datei `.gitignore`.
+
+## Komponenten
+
+Die Standardports sind in Klammern angegeben und können über `.env` angepasst werden.
+
+### GraphDB (`:7200`)
+
+```shell script
+$ docker-compose up -d graphdb
+```
+
+### MinIO (`:9000`)
+
+```shell script
+$ docker-compose up -d minio
+```
+
+### PostgreSQL + PostGIS (`:5432`)
+
+```shell script
+# Service starten
+$ docker-compose up -d postgres
+
+# Zugriff via psql-Client
+$ docker-compose exec postgres psql -U postgres
+```
+
+### pgAdmin (`:5433`)
+
+Eine einfache Administrationsoberfläche für PostgreSQL und PostGIS. Die Anwendung
+wird seit Version 4 auch als Service ausgeführt und kann so eingebunden werden.
+Die Login-Daten werden ebenfalls über `.env` konfiguriert. Nach dem Login können
+beliebige Datenbankinstanzen angesprochen werden.
+
+````shell script
+$ docker-compose -f docker-compose.yml -f docker-compose.extra.yml up -d pgadmin  
+````
+
+Konfiguration des im Stack enthalten Datenbankservers (s.o.):
+
+* Host: `postgres` (entsprechend Docker-Servicenamen)
+* Port: `5432` (Port der Datenbank innerhalb des lokalen Netzwerkes, unter Umständen != `$POSTGRES_PORT`)
+* Username: `postgres` (entsprechend gesetzter Variable `$POSTGRES_USERNAME`)
