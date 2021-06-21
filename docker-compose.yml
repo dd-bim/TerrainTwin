@@ -2,10 +2,7 @@ version: '3.8'
 services:
     configserver:
         container_name: configserver
-        # hostname: ${DOMAIN_NAME}
-            # configserver
-        build:
-            context: ./ConfigServer
+        hostname: configserver
         image: schi11er/tt_configserver:latest
         restart: unless-stopped
         ports:
@@ -14,7 +11,7 @@ services:
             - terraintwin_microservices
         volumes:
             - ./volumes/configs:/var/lib/centralProperties
-            - ./volumes/logs:/var/log
+            - ./volumes/logs/:/var/log/
         healthcheck:
             test: wget --spider http://localhost:8888/actuator/health || exit 1
             interval: 30s
@@ -26,9 +23,6 @@ services:
 
     eurekaserver:
         container_name: eurekaserver
-        # hostname: ${DOMAIN_NAME}
-        build:
-            context: ./EurekaServer
         image: schi11er/tt_eurekaserver:latest
         restart: unless-stopped
         ports:
@@ -46,22 +40,19 @@ services:
         environment:
             - domain.url=${DOMAIN_URL}
         volumes:
-            - ./volumes/logs:/var/log
+            - ./volumes/logs/:/var/log/
 
     minio-upload-service:
         container_name: minio-upload-service
-        # hostname: ${DOMAIN_NAME}
-        build:
-            context: ./MinIOUploadService
         image: schi11er/tt_minio-upload-service:latest
         restart: unless-stopped
         ports:
             - 7204:7204
+        networks:
+            - terraintwin_microservices
         depends_on: 
             - configserver
             - eurekaserver
-        networks:
-            - terraintwin_microservices
         healthcheck:
             test: wget --spider http://localhost:7204/actuator/health || exit 1
             interval: 30s
@@ -75,33 +66,20 @@ services:
             - minio.access_key=${MINIO_ACCESS_KEY}
             - minio.secret_key=${MINIO_SECRET_KEY}
         volumes:
-            - ./volumes/logs:/var/log
-        # deploy:
-        #     mode: replicated
-        #     replicas: 2
+            - ./volumes/logs/:/var/log/
 
             
     graphdb-import-service:
-        # profiles: 
-        #     - import
         container_name: graphdb-import-service
-        # hostname: ${DOMAIN_NAME}
-        build:
-            context: ./GraphDBImportService
         image: schi11er/tt_graphdb-import-service:latest
         restart: unless-stopped
         ports:
             - 7201:7201
-        # networks:
-        #     - terraintwin_microservices
         networks:
-            terraintwin_microservices:
-                aliases:
-                    - graphdbimporter
+            - terraintwin_microservices
         depends_on:
             - configserver
             - eurekaserver
-            # - admin-server
         healthcheck:
             test: wget --spider http://localhost:7201/actuator/health || exit 1
             interval: 30s
@@ -118,16 +96,10 @@ services:
             - graphdb.username=${GRAPHDB_USERNAME}
             - graphdb.password=${GRAPHDB_PASSWORD}
         volumes:
-            - ./volumes/logs:/var/log
-            # - ./volumes/graphdb:/var
+            - ./volumes/logs/:/var/log/
 
     postgres-import-service:
-        # profiles: 
-        #     - import
         container_name: postgres-import-service
-        # hostname: ${DOMAIN_NAME}
-        build:
-            context: ./PostgresImportService
         image: schi11er/tt_postgres-import-service:latest
         restart: unless-stopped
         ports:
@@ -153,15 +125,11 @@ services:
             - postgres.database.name=${POSTGRES_DATABASE}
             - postgres.database.username=${POSTGRES_USERNAME}
             - postgres.database.password=${POSTGRES_PASSWORD}
-            # - project.epsg=${PROJECT_EPSG}
         volumes:
-            - ./volumes/logs:/var/log
+            - ./volumes/logs/:/var/log/
 
     csv2rdf-converter-service:
         container_name: csv2rdf-converter-service
-        # hostname: ${DOMAIN_NAME}
-        build:
-            context: ./Csv2RdfConverterService
         image: schi11er/tt_csv2rdf-converter-service:latest
         restart: unless-stopped
         ports:
@@ -184,13 +152,10 @@ services:
             - minio.access_key=${MINIO_ACCESS_KEY}
             - minio.secret_key=${MINIO_SECRET_KEY}
         volumes:
-            - ./volumes/logs:/var/log
-            
+            - ./volumes/logs/:/var/log/
+
     gateway-service:
         container_name: gateway-service
-        # hostname: ${DOMAIN_NAME}
-        build:
-            context: ./GatewayService
         image: schi11er/tt_gateway-service:latest
         restart: unless-stopped
         ports:
@@ -209,13 +174,10 @@ services:
         environment:
             - domain.url=${DOMAIN_URL}
         volumes:
-            - ./volumes/logs:/var/log
+            - ./volumes/logs/:/var/log/
 
     admin-server:
         container_name: admin-server
-        # hostname: ${DOMAIN_NAME}
-        build:
-            context: ./AdminServer
         image: schi11er/tt_admin-server:latest
         restart: unless-stopped
         ports:
@@ -227,13 +189,10 @@ services:
         environment:
             - domain.url=${DOMAIN_URL}
         volumes:
-            - ./volumes/logs:/var/log
-   
+            - ./volumes/logs/:/var/log/
+
     dashboard-service:
         container_name: dashboard-service
-        # hostname: ${DOMAIN_NAME}
-        build:
-            context: ./DashboardService
         image: schi11er/tt_dashboard-service:latest
         restart: unless-stopped
         ports:
@@ -260,95 +219,4 @@ services:
 
 networks:
     terraintwin_microservices:
-        # driver: bridge
-
-#     keycloak:
-#         image: jboss/keycloak:13.0.1
-#         container_name: keycloak_security
-#         restart: on-failure
-#         environment:
-#             KEYCLOAK_USER: admin
-#             KEYCLOAK_PASSWORD: admin
-#             DB_VENDOR: postgres
-#             DB_ADDR: postgres
-#             DB_DATABASE: keycloak
-#             DB_USER: keycloak
-#             # DB_SCHEMA: public
-#             DB_PASSWORD: password
-#         ports:
-#             - 9095:9095
-#         volumes:
-#             - ./volumes/keycloak-server:/tmp/keycloak/config
-#         command:
-# #             - "-b"
-# #             - "0.0.0.0"
-#             - "-Djboss.socket.binding.port-offset=1015"
-#         networks:
-#             - terraintwin_microservices
-#         depends_on: 
-#             - postgres
-
-#     postgres:
-#         image: postgres:13.2
-#         volumes:
-#             - ./volumes/postgres_data:/var/lib/postgresql/data
-#         restart: always
-#         environment:
-#             POSTGRES_DB: keycloak
-#             POSTGRES_USER: keycloak
-#             POSTGRES_PASSWORD: password
-#         networks:
-#             - terraintwin_microservices
-
-# volumes:
-#     postgres_data:
-#         name: keycloak_postgres_data
-#         driver: local
-
-#     graphdb-database:
-#         image: ghcr.io/dd-bim/graphdb:9.4.1-free
-#         restart: unless-stopped
-#         ports:
-#         - ${GRAPHDB_PORT:-7200}:7200
-#         volumes:
-#         - ./volumes/graphdb:/opt/graphdb/home:Z
-
-#     postgres-database:
-#         image: postgis/postgis:13-3.0-alpine
-#         restart: unless-stopped
-#         environment:
-#         - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-#         - POSTGRES_USER=${POSTGRES_USERNAME}
-#         - POSTGRES_DB=${POSTGRES_DATABASE}
-#         - PGDATA=/var/lib/postgresql/data/pgdata
-#         ports:
-#         - ${POSTGRES_PORT:-5432}:5432
-#         volumes:
-#         - ./volumes/postgres:/var/lib/postgresql/data:Z
-
-#     minio-storage:
-#         image: minio/minio:RELEASE.2020-11-12T22-33-34Z
-#         restart: unless-stopped
-#         ports:
-#         - ${MINIO_PORT:-9000}:9000
-#         environment:
-#         - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
-#         - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
-#         volumes:
-#         - ./volumes/minio:/data:Z
-#         command: ["server", "/data"]
-
-#     pgadmin-interface:
-#         image: dpage/pgadmin4:5.3
-#         restart: unless-stopped
-#         environment:
-#         - PGADMIN_DEFAULT_EMAIL=${PGADMIN_USERMAIL}
-#         - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
-#         ports:
-#         - ${PGADMIN_PORT:-5433}:80
-#         volumes:
-#         - ./volumes/pgadmin:/var/lib/pgadmin:Z
-#         # - pgadmin:/var/lib/pgadmin
-
-# # volumes:
-# #     pgadmin:
+        driver: bridge

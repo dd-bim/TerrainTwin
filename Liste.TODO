@@ -11,11 +11,11 @@ Microservice Architecture:
     ☐ Linkmodell für Daten eines TerrainTwinObject
     ☐ Linkmodell zwischen den Persistenzdiensten
     ☐ Ontologie TerrainTwin
-    ☐ GitLab Projekte vereinigen
+    ✔ GitLab Projekte vereinigen @done (18.6.2021, 13:06:23)
     ☐ Dokumentation erweitern 
     ✔ Docker-Stack (Postgres DB, GraphDB, MinIO Object Storage) einbinden @done (14.6.2021, 08:40:26)
     ☐ Datacat in Microservice-Architektur einbinden
-    ☐ Sachdaten und Geometrie in einer CSV/TXT
+    ✔ Sachdaten und Geometrie in einer CSV/TXT @done (18.6.2021, 13:07:17)
     ☐ allgemeines Projekt anlegen (Bucket, Schema, Repository)
     ☐ 3D-Objekte verwenden
     ☐ Nginx Proxy Container
@@ -25,7 +25,7 @@ Microservice Architecture:
     Postgres-Import-Service:
         ☐ EPSG Codes und Schemaname in Tabellendefinition und Insert Befehlen variabel gestalten
         ☐ REST Schnittstelle für Postgres hinzufügen
-            ✔ über ID als EWKT ausgeben lassen @done (15.6.2021, 12:06:49)
+            ✔ DTM über ID als EWKT ausgeben lassen @done (15.6.2021, 12:06:49)
         ☐ allgemeineren Namen für Service finden
         ☐ direkter Import DGM für Rückschreiben durch LandplanOS?
         ☐ DXF Import
@@ -35,7 +35,7 @@ Microservice Architecture:
 
     MinIO-Upload-Service:
         ☐ Check der Dateien/Daten bei MinIO Upload
-        ☐ File Upload Größe ändern
+        ✔ File Upload Größe ändern @done (21.6.2021, 07:49:04)
     
     GraphDB-Import-Service:
         ☐ Repositories über REST/automatisch neu erstellen (FreeSailRepository)
@@ -56,3 +56,6 @@ Microservice Architecture:
         
     Dashboard-Service:
         ☐ Bountingbox für Elemente gesamt ausgeben
+
+    Csv2RdfConverter:
+        ☐ Dateiauswahl auf MinIO erweitern

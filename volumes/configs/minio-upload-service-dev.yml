@@ -8,6 +8,12 @@ springdoc:
         path: /minioupload/swagger-ui.html
         operationsSorter: method
 
+spring:
+    servlet:
+        multipart:
+            max-file-size: 500MB
+            max-request-size: 500MB
+
 logging:
     file: 
         name: /var/log/minio-upload-service.log
