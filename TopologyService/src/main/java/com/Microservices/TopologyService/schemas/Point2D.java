@@ -14,7 +14,7 @@ import org.locationtech.jts.geom.Point;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
+@Entity(name = "terraintwinv2.point_2d")
 @Table(name = "point_2d", schema = "terraintwinv2")
 // @SQLInsert(sql = "INSERT INTO terraintwinv2.point_2d (geometry, point_id, id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)" )
 @Getter

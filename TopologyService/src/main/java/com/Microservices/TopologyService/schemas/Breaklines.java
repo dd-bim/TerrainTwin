@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
+@Entity(name = "terraintwinv2.dtm_breaklines")
 @Table(name="dtm_breaklines", schema="terraintwinv2")
 @SQLInsert(sql = "INSERT INTO terraintwinv2.dtm_breaklines (geometry, tin_id, bl_id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)" )
 @Getter

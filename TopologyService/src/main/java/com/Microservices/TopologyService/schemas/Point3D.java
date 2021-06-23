@@ -13,7 +13,7 @@ import org.hibernate.annotations.SQLInsert;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
+@Entity(name = "terraintwinv2.point_3d")
 @Table(name = "point_3d", schema = "terraintwinv2")
 @SQLInsert(sql = "INSERT INTO terraintwinv2.point_3d (geometry, point_id, id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)")
 @Getter

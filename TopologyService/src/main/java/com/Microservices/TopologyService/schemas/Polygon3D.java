@@ -13,7 +13,7 @@ import javax.persistence.GeneratedValue;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
+@Entity(name = "terraintwinv2.polygon_3d")
 @Table(name="polygon_3d", schema="terraintwinv2")
 @SQLInsert(sql = "INSERT INTO terraintwinv2.polygon_3d (geometry, polygon_id, id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)" )
 @Getter
