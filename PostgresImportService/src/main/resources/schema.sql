@@ -14,10 +14,10 @@ create table if not exists terraintwinv2.polygon_3d (id uuid PRIMARY KEY , polyg
 
 create table if not exists terraintwinv2.solid (id uuid PRIMARY KEY , solid_id int, geometry geometry(POLYHEDRALSURFACEZ,25832));
 	
-create table if not exists terraintwinv2.dtm_tin (tin_id uuid PRIMARY KEY , geometry geometry(TINZ,25832));	
+create table if not exists terraintwinv2.dtm_tin (id uuid PRIMARY KEY , geometry geometry(TINZ,25832));	
 	
-create table if not exists terraintwinv2.dtm_breaklines (bl_id uuid PRIMARY KEY , geometry geometry(LINESTRINGZ,25832), tin_id uuid, CONSTRAINT dtm_breaklines_fk FOREIGN KEY (tin_id) REFERENCES terraintwinv2.dtm_tin (tin_id));
+create table if not exists terraintwinv2.dtm_breaklines (id uuid PRIMARY KEY , geometry geometry(LINESTRINGZ,25832), tin_id uuid, CONSTRAINT dtm_breaklines_fk FOREIGN KEY (tin_id) REFERENCES terraintwinv2.dtm_tin (id));
 
-create table if not exists terraintwinv2.dtm_specialpoints (id uuid PRIMARY KEY , point_id int, geometry geometry(POINTZ,25832), tin_id uuid, CONSTRAINT dtm_specialPoints_fk FOREIGN KEY (tin_id) REFERENCES terraintwinv2.dtm_tin (tin_id));
+create table if not exists terraintwinv2.dtm_specialpoints (id uuid PRIMARY KEY , point_id int, geometry geometry(POINTZ,25832), tin_id uuid, CONSTRAINT dtm_specialPoints_fk FOREIGN KEY (tin_id) REFERENCES terraintwinv2.dtm_tin (id));
 
-create table if not exists terraintwinv2.dtm_embarkment (embarkment_id uuid PRIMARY KEY, geometry geometry(POLYGON,25832), tin_id uuid, CONSTRAINT dtm_embarkment_fk FOREIGN KEY (tin_id) REFERENCES terraintwinv2.dtm_tin (tin_id));
+create table if not exists terraintwinv2.dtm_embarkment (id uuid PRIMARY KEY, geometry geometry(POLYGON,25832), tin_id uuid, CONSTRAINT dtm_embarkment_fk FOREIGN KEY (tin_id) REFERENCES terraintwinv2.dtm_tin (id));

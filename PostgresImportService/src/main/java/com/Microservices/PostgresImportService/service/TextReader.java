@@ -62,11 +62,11 @@ public class TextReader {
             throws NumberFormatException, IOException {
         log.info("Import WKT from CSV/TXT");
         CSVReader reader;
-        try {
-            reader = new CSVReader(new InputStreamReader(stream), ';', '"', 0); //beginnt bei zweiter Zeile, da erste Zeile Tabellenkopf sein sollte
-        } catch (Exception e) {
+        // try { -> funktioniert nicht
+        //     reader = new CSVReader(new InputStreamReader(stream), ';', '"', 0);
+        // } catch (Exception e) {
             reader = new CSVReader(new InputStreamReader(stream), ',', '"', 0); // seperator sollte variabel sein
-        }
+        // }
         
         String[] nextLine;
         int pointCount = 0, lineCount = 0, polygonCount = 0, solidCount = 0, tinCount = 0, notProcessed = 0;
@@ -202,10 +202,10 @@ System.out.println( idRow + ", " + wktRow + ", " + epsgRow);
                         tin = new TIN("SRID=" + Integer.parseInt(nextLine[epsgRow].trim()) + ";" + nextLine[wktRow]);
                     }
                     tinRepo.save(tin);
-                    log.info("'ID: " + tin.getTin_id() + ", geometry: " + tin.getGeometry() + "'");
+                    log.info("'ID: " + tin.getId() + ", geometry: " + tin.getGeometry() + "'");
                     tinCount++;
 
-                    gdbConn = graphdb.graphdbImport(-1, tin.getTin_id(), "TIN", "dtm_tin", filename, path,
+                    gdbConn = graphdb.graphdbImport(-1, tin.getId(), "TIN", "dtm_tin", filename, path,
                             graphdbRepo);
 
                     // solid

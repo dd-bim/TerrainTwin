@@ -6,26 +6,21 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.SQLInsert;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity(name = "terraintwinv2.dtm_tin")
-@Table(name="dtm_tin", schema="terraintwinv2")
-@SQLInsert(sql = "INSERT INTO terraintwinv2.dtm_tin (geometry, tin_id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?)" )
 @Getter
 @Setter
-public class TIN {
+public class TIN extends PostgresTables{
     
-    @Id
-    @GeneratedValue
-    private UUID tin_id;
+    // @Id
+    // @GeneratedValue
+    // private UUID id;
 
-    @Column(nullable=false)
-    private String geometry;
+    // @Column(nullable=false)
+    // private String geometry;
 
     protected TIN() {
 

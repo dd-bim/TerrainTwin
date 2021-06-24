@@ -17,7 +17,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name="dtm_breaklines", schema="terraintwinv2")
-@SQLInsert(sql = "INSERT INTO terraintwinv2.dtm_breaklines (geometry, tin_id, bl_id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)" )
+@SQLInsert(sql = "INSERT INTO terraintwinv2.dtm_breaklines (geometry, tin_id, id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)" )
 @Getter
 @Setter
 public class Breaklines {
@@ -26,7 +26,7 @@ public class Breaklines {
     
     @Id
     @GeneratedValue
-    private UUID bl_id;
+    private UUID id;
 
     @Column(nullable = false)
     private UUID tin_id;

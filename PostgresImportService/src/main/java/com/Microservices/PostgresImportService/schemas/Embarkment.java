@@ -15,14 +15,14 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "dtm_embarkment", schema = "terraintwinv2")
-@SQLInsert(sql = "INSERT INTO terraintwinv2.dtm_embarkment (geometry, tin_id, embarkment_id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)" )
+@SQLInsert(sql = "INSERT INTO terraintwinv2.dtm_embarkment (geometry, tin_id, id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)" )
 @Getter
 @Setter
 public class Embarkment {
 
     @Id
     @GeneratedValue
-    private UUID embarkment_id;
+    private UUID id;
 
     @Column
     private UUID tin_id;

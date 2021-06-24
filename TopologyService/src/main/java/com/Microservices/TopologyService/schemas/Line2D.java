@@ -6,29 +6,24 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.SQLInsert;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity(name = "terraintwinv2.line_2d")
-@Table(name = "line_2d", schema = "terraintwinv2")
-@SQLInsert(sql = "INSERT INTO terraintwinv2.line_2d (geometry, line_id, id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)" )
 @Getter
 @Setter
-public class Line2D {
+public class Line2D extends PostgresTables {
 
-    @Id
-    @GeneratedValue
-    private UUID id;
+    // @Id
+    // @GeneratedValue
+    // private UUID id;
 
     @Column(name="line_id", nullable = false)
     private Integer l_id;
 
-    @Column(nullable=false)
-    private String geometry;
+    // @Column(nullable=false)
+    // private String geometry;
 
     protected Line2D(){
 

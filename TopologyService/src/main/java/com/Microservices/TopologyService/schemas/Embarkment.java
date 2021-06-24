@@ -6,29 +6,24 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.SQLInsert;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity(name = "terraintwinv2.dtm_embarkment")
-@Table(name = "dtm_embarkment", schema = "terraintwinv2")
-@SQLInsert(sql = "INSERT INTO terraintwinv2.dtm_embarkment (geometry, tin_id, embarkment_id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)" )
 @Getter
 @Setter
-public class Embarkment {
+public class Embarkment extends PostgresTables {
 
-    @Id
-    @GeneratedValue
-    private UUID embarkment_id;
+    // @Id
+    // @GeneratedValue
+    // private UUID id;
 
     @Column
     private UUID tin_id;
 
-    @Column(nullable=false)
-    private String geometry;
+    // @Column(nullable=false)
+    // private String geometry;
 
     protected Embarkment(){
 
