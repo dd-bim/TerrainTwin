@@ -1,42 +1,30 @@
 package com.Microservices.PostgresImportService.schemas;
 
-import java.util.UUID;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.SQLInsert;
 
-import javax.persistence.GeneratedValue;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Table(name="polygon_2d", schema="terraintwinv2")
-@SQLInsert(sql = "INSERT INTO terraintwinv2.polygon_2d (geometry, polygon_id, id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)" )
+@SQLInsert(sql = "INSERT INTO terraintwinv2.polygon_2d (geometry, origin_id, id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)" )
 @Getter
 @Setter
-public class Polygon2D {
+public class Polygon2D extends PostgresTables {
 
-    @Id
-    @GeneratedValue
-    private UUID id;
-
-    @Column(name="polygon_id", nullable = false)
-    private Integer surfaceID;
-
-    @Column(nullable=false)
-    private String geometry;
-
+    @Column
+    protected int origin_id;
 
     protected Polygon2D() {
 
     }
 
-    public Polygon2D(Integer surfaceID, String geometry) {
-        this.surfaceID = surfaceID;
+    public Polygon2D(Integer origin_id, String geometry) {
+        this.origin_id = origin_id;
         this.geometry = geometry;
     }
 }

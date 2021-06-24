@@ -72,8 +72,7 @@ public class ImportRestController {
 
     // iterate over all repository classes and execute defined methods on there
     // instances
-    // to avoid duplicate relation generation, one more method is removed in each
-    // repository in the following order
+
     Class[] classes = { Point2DRepository.class, Point3DRepository.class, Line2DRepository.class,
         Line3DRepository.class, Polygon2DRepository.class, Polygon3DRepository.class, TINRepository.class,
         BreaklinesRepository.class, EmbarkmentRepository.class, SpecialPointsRepository.class };
@@ -86,7 +85,7 @@ public class ImportRestController {
         // get all methods of the repository class starting with "relate" and execute
         // them
         Method[] methods = classes[i].getMethods();
-
+    // to avoid duplicate relation generation, corresponding methods to repositories aren't used after the repository is processed
         for (int index = i; index < methods.length; index++) {
           if (methods[index].getName().startsWith("relate")) {
             String[][] rels = (String[][]) methods[index].invoke(objects[i]);

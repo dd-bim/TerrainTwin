@@ -1,11 +1,7 @@
 package com.Microservices.PostgresImportService.schemas;
 
-import java.util.UUID;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.SQLInsert;
@@ -15,27 +11,20 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "point_3d", schema = "terraintwinv2")
-@SQLInsert(sql = "INSERT INTO terraintwinv2.point_3d (geometry, point_id, id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)")
+@SQLInsert(sql = "INSERT INTO terraintwinv2.point_3d (geometry, origin_id, id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)")
 @Getter
 @Setter
-public class Point3D {
+public class Point3D extends PostgresTables {
 
-    @Id
-    @GeneratedValue
-    private UUID id;
-
-    @Column(name = "point_id", nullable = false)
-    private Integer p_id;
-
-    @Column(nullable = false)
-    private String geometry;
+    @Column
+    protected int origin_id;
 
     protected Point3D() {
 
     }
 
-    public Point3D(int point_id, String geometry) {
-        this.p_id = point_id;
+    public Point3D(int origin_id, String geometry) {
+        this.origin_id = origin_id;
         this.geometry = geometry;
     }
 }

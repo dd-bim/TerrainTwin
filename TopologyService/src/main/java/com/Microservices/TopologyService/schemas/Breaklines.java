@@ -4,11 +4,6 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,16 +12,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Breaklines extends PostgresTables {
-    
-    // @Id
-    // @GeneratedValue
-    // private UUID id;
 
     @Column(nullable = false)
     private UUID tin_id;
-
-    // @Column(nullable=false)
-    // private String geometry;
   
     protected Breaklines() {
 

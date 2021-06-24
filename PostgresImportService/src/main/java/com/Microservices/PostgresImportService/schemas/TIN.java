@@ -1,11 +1,6 @@
 package com.Microservices.PostgresImportService.schemas;
 
-import java.util.UUID;
-
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.SQLInsert;
@@ -18,14 +13,7 @@ import lombok.Setter;
 @SQLInsert(sql = "INSERT INTO terraintwinv2.dtm_tin (geometry, id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?)" )
 @Getter
 @Setter
-public class TIN {
-    
-    @Id
-    @GeneratedValue
-    private UUID id;
-
-    @Column(nullable=false)
-    private String geometry;
+public class TIN extends PostgresTables {
 
     protected TIN() {
 

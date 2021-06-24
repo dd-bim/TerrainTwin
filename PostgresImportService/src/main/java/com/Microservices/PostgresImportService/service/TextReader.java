@@ -99,11 +99,11 @@ System.out.println( idRow + ", " + wktRow + ", " + epsgRow);
                                 "SRID=" + Integer.parseInt(nextLine[epsgRow].trim()) + ";" + nextLine[wktRow]);
                     }
                     point3DRepo.save(point);
-                    log.info("'ID: " + point.getId() + ", point_id: " + point.getP_id() + ", geometry: "
+                    log.info("'ID: " + point.getId() + ", origin_id: " + point.getOrigin_id() + ", geometry: "
                             + point.getGeometry() + "'");
                     pointCount++;
 
-                    gdbConn = graphdb.graphdbImport(point.getP_id(), point.getId(), "3DPoint", "point_3d", filename, path,
+                    gdbConn = graphdb.graphdbImport(point.getOrigin_id(), point.getId(), "3DPoint", "point_3d", filename, path,
                             graphdbRepo);
 
                     // 2D point
@@ -116,11 +116,11 @@ System.out.println( idRow + ", " + wktRow + ", " + epsgRow);
                                 "SRID=" + Integer.parseInt(nextLine[epsgRow].trim()) + ";" + nextLine[wktRow]);
                     }
                     point2DRepo.save(point);
-                    log.info("'ID: " + point.getId() + ", point_id: " + point.getP_id() + ", geometry: "
+                    log.info("'ID: " + point.getId() + ", origin_id: " + point.getOrigin_id() + ", geometry: "
                             + point.getGeometry() + "'");
                     pointCount++;
 
-                    gdbConn = graphdb.graphdbImport(point.getP_id(), point.getId(), "2DPoint", "point_2d", filename, path,
+                    gdbConn = graphdb.graphdbImport(point.getOrigin_id(), point.getId(), "2DPoint", "point_2d", filename, path,
                             graphdbRepo);
 
                     // 3D line
@@ -134,11 +134,11 @@ System.out.println( idRow + ", " + wktRow + ", " + epsgRow);
                                 "SRID=" + Integer.parseInt(nextLine[epsgRow].trim()) + ";" + nextLine[wktRow]);
                     }
                     line3DRepo.save(line);
-                    log.info("'ID: " + line.getId() + ", line_id: " + line.getL_id() + ", geometry: "
+                    log.info("'ID: " + line.getId() + ", origin_id: " + line.getOrigin_id() + ", geometry: "
                             + line.getGeometry() + "'");
                     lineCount++;
 
-                    gdbConn = graphdb.graphdbImport(line.getL_id(), line.getId(), "3DLine", "line_3d", filename, path,
+                    gdbConn = graphdb.graphdbImport(line.getOrigin_id(), line.getId(), "3DLine", "line_3d", filename, path,
                             graphdbRepo);
 
                     // 2D line
@@ -151,11 +151,11 @@ System.out.println( idRow + ", " + wktRow + ", " + epsgRow);
                                 "SRID=" + Integer.parseInt(nextLine[epsgRow].trim()) + ";" + nextLine[wktRow]);
                     }
                     line2DRepo.save(line);
-                    log.info("'ID: " + line.getId() + ", line_id: " + line.getL_id() + ", geometry: "
+                    log.info("'ID: " + line.getId() + ", origin_id: " + line.getOrigin_id() + ", geometry: "
                             + line.getGeometry() + "'");
                     lineCount++;
 
-                    gdbConn = graphdb.graphdbImport(line.getL_id(), line.getId(), "2DLine", "line_2d", filename, path,
+                    gdbConn = graphdb.graphdbImport(line.getOrigin_id(), line.getId(), "2DLine", "line_2d", filename, path,
                             graphdbRepo);
 
                     // 3D polygon
@@ -168,11 +168,11 @@ System.out.println( idRow + ", " + wktRow + ", " + epsgRow);
                                 "SRID=" + Integer.parseInt(nextLine[epsgRow].trim()) + ";" + nextLine[wktRow]);
                     }
                     polygon3DRepo.save(polygon);
-                    log.info("'ID: " + polygon.getId() + ", polygon_id: " + polygon.getSurfaceID() + ", geometry: "
+                    log.info("'ID: " + polygon.getId() + ", origin_id: " + polygon.getOrigin_id() + ", geometry: "
                             + polygon.getGeometry() + "'");
                     polygonCount++;
 
-                    gdbConn = graphdb.graphdbImport(polygon.getSurfaceID(), polygon.getId(), "3DPolygon", "polygon_3d", filename,
+                    gdbConn = graphdb.graphdbImport(polygon.getOrigin_id(), polygon.getId(), "3DPolygon", "polygon_3d", filename,
                             path, graphdbRepo);
 
                     // 2D polygon
@@ -185,11 +185,11 @@ System.out.println( idRow + ", " + wktRow + ", " + epsgRow);
                                 "SRID=" + Integer.parseInt(nextLine[epsgRow].trim()) + ";" + nextLine[wktRow]);
                     }
                     polygon2DRepo.save(polygon);
-                    log.info("'ID: " + polygon.getId() + ", polygon_id: " + polygon.getSurfaceID() + ", geometry: "
+                    log.info("'ID: " + polygon.getId() + ", origin_id: " + polygon.getOrigin_id() + ", geometry: "
                             + polygon.getGeometry() + "'");
                     polygonCount++;
 
-                    gdbConn = graphdb.graphdbImport(polygon.getSurfaceID(), polygon.getId(), "2DPolygon", "polygon_2d", filename,
+                    gdbConn = graphdb.graphdbImport(polygon.getOrigin_id(), polygon.getId(), "2DPolygon", "polygon_2d", filename,
                             path, graphdbRepo);
 
                     // 3D TIN
@@ -218,11 +218,11 @@ System.out.println( idRow + ", " + wktRow + ", " + epsgRow);
                                 "SRID=" + Integer.parseInt(nextLine[epsgRow].trim()) + ";" + nextLine[wktRow]);
                     }
                     solidRepo.save(solid);
-                    log.info("'ID: " + solid.getId() + ", solid_id: " + solid.getS_id() + ", geometry: "
+                    log.info("'ID: " + solid.getId() + ", origin_id: " + solid.getOrigin_id() + ", geometry: "
                             + solid.getGeometry() + "'");
                     solidCount++;
 
-                    gdbConn = graphdb.graphdbImport(solid.getS_id(), solid.getId(), "Solid", "solid", filename,
+                    gdbConn = graphdb.graphdbImport(solid.getOrigin_id(), solid.getId(), "Solid", "solid", filename,
                             path, graphdbRepo);
 
                 } else {
