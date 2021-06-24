@@ -11,15 +11,15 @@ import lombok.Setter;
 @Setter
 public class Solid extends PostgresTables {
 
-    @Column(name="solid_id", nullable = false)
-    private Integer s_id;
+    @Column
+    protected int origin_id;
 
     protected Solid(){
 
     }
     
-    public Solid(int solid_id, String geometry){
-        this.s_id = solid_id;
+    public Solid(int origin_id, String geometry){
+        this.origin_id = origin_id;
         this.geometry = geometry;
     }
 }

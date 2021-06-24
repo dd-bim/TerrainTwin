@@ -11,15 +11,15 @@ import lombok.Setter;
 @Setter
 public class Line2D extends PostgresTables {
 
-    @Column(name="line_id", nullable = false)
-    private Integer l_id;
+    @Column
+    protected int origin_id;
 
     protected Line2D(){
 
     }
     
-    public Line2D(int line_id, String geometry){
-        this.l_id = line_id;
+    public Line2D(int origin_id, String geometry){
+        this.origin_id = origin_id;
         this.geometry = geometry;
     }
 }

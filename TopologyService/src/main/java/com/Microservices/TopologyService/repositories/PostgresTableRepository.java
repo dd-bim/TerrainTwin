@@ -11,7 +11,7 @@ import org.springframework.data.repository.NoRepositoryBean;
 @NoRepositoryBean
 public interface PostgresTableRepository<T extends PostgresTables> extends CrudRepository<T, UUID> {
     
-    @Query(value = "select cast(a.id as varchar) as a_id, cast(b.id as varchar) as b_id, ST_Dimension(a.geometry) as dimA, ST_Dimension(b.geometry) as dimB, ST_Relate(a.geometry, b.geometry) from #{#entityName} a, #{#entityName} b", nativeQuery = true)
+    @Query(value = "select cast(a.id as varchar) as a_id, cast(b.id as varchar) as b_id, ST_Dimension(a.geometry) as dimA, ST_Dimension(b.geometry) as dimB, ST_Relate(a.geometry, b.geometry) from #{#entityName} a, terraintwinv2.point_2d b", nativeQuery = true)
     String [][] relatePoint2d();
 
     @Query(value = "select cast(a.id as varchar) as a_id, cast(b.id as varchar) as b_id, ST_Dimension(a.geometry) as dimA, ST_Dimension(b.geometry) as dimB, ST_Relate(a.geometry, b.geometry) from #{#entityName} a, terraintwinv2.point_3d b", nativeQuery = true)

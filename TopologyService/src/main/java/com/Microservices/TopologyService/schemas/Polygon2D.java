@@ -11,15 +11,15 @@ import lombok.Setter;
 @Setter
 public class Polygon2D extends PostgresTables {
 
-    @Column(name="polygon_id", nullable = false)
-    private Integer surfaceID;
+    @Column
+    protected int origin_id;
 
     protected Polygon2D() {
 
     }
 
-    public Polygon2D(Integer surfaceID, String geometry) {
-        this.surfaceID = surfaceID;
+    public Polygon2D(int origin_id, String geometry) {
+        this.origin_id = origin_id;
         this.geometry = geometry;
     }
 }

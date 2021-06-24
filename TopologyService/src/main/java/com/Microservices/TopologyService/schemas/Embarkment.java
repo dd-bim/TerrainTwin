@@ -20,10 +20,6 @@ public class Embarkment extends PostgresTables {
 
     }
 
-    public Embarkment(String geometry){
-        this.geometry = geometry;
-    }
-
     public Embarkment(UUID tin_id, String geometry){
         this.tin_id = tin_id;
         this.geometry = geometry;
