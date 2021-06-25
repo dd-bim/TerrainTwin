@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BreaklinesRepository extends PostgresTableRepository<Breaklines> {
   
-    @Query(value="select * from terraintwin.breaklines_rohdaten", nativeQuery = true )
-    List<Breaklines> getBreaklines();
+    // @Query(value="select * from terraintwin.breaklines_rohdaten", nativeQuery = true )
+    // List<Breaklines> getBreaklines();
 
 }

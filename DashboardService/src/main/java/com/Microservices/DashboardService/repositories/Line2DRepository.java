@@ -1,17 +1,14 @@
 package com.Microservices.DashboardService.repositories;
 
-import java.util.UUID;
-
 import com.Microservices.DashboardService.schemas.Line2D;
 
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface Line2DRepository extends CrudRepository<Line2D, UUID> {
+public interface Line2DRepository extends PostgresTableRepository<Line2D> {
 
-    @Query(value = "select line_id, count(*) from terraintwinv2.line_2d group by line_id, geometry having count(*) > 1", nativeQuery = true)
+    @Query(value = "select origin_id, count(*) from terraintwinv2.line_2d group by origin_id, geometry having count(*) > 1", nativeQuery = true)
     Integer[][] getLine2DDuplicates();
 }
 

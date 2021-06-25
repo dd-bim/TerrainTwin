@@ -96,6 +96,7 @@ public class DashboardController {
     int pnt1 = pntDups1.length;
     Integer[][] pntDups2 = pnt3DRepository.getPnt3DDuplicates();
     int pnt2 = pntDups2.length;
+    System.out.println(pnt1 + " " + pnt2);
 
     Integer[][] pntDups = new Integer[pnt1 + pnt2][2];
     for (int p1 = 0; p1 < pnt1; p1++) {
@@ -103,8 +104,8 @@ public class DashboardController {
       pntDups[p1][1] = pntDups1[p1][1];
     }
     for (int p2 = 0; p2 < pnt2; p2++) {
-      pntDups[pnt1 - 1 + p2][0] = pntDups2[p2][0];
-      pntDups[pnt1 - 1 + p2][1] = pntDups2[p2][1];
+      pntDups[pnt1 + p2][0] = pntDups2[p2][0];
+      pntDups[pnt1 + p2][1] = pntDups2[p2][1];
     }
     model.addAttribute("pntDups", pntDups);
 
@@ -119,8 +120,8 @@ public class DashboardController {
       lineDups[l1][1] = lineDups1[l1][1];
     }
     for (int l2 = 0; l2 < line2; l2++) {
-      lineDups[line1 - 1 + l2][0] = lineDups2[l2][0];
-      lineDups[line1 - 1 + l2][1] = lineDups2[l2][1];
+      lineDups[line1 + l2][0] = lineDups2[l2][0];
+      lineDups[line1 + l2][1] = lineDups2[l2][1];
     }
     model.addAttribute("lineDups", lineDups);
 
@@ -135,8 +136,8 @@ public class DashboardController {
       polyDups[l1][1] = polyDups1[l1][1];
     }
     for (int l2 = 0; l2 < poly2; l2++) {
-      polyDups[poly1 - 1 + l2][0] = polyDups2[l2][0];
-      polyDups[poly1 - 1 + l2][1] = polyDups2[l2][1];
+      polyDups[poly1 + l2][0] = polyDups2[l2][0];
+      polyDups[poly1 + l2][1] = polyDups2[l2][1];
     }
     model.addAttribute("polyDups", polyDups);
 

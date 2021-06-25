@@ -4,8 +4,6 @@ import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.SQLInsert;
@@ -17,22 +15,15 @@ import lombok.Setter;
 
 @Entity
 @Table(name="dtm_breaklines", schema="terraintwinv2")
-@SQLInsert(sql = "INSERT INTO terraintwinv2.dtm_breaklines (geometry, tin_id, bl_id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)" )
+@SQLInsert(sql = "INSERT INTO terraintwinv2.dtm_breaklines (geometry, tin_id, id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)" )
 @Getter
 @Setter
-public class Breaklines {
+public class Breaklines extends PostgresTables {
 
     private static Logger LOGGER = LoggerFactory.getLogger(Breaklines.class);
-    
-    @Id
-    @GeneratedValue
-    private UUID bl_id;
 
     @Column(nullable = false)
     private UUID tin_id;
-
-    @Column(nullable=false)
-    private String geometry;
   
     protected Breaklines() {
 

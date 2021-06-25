@@ -1,16 +1,13 @@
 package com.Microservices.DashboardService.repositories;
 
-import java.util.UUID;
-
 import com.Microservices.DashboardService.schemas.Solid;
 
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface SolidRepository extends CrudRepository<Solid, UUID> {
+public interface SolidRepository extends PostgresTableRepository<Solid> {
 
-    @Query(value = "select solid_id, count(*) from terraintwinv2.solid group by solid_id, geometry having count(*) > 1", nativeQuery = true)
+    @Query(value = "select origin_id, count(*) from terraintwinv2.solid group by origin_id, geometry having count(*) > 1", nativeQuery = true)
     Integer[][] getSolidDuplicates();
 }
