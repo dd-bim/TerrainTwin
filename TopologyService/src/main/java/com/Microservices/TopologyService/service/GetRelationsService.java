@@ -63,8 +63,8 @@ public class GetRelationsService {
               String[] arr = { a, "crosses", b };
               relations.add(arr);
             }
-            if (dimA == dimB && (dimA == 0 || dimA == 2 && wm.match(bool, "T?T???T??"))
-                || (dimA == 1 && mask.startsWith("1") && wm.match(bool, "T?T???T??"))) {
+            if (dimA == dimB && (dimA == 0 || dimA == 2) && wm.match(bool, "T?T???T??")
+                || dimA == dimB && (dimA == 1 && mask.startsWith("1") && wm.match(bool, "T?T???T??"))) {
               String[] arr = { a, "overlaps", b };
               relations.add(arr);
             }

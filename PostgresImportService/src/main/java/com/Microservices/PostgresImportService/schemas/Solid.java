@@ -11,7 +11,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "solid", schema = "terraintwinv2")
-@SQLInsert(sql = "INSERT INTO terraintwinv2.solid (geometry, solid_id, id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)" )
+@SQLInsert(sql = "INSERT INTO terraintwinv2.solid (geometry, origin_id, id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)" )
 @Getter
 @Setter
 public class Solid extends PostgresTables {
