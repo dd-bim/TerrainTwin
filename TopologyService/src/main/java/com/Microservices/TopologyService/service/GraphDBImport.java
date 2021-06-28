@@ -24,8 +24,8 @@ public class GraphDBImport {
 
     Logger log = LoggerFactory.getLogger(GraphDBImport.class);
 
-    // public String graphdbImport(ArrayList<String[]> relations) {
-        public String graphdbImport() {
+    public String graphdbImport(ArrayList<String[]> relations) {
+        // public String graphdbImport() {
                 String conn = "";
         try {
             // ObjectMapper mapper = new ObjectMapper();
@@ -53,8 +53,17 @@ URL url = new URL("http://host.docker.internal:7201/graphdbimport/topology");
     connection.setRequestProperty("Content-Type", "application/json");
 
     OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());  
+    String json = new Gson().toJson(relations);
+    out.write(json);
+    // relations.forEach((relation) -> {
+    //     try {
+    //         out.write(relation[0] + ", " + relation[1] + ", " + relation[2]);
+    //     } catch (IOException e) {
+    //         e.printStackTrace();
+    //     }
+    // });
     // out.write(relations.toString());
-    out.write("hello world!");
+    // out.write("hello world!");
     out.flush();
     out.close();
 

@@ -129,7 +129,7 @@ public class ImportRestController {
       }
       result = "All relations processed. \n";
 
-      // String r = graphdb.graphdbImport(relations);
+      String r = graphdb.graphdbImport(relations);
       // result += graphdb.graphdbImport();
 
       // print methods to http response
