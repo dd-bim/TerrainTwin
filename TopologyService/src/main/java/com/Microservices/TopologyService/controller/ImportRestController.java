@@ -16,6 +16,7 @@ import com.Microservices.TopologyService.repositories.Polygon3DRepository;
 import com.Microservices.TopologyService.repositories.SpecialPointsRepository;
 import com.Microservices.TopologyService.repositories.TINRepository;
 import com.Microservices.TopologyService.service.GetRelationsService;
+import com.Microservices.TopologyService.service.GraphDBImport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +67,7 @@ public class ImportRestController {
 
   @GetMapping("/topology/relations")
   public String relations() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    GraphDBImport graphdb = new GraphDBImport();
     long start = System.currentTimeMillis();
 
     String result = "";
@@ -126,6 +128,9 @@ public class ImportRestController {
         }
       }
       result = "All relations processed. \n";
+
+      // String r = graphdb.graphdbImport(relations);
+      // result += graphdb.graphdbImport();
 
       // print methods to http response
       for (int z = 0; z < relations.size(); z++) {

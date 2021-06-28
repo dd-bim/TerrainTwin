@@ -16,7 +16,7 @@ public class GetRelationsService {
           String b = rel[i][1];
           int dimA = Integer.parseInt(rel[i][2]);
           int dimB = Integer.parseInt(rel[i][3]);
-          ;
+          
           String mask = rel[i][4];
           String bool = mask.replaceAll("[0-2]", "T");
           WildcardMatch wm = new WildcardMatch();

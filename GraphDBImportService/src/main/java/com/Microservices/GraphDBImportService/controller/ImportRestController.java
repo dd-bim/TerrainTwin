@@ -3,6 +3,8 @@ package com.Microservices.GraphDBImportService.controller;
 import com.Microservices.GraphDBImportService.domain.model.PostgresInfos;
 import com.Microservices.GraphDBImportService.service.ImportService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +24,8 @@ public class ImportRestController {
   @Autowired
   ImportService minio;
 
+  Logger log = LoggerFactory.getLogger(ImportRestController.class);
+
   // get bucket and use them
   @GetMapping("/graphdbimport/import/miniobucket/{bucket}/graphdbrepo/{repo}")
   public String send(@PathVariable String bucket, @PathVariable String repo) throws Exception {
@@ -39,4 +43,12 @@ public class ImportRestController {
 
     return results;
   }
+
+    // import infos from postgres database geometry
+    @PostMapping(path = "/graphdbimport/topology")
+    public String importTopology(@RequestBody String topo ) throws Exception {
+  
+      log.info(topo);
+      return "test";
+    }
 }
