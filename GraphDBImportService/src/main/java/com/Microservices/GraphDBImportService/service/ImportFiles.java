@@ -34,7 +34,7 @@ import io.minio.errors.MinioException;
 import io.minio.messages.Item;
 
 @Service
-public class ImportService {
+public class ImportFiles {
 
     @Autowired
     MinIOConnection connection;
@@ -42,7 +42,7 @@ public class ImportService {
     @Autowired
     GraphDBConnection dbconnection;
 
-    Logger log = LoggerFactory.getLogger(ImportService.class);
+    Logger log = LoggerFactory.getLogger(ImportFiles.class);
 
     @Value("${minio.url}")
     private String url;

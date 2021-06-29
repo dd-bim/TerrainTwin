@@ -86,7 +86,6 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/org/antlr/antlr-runtime/3.4/antlr-runtime-3.4.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/antlr/stringtemplate/3.2.1/stringtemplate-3.2.1.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/antlr/antlr/2.7.7/antlr-2.7.7.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/com/google/code/gson/gson/2.8.6/gson-2.8.6.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/apache/commons/commons-math/2.2/commons-math-2.2.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/thoughtworks/xstream/xstream/1.4.14/xstream-1.4.14.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/xmlpull/xmlpull/1.1.3.1/xmlpull-1.1.3.1.jar" enabled="true" runInBatchMode="false"/>
@@ -301,4 +300,5 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/com/carrotsearch/thirdparty/simple-xml-safe/2.7.1/simple-xml-safe-2.7.1.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/squareup/okhttp3/okhttp/3.14.9/okhttp-3.14.9.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/squareup/okio/okio/1.17.2/okio-1.17.2.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/com/google/code/gson/gson/2.8.7/gson-2.8.7.jar" enabled="true" runInBatchMode="false"/>
 </factorypath>

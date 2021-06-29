@@ -1,7 +1,9 @@
 package com.Microservices.GraphDBImportService.controller;
 
 import com.Microservices.GraphDBImportService.domain.model.PostgresInfos;
-import com.Microservices.GraphDBImportService.service.ImportService;
+import com.Microservices.GraphDBImportService.service.ImportFiles;
+import com.Microservices.GraphDBImportService.service.ImportPostgresGeometryInfos;
+import com.Microservices.GraphDBImportService.service.ImportTopology;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +24,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class ImportRestController {
 
   @Autowired
-  ImportService minio;
+  ImportFiles minio;
+
+  @Autowired
+  ImportPostgresGeometryInfos postgres;
+
+  @Autowired
+  ImportTopology topo;
 
   Logger log = LoggerFactory.getLogger(ImportRestController.class);
 
@@ -37,18 +45,17 @@ public class ImportRestController {
 
   // import infos from postgres database geometry
   @PostMapping(path = "/graphdbimport/postgresinfos")
-  public String importPostgres(@RequestBody PostgresInfos infos ) throws Exception {
+  public String importPostgres(@RequestBody PostgresInfos infos) throws Exception {
 
-    String results = minio.importPostgresInfos(infos);
-
+    String results = postgres.importPostgresInfos(infos);
     return results;
   }
 
-    // import infos from postgres database geometry
-    @PostMapping(path = "/graphdbimport/topology")
-    public String importTopology(@RequestBody String topo ) throws Exception {
-  
-      log.info(topo);
-      return "test";
-    }
+  // import topological relations from postgres geometry
+  @PostMapping(path = "/graphdbimport/topology")
+  public String importTopology(@RequestBody String topology) throws Exception {
+
+    String result = topo.importTopo(topology, "test1"); // repo variabel
+    return result;
+  }
 }

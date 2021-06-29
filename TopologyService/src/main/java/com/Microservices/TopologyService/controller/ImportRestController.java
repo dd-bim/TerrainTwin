@@ -4,7 +4,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
+import com.Microservices.TopologyService.domain.model.Triple;
 import com.Microservices.TopologyService.repositories.BreaklinesRepository;
 import com.Microservices.TopologyService.repositories.EmbarkmentRepository;
 import com.Microservices.TopologyService.repositories.Line2DRepository;
@@ -71,7 +73,7 @@ public class ImportRestController {
     long start = System.currentTimeMillis();
 
     String result = "";
-    ArrayList<String[]> relations = new ArrayList<String[]>();
+    List<Triple> relations = new ArrayList<Triple>();
 
     // iterate over all repository classes and execute defined methods on there
     // instances
@@ -129,13 +131,12 @@ public class ImportRestController {
       }
       result = "All relations processed. \n";
 
-      String r = graphdb.graphdbImport(relations);
-      // result += graphdb.graphdbImport();
-
+      result += graphdb.graphdbImport(relations);
+      
       // print methods to http response
-      for (int z = 0; z < relations.size(); z++) {
-        result += relations.get(z)[0] + ", " + relations.get(z)[1] + ", " + relations.get(z)[2] + "\n";
-      }
+      // for (int z = 0; z < relations.size(); z++) {
+      //   result += relations.get(z).getSubject() + ", " + relations.get(z).getPredicate() + ", " + relations.get(z).getObject() + "\n";
+      // }
 
     } catch (Exception e) {
       result = "Something goes wrong. Message: " + e.getMessage();

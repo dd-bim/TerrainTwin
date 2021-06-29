@@ -1,6 +1,6 @@
 package com.Microservices.GraphDBImportService.controller;
 
-import com.Microservices.GraphDBImportService.service.ImportService;
+import com.Microservices.GraphDBImportService.service.ImportFiles;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ImportController {
 
   @Autowired
-  ImportService minio;
+  ImportFiles minio;
 
   // start page
   @GetMapping("/graphdbimport/home")
