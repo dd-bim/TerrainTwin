@@ -9,6 +9,7 @@ Microservice Architecture:
     ☐ neuer Service mit Coverage Berechnungen (DE-9IM, Walthers Masterarbeit)
     ☐ Automation der Überführung nach PostGIS und GraphDB 
     ☐ Linkmodell für Daten eines TerrainTwinObject
+    (Topology abstract Intersects Klasse)
     ☐ Linkmodell zwischen den Persistenzdiensten
     ☐ Ontologie TerrainTwin
     ☐ Namespace einheitlich in .env für RDF Resources definieren
@@ -21,6 +22,7 @@ Microservice Architecture:
     ☐ 3D-Objekte verwenden
     ☐ Nginx Proxy Container
     ☐ Geoserver Docker
+    ☐ Geometrieexport mit angabe des EPSG Code für Ausgabe in bestimmtem Ref.-Sys.
     
 
     Postgres-Import-Service:
@@ -45,9 +47,9 @@ Microservice Architecture:
 
     Berechnungen:
         ☐ Abfrage welche Objekte liegen übereinander (DE-9IM)
-            ☐ Topologie explizit in GraphDB
+            ✔ Topologie explizit in GraphDB @done (1.7.2021, 15:15:23)
             ☐ Mögliche Abfragen zeigen
-        ☐ Umring von DGM als 3D-Polygon, 2D-Polygon
+        ☐ Umring von DGM als 3D-Polygon / 2D-Polygon
         ☐ GDAL Docker 
         ☐ Massenberechnungen, Differenz zw. 2 DGM
 

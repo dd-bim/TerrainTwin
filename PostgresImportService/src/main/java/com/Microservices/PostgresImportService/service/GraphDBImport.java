@@ -1,43 +1,43 @@
 package com.Microservices.PostgresImportService.service;
 
-import java.io.IOException;
-import java.util.UUID;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.Microservices.PostgresImportService.domain.model.PostgresInfos;
+import com.google.gson.Gson;
 
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 public class GraphDBImport {
 
-    @Value("domain.url")
-    private String domain;
-
     Logger log = LoggerFactory.getLogger(GraphDBImport.class);
 
-    public String graphdbImport(int originId, UUID id, String type, String table, String filename, String path,
-            String graphdbRepo) {
+    public String graphdbImport(PostgresInfos info) {
                 String conn = "";
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            ObjectNode infos = mapper.createObjectNode();
-            String postgresUrl = domain + "/postgres/" + table + "/id/" + id;
-            infos.put("originId", originId).put("id", id.toString()).put("url", postgresUrl).put("type", type)
-                    .put("filename", filename).put("path", path).put("graphdbRepo", graphdbRepo);
-            String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(infos);
 
-            HttpResponse response = postRequestGraphDBImport(json);
+            URL url = new URL("http://host.docker.internal:7201/graphdbimport/postgresinfos");
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(5000);// 5 secs
+            connection.setReadTimeout(5000);// 5 secs
 
-            System.out.println(response.toString());
-            if (response.getStatusLine().getStatusCode() == 200) {
+            connection.setRequestMethod("POST");
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type", "application/json");
+
+            OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
+            String json = new Gson().toJson(info);
+            out.write(json);
+            out.flush();
+            out.close();
+
+            int res = connection.getResponseCode();
+            if (res == 200) {
                 log.info("Import in GraphDB successfully finished.");
+            } else {
+                log.info("Error: " + res);
             }
 
         } catch (Exception e) {
@@ -47,11 +47,11 @@ public class GraphDBImport {
         return conn;
     }
 
-    HttpResponse postRequestGraphDBImport(String json) throws ClientProtocolException, IOException {
-        return Request.Post("http://graphdbimporter:7201/graphdbimport/postgresinfos")  //"http://172.17.0.1:7201/graphdbimport/postgresinfos" http://host.docker.internal:7201/graphdbimport/postgresinfos
-                // .viaProxy(new HttpHost("myproxy", 8080))
-                // .viaProxy(new HttpHost("graphdb-import-service", 7201))
-                .bodyString(json, ContentType.APPLICATION_JSON).execute().returnResponse();
-    }
+    // HttpResponse postRequestGraphDBImport(String json) throws ClientProtocolException, IOException {
+    //     return Request.Post("http://graphdbimporter:7201/graphdbimport/postgresinfos")  //"http://172.17.0.1:7201/graphdbimport/postgresinfos" http://host.docker.internal:7201/graphdbimport/postgresinfos
+    //             // .viaProxy(new HttpHost("myproxy", 8080))
+    //             // .viaProxy(new HttpHost("graphdb-import-service", 7201))
+    //             .bodyString(json, ContentType.APPLICATION_JSON).execute().returnResponse();
+    // }
 
 }

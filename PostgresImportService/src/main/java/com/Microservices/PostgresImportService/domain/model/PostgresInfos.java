@@ -1,4 +1,4 @@
-package com.Microservices.GraphDBImportService.domain.model;
+package com.Microservices.PostgresImportService.domain.model;
 
 import java.util.UUID;
 

@@ -40,7 +40,7 @@ public class ImportRestController {
   }
 
     // get folder and use them
-    @GetMapping("/postgresexport/DGM/id/{id}")
+    @GetMapping("/postgres/dtm_tin/id/{id}")
     public String getDGM(@PathVariable UUID id) throws Exception {
   
     String geom = tinRepository.getTINGeometry(id);

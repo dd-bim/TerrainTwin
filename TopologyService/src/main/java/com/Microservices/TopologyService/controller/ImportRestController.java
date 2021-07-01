@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.data.repository.Repository;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -67,8 +68,8 @@ public class ImportRestController {
 
   Logger log = LoggerFactory.getLogger(ImportRestController.class);
 
-  @GetMapping("/topology/relations")
-  public String relations() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+  @GetMapping("/topology/relations/graphdbrepo/{repo}")
+  public String relations(@PathVariable String repo) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
     GraphDBImport graphdb = new GraphDBImport();
     long start = System.currentTimeMillis();
 
@@ -131,12 +132,12 @@ public class ImportRestController {
       }
       result = "All relations processed. \n";
 
-      result += graphdb.graphdbImport(relations);
+      result += graphdb.graphdbImport(relations, repo);
       
       // print methods to http response
-      // for (int z = 0; z < relations.size(); z++) {
-      //   result += relations.get(z).getSubject() + ", " + relations.get(z).getPredicate() + ", " + relations.get(z).getObject() + "\n";
-      // }
+      for (int z = 0; z < relations.size(); z++) {
+        result += relations.get(z).getSubject() + ", " + relations.get(z).getPredicate() + ", " + relations.get(z).getObject() + "\n";
+      }
 
     } catch (Exception e) {
       result = "Something goes wrong. Message: " + e.getMessage();

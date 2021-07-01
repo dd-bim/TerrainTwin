@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TINRepository extends PostgresTableRepository<TIN> {
 
-    @Query(value = "select ST_asEWKT(geometry) from terraintwinv2.dtm_tin where tin_id = ?#{[0]}", nativeQuery = true)
+    @Query(value = "select ST_asEWKT(geometry) from terraintwinv2.dtm_tin where id = ?#{[0]}", nativeQuery = true)
     String getTINGeometry(UUID id);
 }

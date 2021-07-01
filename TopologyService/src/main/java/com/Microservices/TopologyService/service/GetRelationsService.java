@@ -29,36 +29,36 @@ public class GetRelationsService {
           } else if (wm.match(bool, "FF?FF????")) {
     
           } else if (wm.match(bool, "T?F??FFF?")) {
-            relations.add(new Triple(a, "equals", b));
+            relations.add(new Triple(a, "sfEquals", b));
 
           } else {
     
             if (wm.match(bool, "T?F??F???")) {
-              relations.add(new Triple(a, "within", b));
-              relations.add(new Triple(b, "contains", a));
+              relations.add(new Triple(a, "sfWithin", b));
+              relations.add(new Triple(b, "sfContains", a));
             }
             if (wm.match(bool, "?TF??F???") || wm.match(bool, "??FT?F???") || wm.match(bool, "??F?TF???")) {
-              relations.add(new Triple(a, "coveredBy", b));
-              relations.add(new Triple(b, "covers", a));
+              relations.add(new Triple(a, "ehCoveredBy", b));
+              relations.add(new Triple(b, "ehCovers", a));
             }
             if (wm.match(bool, "FT???????") || wm.match(bool, " 	F??T?????") || wm.match(bool, "F???T????")) {
-              relations.add(new Triple(a, "touches", b));
+              relations.add(new Triple(a, "sfTouches", b));
             }
             if (wm.match(bool, "T?????FF?")) {
-              relations.add(new Triple(a, "contains", b));
-              relations.add(new Triple(b, "within", a));
+              relations.add(new Triple(a, "sfContains", b));
+              relations.add(new Triple(b, "sfWithin", a));
             }
             if (wm.match(bool, "?T????FF?") || wm.match(bool, "???T??FF?") || wm.match(bool, "????T?FF?")) {
-              relations.add(new Triple(a, "covers", b));
-              relations.add(new Triple(b, "coveredBy", a));
+              relations.add(new Triple(a, "ehCovers", b));
+              relations.add(new Triple(b, "ehCoveredBy", a));
             }
             if (dimA < dimB && wm.match(bool, "T?T??????") || dimA > dimB && wm.match(bool, "T?????T??")
                 || dimA == 1 && dimB == 1 && mask.startsWith("0")) {
-              relations.add(new Triple(a, "crosses", b));
+              relations.add(new Triple(a, "sfCrosses", b));
             }
             if (dimA == dimB && (dimA == 0 || dimA == 2) && wm.match(bool, "T?T???T??")
                 || dimA == dimB && (dimA == 1 && mask.startsWith("1") && wm.match(bool, "T?T???T??"))) {
-              relations.add(new Triple(a, "overlaps", b));
+              relations.add(new Triple(a, "sfOverlaps", b));
             }
           }
         }

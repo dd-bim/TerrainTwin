@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import com.Microservices.PostgresImportService.domain.model.PostgresInfos;
 import com.Microservices.PostgresImportService.repositories.Line2DRepository;
 import com.Microservices.PostgresImportService.repositories.Line3DRepository;
 import com.Microservices.PostgresImportService.repositories.Point2DRepository;
@@ -24,6 +25,7 @@ import com.Microservices.PostgresImportService.schemas.TIN;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import au.com.bytecode.opencsv.CSVReader;
@@ -55,6 +57,9 @@ public class TextReader {
     @Autowired
     SolidRepository solidRepo;
 
+    @Value("${domain.url}")
+    private String domain;
+
     Logger log = LoggerFactory.getLogger(TextReader.class);
 
     // Imports WKT data from CSV and writes them into a database
@@ -67,7 +72,7 @@ public class TextReader {
         // } catch (Exception e) {
             reader = new CSVReader(new InputStreamReader(stream), ',', '"', 0); // seperator sollte variabel sein
         // }
-        
+
         String[] nextLine;
         int pointCount = 0, lineCount = 0, polygonCount = 0, solidCount = 0, tinCount = 0, notProcessed = 0;
         GraphDBImport graphdb = new GraphDBImport();
@@ -103,8 +108,10 @@ System.out.println( idRow + ", " + wktRow + ", " + epsgRow);
                             + point.getGeometry() + "'");
                     pointCount++;
 
-                    gdbConn = graphdb.graphdbImport(point.getOrigin_id(), point.getId(), "3DPoint", "point_3d", filename, path,
-                            graphdbRepo);
+                    String table = "point_3d";
+                    String postgresUrl = domain + "/postgres/" + table + "/id/" + point.getId();
+                    PostgresInfos p = new PostgresInfos(point.getOrigin_id(), point.getId(), postgresUrl, 0, 3, filename, path, graphdbRepo);
+                    gdbConn = graphdb.graphdbImport(p);
 
                     // 2D point
                 } else if (nextLine[wktRow].toUpperCase().contains("POINT")) {
@@ -120,8 +127,10 @@ System.out.println( idRow + ", " + wktRow + ", " + epsgRow);
                             + point.getGeometry() + "'");
                     pointCount++;
 
-                    gdbConn = graphdb.graphdbImport(point.getOrigin_id(), point.getId(), "2DPoint", "point_2d", filename, path,
-                            graphdbRepo);
+                    String table = "point_2d";
+                    String postgresUrl = domain + "/postgres/" + table + "/id/" + point.getId();
+                    PostgresInfos p = new PostgresInfos(point.getOrigin_id(), point.getId(), postgresUrl, 0, 2, filename, path, graphdbRepo);
+                    gdbConn = graphdb.graphdbImport(p);
 
                     // 3D line
                 } else if (nextLine[wktRow].toUpperCase().contains("LINESTRINGZ")
@@ -138,8 +147,10 @@ System.out.println( idRow + ", " + wktRow + ", " + epsgRow);
                             + line.getGeometry() + "'");
                     lineCount++;
 
-                    gdbConn = graphdb.graphdbImport(line.getOrigin_id(), line.getId(), "3DLine", "line_3d", filename, path,
-                            graphdbRepo);
+                    String table = "line_3d";
+                    String postgresUrl = domain + "/postgres/" + table + "/id/" + line.getId();
+                    PostgresInfos p = new PostgresInfos(line.getOrigin_id(), line.getId(), postgresUrl, 1, 3, filename, path, graphdbRepo);
+                    gdbConn = graphdb.graphdbImport(p);
 
                     // 2D line
                 } else if (nextLine[wktRow].toUpperCase().contains("LINESTRING")) {
@@ -155,8 +166,10 @@ System.out.println( idRow + ", " + wktRow + ", " + epsgRow);
                             + line.getGeometry() + "'");
                     lineCount++;
 
-                    gdbConn = graphdb.graphdbImport(line.getOrigin_id(), line.getId(), "2DLine", "line_2d", filename, path,
-                            graphdbRepo);
+                    String table = "line_2d";
+                    String postgresUrl = domain + "/postgres/" + table + "/id/" + line.getId();
+                    PostgresInfos p = new PostgresInfos(line.getOrigin_id(), line.getId(), postgresUrl, 1, 2, filename, path, graphdbRepo);
+                    gdbConn = graphdb.graphdbImport(p);
 
                     // 3D polygon
                 } else if (nextLine[wktRow].toUpperCase().contains("POLYGONZ") || nextLine[wktRow].toUpperCase().contains("POLYGON Z")) {
@@ -172,8 +185,10 @@ System.out.println( idRow + ", " + wktRow + ", " + epsgRow);
                             + polygon.getGeometry() + "'");
                     polygonCount++;
 
-                    gdbConn = graphdb.graphdbImport(polygon.getOrigin_id(), polygon.getId(), "3DPolygon", "polygon_3d", filename,
-                            path, graphdbRepo);
+                    String table = "polygon_3d";
+                    String postgresUrl = domain + "/postgres/" + table + "/id/" + polygon.getId();
+                    PostgresInfos p = new PostgresInfos(polygon.getOrigin_id(), polygon.getId(), postgresUrl, 2, 3, filename, path, graphdbRepo);
+                    gdbConn = graphdb.graphdbImport(p);
 
                     // 2D polygon
                 } else if (nextLine[wktRow].toUpperCase().contains("POLYGON")) {
@@ -189,8 +204,10 @@ System.out.println( idRow + ", " + wktRow + ", " + epsgRow);
                             + polygon.getGeometry() + "'");
                     polygonCount++;
 
-                    gdbConn = graphdb.graphdbImport(polygon.getOrigin_id(), polygon.getId(), "2DPolygon", "polygon_2d", filename,
-                            path, graphdbRepo);
+                    String table = "polygon_2d";
+                    String postgresUrl = domain + "/postgres/" + table + "/id/" + polygon.getId();
+                    PostgresInfos p = new PostgresInfos(polygon.getOrigin_id(), polygon.getId(), postgresUrl, 2, 2, filename, path, graphdbRepo);
+                    gdbConn = graphdb.graphdbImport(p);
 
                     // 3D TIN
                 } else if (nextLine[wktRow].toUpperCase().contains("TIN")) {
@@ -205,8 +222,10 @@ System.out.println( idRow + ", " + wktRow + ", " + epsgRow);
                     log.info("'ID: " + tin.getId() + ", geometry: " + tin.getGeometry() + "'");
                     tinCount++;
 
-                    gdbConn = graphdb.graphdbImport(-1, tin.getId(), "TIN", "dtm_tin", filename, path,
-                            graphdbRepo);
+                    String table = "dtm_tin";
+                    String postgresUrl = domain + "/postgres/" + table + "/id/" + tin.getId();
+                    PostgresInfos p = new PostgresInfos(-1, tin.getId(), postgresUrl, 4, 3, filename, path, graphdbRepo);
+                    gdbConn = graphdb.graphdbImport(p);
 
                     // solid
                 } else if (nextLine[wktRow].toUpperCase().contains("POLYHEDRALSURFACE")) {
@@ -222,8 +241,10 @@ System.out.println( idRow + ", " + wktRow + ", " + epsgRow);
                             + solid.getGeometry() + "'");
                     solidCount++;
 
-                    gdbConn = graphdb.graphdbImport(solid.getOrigin_id(), solid.getId(), "Solid", "solid", filename,
-                            path, graphdbRepo);
+                    String table = "solid";
+                    String postgresUrl = domain + "/postgres/" + table + "/id/" + solid.getId();
+                    PostgresInfos p = new PostgresInfos(-1, solid.getId(), postgresUrl, 3, 3, filename, path, graphdbRepo);
+                    gdbConn = graphdb.graphdbImport(p);
 
                 } else {
                     log.error("Could not process " + nextLine[idRow] + ", " + nextLine[wktRow]);

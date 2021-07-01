@@ -10,20 +10,16 @@ import com.google.gson.Gson;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 public class GraphDBImport {
 
-    @Value("domain.url")
-    private String domain;
-
     Logger log = LoggerFactory.getLogger(GraphDBImport.class);
 
-    public String graphdbImport(List<Triple> relations) {
+    public String graphdbImport(List<Triple> relations, String repo) {
         String conn = "";
         try {
 
-            URL url = new URL("http://host.docker.internal:7201/graphdbimport/topology");
+            URL url = new URL("http://host.docker.internal:7201/graphdbimport/topology/graphdbrepo/" + repo);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setConnectTimeout(5000);// 5 secs
             connection.setReadTimeout(5000);// 5 secs

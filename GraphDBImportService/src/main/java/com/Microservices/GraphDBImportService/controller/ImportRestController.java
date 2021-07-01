@@ -52,10 +52,10 @@ public class ImportRestController {
   }
 
   // import topological relations from postgres geometry
-  @PostMapping(path = "/graphdbimport/topology")
-  public String importTopology(@RequestBody String topology) throws Exception {
+  @PostMapping(path = "/graphdbimport/topology/graphdbrepo/{repo}")
+  public String importTopology( @PathVariable String repo, @RequestBody String topology) throws Exception {
 
-    String result = topo.importTopo(topology, "test1"); // repo variabel
+    String result = topo.importTopo(topology, repo);
     return result;
   }
 }

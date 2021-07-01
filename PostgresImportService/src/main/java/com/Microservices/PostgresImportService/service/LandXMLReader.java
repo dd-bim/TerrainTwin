@@ -7,6 +7,7 @@ import java.util.HashMap;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
+import com.Microservices.PostgresImportService.domain.model.PostgresInfos;
 import com.Microservices.PostgresImportService.repositories.BreaklinesRepository;
 import com.Microservices.PostgresImportService.repositories.SpecialPointsRepository;
 import com.Microservices.PostgresImportService.repositories.TINRepository;
@@ -17,11 +18,12 @@ import com.Microservices.PostgresImportService.schemas.TIN;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class LandXMLReader {
-
+    
     @Autowired
     TINRepository tinRepository;
 
@@ -32,6 +34,9 @@ public class LandXMLReader {
     SpecialPointsRepository spRepository;
 
     Logger log = LoggerFactory.getLogger(LandXMLReader.class);
+
+    @Value("${domain.url}")
+    private String domain;
 
     ArrayList<String> breaklines = new ArrayList<String>();
     HashMap<Integer, String> points = new HashMap<Integer, String>();
@@ -48,21 +53,33 @@ public class LandXMLReader {
         TIN tin = new TIN("SRID=" + srid + ";" + buildWktTIN());
         tinRepository.save(tin);
         log.info("'ID: " + tin.getId() + ", WKT: " + tin.getGeometry() + "'");
-        graphdb.graphdbImport(-1, tin.getId(), "TIN", "dtm_tin",filename, path, graphdbRepo);
+
+        String table = "dtm_tin";
+        String postgresUrl = domain + "/postgres/" + table + "/id/" + tin.getId();
+        PostgresInfos p = new PostgresInfos(-1, tin.getId(), postgresUrl, 4, 3, filename, path, graphdbRepo);
+        graphdb.graphdbImport(p);
 
         for (int i = 0; i < breaklines.size(); i++) {
             Breaklines bl = new Breaklines(tin.getId(), "SRID=" + srid + ";" + getBreaklines(i));
             blRepository.save(bl);
             blCount++;
             log.info("'ID: " + bl.getId() + ", WKT: " + bl.getGeometry() + ", tin_id: " + bl.getTin_id() + "'");
-            graphdb.graphdbImport(-1, bl.getId(), "Breakline", "dtm_breaklines",filename, path, graphdbRepo);
+            
+            String tableBl = "dtm_breaklines";
+            String postgresUrlBl = domain + "/postgres/" + tableBl + "/id/" + bl.getId();
+            PostgresInfos pBl = new PostgresInfos(-1, bl.getId(), postgresUrlBl, 1, 3, filename, path, graphdbRepo);
+            graphdb.graphdbImport(pBl);
         }
 
         cgpoints.forEach((key, value) -> {
             SpecialPoints spPoint = new SpecialPoints(key, tin.getId() ,
             "SRID=" + srid + ";POINTZ (" + value + ")");
             spRepository.save(spPoint);
-            graphdb.graphdbImport(-1, spPoint.getId(), "SpecialPoint", "dtm_specialpoints",filename, path, graphdbRepo);
+
+            String tableSp = "dtm_specialpoints";
+            String postgresUrlSp = domain + "/postgres/" + tableSp + "/id/" + spPoint.getId();
+            PostgresInfos pBl = new PostgresInfos(-1, spPoint.getId(), postgresUrlSp, 0, 3, filename, path, graphdbRepo);
+            graphdb.graphdbImport(pBl);
         });
 
         return "TIN with " + blCount + " Breaklines and " + cgpoints.size() + " special points has been imported.";

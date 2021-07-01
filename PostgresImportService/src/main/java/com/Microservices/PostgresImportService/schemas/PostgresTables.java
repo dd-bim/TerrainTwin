@@ -27,5 +27,5 @@ public abstract class PostgresTables {
 
     @Column(nullable=false)
     protected String geometry;
-    
+
 }

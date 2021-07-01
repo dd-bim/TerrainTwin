@@ -47,6 +47,8 @@ public class ImportTopology {
         Type type = new TypeToken<ArrayList<Triple>>(){}.getType();
         List<Triple> triples = gson.fromJson(topo, type);
         
+        System.out.println("Anzahl Triples: " + triples.size()); // 782 stimmt
+        
         // get connection to graphdb repository
         try {
             RepositoryConnection db = dbconnection.connection(repo);
@@ -55,11 +57,12 @@ public class ImportTopology {
             String prefix = "postgres:";
 
             ModelBuilder builder = new ModelBuilder();
-            builder.setNamespace("postgres", namespace);
+            builder.setNamespace("postgres", namespace).setNamespace("geo", "http://www.opengis.net/ont/geosparql#");
             
             // write triples 
             triples.forEach( (t) -> {
-                builder.add(prefix + t.getSubject(), prefix + t.getPredicate(), prefix + t.getObject());
+                builder.add(prefix + t.getSubject(), "geo:" + t.getPredicate(), prefix + t.getObject());
+                log.info(t.getPredicate());
             });
 
             Model m = builder.build();

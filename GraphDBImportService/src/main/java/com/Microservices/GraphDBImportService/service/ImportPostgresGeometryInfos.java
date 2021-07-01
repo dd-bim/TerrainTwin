@@ -49,11 +49,11 @@ public class ImportPostgresGeometryInfos {
 
                 // create rdf model from data
                 ModelBuilder builder = new ModelBuilder();
-                builder.setNamespace("postgres", namespace).setNamespace("geom", "http://geometry.example.org/");
-                String object = "postgres:" + infos.getOriginId();
-                builder.add(object, "geom:source", infos.getPath() + "/" + infos.getFilename())
-                        .add(object, "geom:id", infos.getId()).add(object, "geom:url", infos.getUrl())
-                        .add(object, "geom:Type", infos.getType());
+                builder.setNamespace("postgres", namespace).setNamespace("tto", "http://terrain.dd-bim.org/terraintwin/ontology/");
+                String object = "postgres:" + infos.getId();
+                builder.add(object, "tto:source", infos.getPath() + "/" + infos.getFilename())
+                        .add(object, "tto:origin_id", infos.getOriginId()).add(object, "tto:url", infos.getUrl())
+                        .add(object, "geo:dimension", infos.getDimension()).add(object, "geo:coordinateDimension", infos.getCoordDimension());
 
                 Model m = builder.build();
                 log.info(m.toString());
