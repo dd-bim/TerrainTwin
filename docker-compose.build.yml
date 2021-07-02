@@ -156,6 +156,7 @@ services:
             # - project.epsg=${PROJECT_EPSG}
         volumes:
             - ./volumes/logs:/var/log
+        # command: /bin/bash -c "psql -v ON_ERROR_STOP=1 -v dbname=example -v dbuser=example -e" < ./schema.sql
 
     csv2rdf-converter-service:
         container_name: csv2rdf-converter-service
