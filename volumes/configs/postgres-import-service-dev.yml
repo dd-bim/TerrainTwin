@@ -5,8 +5,9 @@ springdoc:
     api-docs:
         path: /postgresimport/v3/api-docs
     swagger-ui: 
-        path: /postgresimport/swagger-ui.html
+        path: /postgresimport
         operationsSorter: method
+        url: /openapi.yml
 
 spring:
     datasource:

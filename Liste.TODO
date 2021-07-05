@@ -6,7 +6,7 @@ Microservice Architecture:
 
     ☐ DGM Ausgabe über WCS/WFS
     ☐ ID's einheitlich gestalten
-    ☐ neuer Service mit Coverage Berechnungen (DE-9IM, Walthers Masterarbeit)
+    ✔ neuer Service mit Coverage Berechnungen (DE-9IM, Walthers Masterarbeit) @done (2.7.2021, 10:02:21)
     ☐ Automation der Überführung nach PostGIS und GraphDB 
     ☐ Linkmodell für Daten eines TerrainTwinObject
     (Topology abstract Intersects Klasse)
@@ -22,7 +22,7 @@ Microservice Architecture:
     ☐ 3D-Objekte verwenden
     ☐ Nginx Proxy Container
     ☐ Geoserver Docker
-    ☐ Geometrieexport mit angabe des EPSG Code für Ausgabe in bestimmtem Ref.-Sys.
+    ☐ Geometrieexport mit Angabe des EPSG Code für Ausgabe in bestimmtem Ref.-Sys.
     
 
     Postgres-Import-Service:

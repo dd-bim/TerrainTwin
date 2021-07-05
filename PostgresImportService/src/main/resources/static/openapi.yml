@@ -1,0 +1,108 @@
+openapi: 3.0.3
+info:
+  title: PostgreSQL Import API
+  description: Documentation of PostgreSQL Import and Export.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: v1.1
+servers:
+- url: http://localhost:7203
+- url: https://terrain.dd-bim.org
+- url: /
+paths:
+  /postgresimport/bucket/{bucket}/graphDbRepo/{graphDbRepo}:
+    get:
+      tags:
+      - Import
+      summary: Import geometries into Postgres
+      operationId: import-geometry
+      parameters:
+      - name: bucket
+        in: path
+        description: The name of the source MinIO bucket.
+        required: true
+        schema:
+          type: string
+      - name: graphDbRepo
+        in: path
+        description: The name of the target repository for the import of extra information into GraphDB.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+  /collections:
+    get:
+      tags:
+      - Export
+      summary: Get all collectionId's
+      operationId: collections
+      responses:
+        200:
+          description: successful operation
+  /collections/{collectionId}:
+    get:
+      tags:
+      - Export
+      summary: Get collection by Id
+      operationId: collection
+      parameters:
+      - name: collectionId
+        in: path
+        description: The unique id of the collection.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+  /collections/{collectionId}/items:
+    get:
+      tags:
+      - Export
+      summary: Get all items of a collection
+      operationId: collection-items
+      parameters:
+      - name: collectionId
+        in: path
+        description: The unique id of the collection.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+  /collections/{collectionId}/items/{featureId}:
+    get:
+      tags:
+      - Export
+      summary: Export DGM by ID
+      operationId: dgm-export
+      parameters:
+      - name: id
+        in: path
+        description: The unique id of the DGM geometry.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+  /postgres/dtm_tin/id/{id}:
+    get:
+      tags:
+      - Export
+      summary: Export DGM by ID
+      operationId: dgm-export
+      parameters:
+      - name: id
+        in: path
+        description: The unique id of the DGM geometry.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation

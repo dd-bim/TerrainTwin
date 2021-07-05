@@ -13,12 +13,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.ExternalDocumentation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-
 @RefreshScope
 @RestController
-@Tag(name = "Postgres Importer", description = "Import Files from MinIO Object Storage into postgres database", externalDocs = @ExternalDocumentation(url = "/postgresimport", description = "Interface"))
+// @Tag(name = "Postgres Importer", description = "Import Files from MinIO Object Storage into postgres database", externalDocs = @ExternalDocumentation(url = "/postgresimport", description = "Interface"))
 public class ImportRestController {
 
   @Autowired

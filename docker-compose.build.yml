@@ -49,6 +49,8 @@ services:
             - ./volumes/logs:/var/log
 
     minio-upload-service:
+        profiles: 
+            - terraintwin
         container_name: minio-upload-service
         # hostname: ${DOMAIN_NAME}
         build:
@@ -82,8 +84,10 @@ services:
 
             
     graphdb-import-service:
-        # profiles: 
-        #     - import
+        profiles: 
+            - topoimport
+            - terraintwin
+            - import
         container_name: graphdb-import-service
         # hostname: ${DOMAIN_NAME}
         build:
@@ -119,11 +123,11 @@ services:
             - graphdb.password=${GRAPHDB_PASSWORD}
         volumes:
             - ./volumes/logs:/var/log
-            # - ./volumes/graphdb:/var
 
     postgres-import-service:
-        # profiles: 
-        #     - import
+        profiles: 
+            - import
+            - terraintwin
         container_name: postgres-import-service
         # hostname: ${DOMAIN_NAME}
         build:
@@ -159,6 +163,8 @@ services:
         # command: /bin/bash -c "psql -v ON_ERROR_STOP=1 -v dbname=example -v dbuser=example -e" < ./schema.sql
 
     csv2rdf-converter-service:
+        profiles: 
+            - terraintwin
         container_name: csv2rdf-converter-service
         # hostname: ${DOMAIN_NAME}
         build:
@@ -188,6 +194,8 @@ services:
             - ./volumes/logs:/var/log
             
     gateway-service:
+        profiles: 
+            - terraintwin
         container_name: gateway-service
         # hostname: ${DOMAIN_NAME}
         build:
@@ -213,6 +221,8 @@ services:
             - ./volumes/logs:/var/log
 
     admin-server:
+        profiles: 
+            - terraintwin
         container_name: admin-server
         # hostname: ${DOMAIN_NAME}
         build:
@@ -231,6 +241,8 @@ services:
             - ./volumes/logs:/var/log
    
     dashboard-service:
+        profiles: 
+            - terraintwin
         container_name: dashboard-service
         # hostname: ${DOMAIN_NAME}
         build:
@@ -260,6 +272,9 @@ services:
             - ./volumes/logs:/var/log
 
     topology-service:
+        profiles: 
+            - topoimport
+            - terraintwin
         container_name: topology-service
         # hostname: ${DOMAIN_NAME}
         build:
@@ -291,7 +306,7 @@ services:
 
 networks:
     terraintwin_microservices:
-        # driver: bridge
+        driver: bridge
 
 #     keycloak:
 #         image: jboss/keycloak:13.0.1

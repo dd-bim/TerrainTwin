@@ -21,6 +21,14 @@ spring:
                   uri: lb://postgres-import-service
                   predicates:
                       - Path=/postgresimport/**
+                - id: topology-service
+                  uri: lb://topology-service
+                  predicates:
+                      - Path=/topology/**
+                # - id: dashboard-service
+                #   uri: lb://dashboard-service
+                #   predicates:
+                #       - Path=/postgresinfos/**
                 - id: openapi
                   uri: http://localhost:${server.port}
                   predicates:

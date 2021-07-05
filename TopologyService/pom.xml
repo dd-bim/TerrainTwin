@@ -55,7 +55,7 @@
 		<dependency>
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
-			<version>1.5.5</version>
+			<version>1.5.9</version>
 		</dependency>
 		<!-- <dependency>
 			<groupId>com.h2database</groupId>
@@ -117,7 +117,7 @@
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>fluent-hc</artifactId>
 			<version>4.5.13</version>
@@ -126,7 +126,7 @@
 			<groupId>org.apache.clerezza.ext</groupId>
 			<artifactId>org.json.simple</artifactId>
 			<version>0.4</version>
-		</dependency>
+		</dependency> -->
 
 	</dependencies>
 	<dependencyManagement>
