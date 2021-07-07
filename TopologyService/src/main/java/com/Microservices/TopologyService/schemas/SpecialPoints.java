@@ -13,9 +13,6 @@ import lombok.Setter;
 @Setter
 public class SpecialPoints extends PostgresTables {
 
-    @Column
-    protected int origin_id;
-
     @Column(name="tin_id", nullable=false)
     private UUID tin_id;
 
@@ -23,8 +20,7 @@ public class SpecialPoints extends PostgresTables {
 
     }
     
-    public SpecialPoints(int origin_id, UUID tin_id, String geometry){
-        this.origin_id = origin_id;
+    public SpecialPoints(UUID tin_id, String geometry){
         this.tin_id = tin_id;
         this.geometry = geometry;
     }

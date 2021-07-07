@@ -20,7 +20,7 @@ public abstract class PostgresTables {
 
     @Id
     @GeneratedValue
-    private UUID id;
+    protected UUID id;
 
     // @Column
     // protected int origin_id;

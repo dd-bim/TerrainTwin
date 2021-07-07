@@ -9,7 +9,7 @@ import org.hibernate.annotations.SQLInsert;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
+@Entity(name = "terraintwinv2.solid")
 @Table(name = "solid", schema = "terraintwinv2")
 @SQLInsert(sql = "INSERT INTO terraintwinv2.solid (geometry, origin_id, id) VALUES (ST_Transform(ST_GeomFromEWKT(?),25832),?,?)" )
 @Getter

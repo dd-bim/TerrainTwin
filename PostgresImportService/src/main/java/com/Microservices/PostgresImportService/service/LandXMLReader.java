@@ -72,7 +72,7 @@ public class LandXMLReader {
         }
 
         cgpoints.forEach((key, value) -> {
-            SpecialPoints spPoint = new SpecialPoints(key, tin.getId() ,
+            SpecialPoints spPoint = new SpecialPoints(tin.getId() ,
             "SRID=" + srid + ";POINTZ (" + value + ")");
             spRepository.save(spPoint);
 
