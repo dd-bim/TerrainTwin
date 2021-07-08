@@ -18,7 +18,7 @@ spring:
                   predicates:
                       - Path=/minioupload/**
                 - id: geometry-service
-                  uri: lb://postgres-import-service
+                  uri: lb://geometry-handler
                   predicates:
                       - Path=/geometry/**
                 - id: topology-service

@@ -25,11 +25,11 @@ Microservice Architecture:
     ☐ Geometrieexport mit Angabe des EPSG Code für Ausgabe in bestimmtem Ref.-Sys.
     
 
-    Postgres-Import-Service:
+    Geometry Handler:
         ☐ EPSG Codes und Schemaname in Tabellendefinition und Insert Befehlen variabel gestalten
         ☐ REST Schnittstelle für Postgres hinzufügen
             ✔ DTM über ID als EWKT ausgeben lassen @done (15.6.2021, 12:06:49)
-        ☐ allgemeineren Namen für Service finden
+        ✔ allgemeineren Namen für Service finden @done (8.7.2021, 14:58:47)
         ☐ direkter Import DGM für Rückschreiben durch LandplanOS?
         ☐ DXF Import
         ☐ GML Import 

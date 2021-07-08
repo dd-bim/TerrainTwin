@@ -124,15 +124,15 @@ services:
         volumes:
             - ./volumes/logs:/var/log
 
-    postgres-import-service:
+    geometry-handler:
         profiles: 
             - import
             - terraintwin
-        container_name: postgres-import-service
+        container_name: geometry-handler
         # hostname: ${DOMAIN_NAME}
         build:
-            context: ./PostgresImportService
-        image: schi11er/tt_postgres-import-service:latest
+            context: ./GeometryHandler
+        image: schi11er/tt_geometry-handler:latest
         restart: unless-stopped
         ports:
             - 7203:7203

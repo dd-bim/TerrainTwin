@@ -1,0 +1,156 @@
+openapi: 3.0.3
+info:
+  title: PostgreSQL Import/Export API
+  description: Documentation of PostgreSQL Import and Export.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: v1.1
+servers:
+- url: http://localhost:7203
+- url: https://terrain.dd-bim.org
+- url: /
+paths:
+  /geometry/import/bucket/{bucket}/graphDbRepo/{graphDbRepo}:
+    get:
+      tags:
+      - Import
+      summary: Import geometries into Postgres
+      operationId: import-geometry
+      parameters:
+      - name: bucket
+        in: path
+        description: The name of the source MinIO bucket.
+        required: true
+        schema:
+          type: string
+      - name: graphDbRepo
+        in: path
+        description: The name of the target repository for the import of extra information into GraphDB.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+  /:
+    get:
+      tags:
+      - Export
+      summary: Landing page
+      operationId: landing-page
+      responses:
+        200:
+          description: successful operation
+  /conformance:
+    get:
+      tags:
+      - Export
+      summary: Get conformance information
+      operationId: conformance
+      responses:
+        200:
+          description: successful operation
+  /collections:
+    get:
+      tags:
+      - Export
+      summary: Get all collectionId's
+      operationId: collections
+      responses:
+        200:
+          description: successful operation
+  /collections/{collectionId}:
+    get:
+      tags:
+      - Export
+      summary: Get collection by id
+      operationId: collection
+      parameters:
+      - name: collectionId
+        in: path
+        description: The unique id of the collection.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+  /collections/{collectionId}/items:
+    get:
+      tags:
+      - Export
+      summary: Get all items of a collection
+      operationId: collection-items
+      parameters:
+      - name: collectionId
+        in: path
+        description: The unique id of the collection.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+  /collections/{collectionId}/items/{featureId}:
+    get:
+      tags:
+      - Export
+      summary: Export feature by id
+      operationId: feature-export
+      parameters:
+      - name: collectionId
+        in: path
+        description: The unique id of the collection.
+        required: true
+        schema:
+          type: string
+      - name: featureId
+        in: path
+        description: The unique id of the geometry.
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            # application/geo+json:
+            #   schema: 
+            #     $ref: '#/components/schemas/geoObject'
+              # example:
+              #   id: 00d57a7b-1aaf-49b8-b910-b6e41b24e3ce
+              #   origin_id: 1234
+              #   geometry: SRID=25832;POINT(685647.538246778 5646639.64492847 0)
+            # text/html:
+            #   schema:
+            #     $ref: '#/components/schemas/geoObject'
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/geoObject'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/geoObject'
+            text/plain:
+              schema:
+                type: string
+            # application/yaml:
+            #   schema:
+            #     $ref: '#/components/schemas/geoObject'
+components:
+  schemas:
+    geoObject:
+      type: object
+      required:
+        - id 
+        - geometry
+      properties: 
+        id:
+          type: string
+        origin_id:
+          type: integer
+          nullable: true
+        geometry:
+          type: string
+        tin_id:
+          type: string
