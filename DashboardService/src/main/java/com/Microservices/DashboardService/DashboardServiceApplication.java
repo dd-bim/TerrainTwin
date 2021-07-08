@@ -2,6 +2,7 @@ package com.Microservices.DashboardService;
 
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -31,8 +32,8 @@ public class DashboardServiceApplication implements WebMvcConfigurer{
     }
 
     @Bean 
-    public OpenAPI springOpenAPI() {
-        return new OpenAPI().addServersItem(new Server().url("http://localhost:7205"));
+    public OpenAPI serversOpenAPI(@Value("${domain.url}") String url, @Value("${server.port}") String port) {
+        return new OpenAPI().addServersItem(new Server().url(url)).addServersItem(new Server().url("http://localhost:" + port));
     }
 
 }

@@ -3,11 +3,11 @@ server:
 
 springdoc:
     api-docs:
-        path: /postgresimport/v3/api-docs
+        path: /geometry/v3/api-docs
     swagger-ui: 
-        path: /postgresimport
+        path: /geometry
         operationsSorter: method
-        url: /openapi.yml
+        disable-swagger-default-url: true
 
 spring:
     datasource:

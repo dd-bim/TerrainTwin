@@ -35,12 +35,21 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RefreshScope
 @RestController
-public class ImportRestController {
+@Tag(name = "Export")
+@RequestMapping("/geometry/export")
+public class ExportController {
 
   @Autowired
   CheckFiles minio;
@@ -78,21 +87,27 @@ public class ImportRestController {
   @Autowired
   SpecialPointsRepository sPntRepo;
 
-  Logger log = LoggerFactory.getLogger(ImportRestController.class);
+  Logger log = LoggerFactory.getLogger(ExportController.class);
 
-  // get folder and use them
-  @GetMapping("/postgresimport/bucket/{bucket}/graphDbRepo/{graphDbRepo}")
-  public String send(@PathVariable String bucket, @PathVariable String graphDbRepo) throws Exception {
-
-    log.info("Start import of geometries into postgres database");
-    String results = minio.getFiles(bucket, graphDbRepo);
-
-    return results;
-  }
+  // public static final String exapmleFeature = "{\r\n \"id\":\"string\",\r\n
+  // \"origin_id\":0,\r\n \"geometry\": \"string\"\r\n}";
 
   // landing page
   @GetMapping("/")
+  @Operation(summary = "Landing page")
+  @ApiResponse(responseCode = "200", description = "Successful operation")
   public String getIndex() {
+
+    String text = "Hello World!";
+
+    return text;
+  }
+
+  // conformance page
+  @GetMapping("/conformance")
+  @Operation(summary = "Get conformance information")
+  @ApiResponse(responseCode = "200", description = "Successful operation")
+  public String getConformance() {
 
     String text = "Hello World!";
 
@@ -101,6 +116,8 @@ public class ImportRestController {
 
   // get all collectionId's
   @GetMapping("/collections")
+  @Operation(summary = "Get all collectionId's")
+  @ApiResponse(responseCode = "200", description = "Successful operation")
   public String getCollectionsPage() {
 
     List<String> collections = tinRepo.getCollections();
@@ -115,7 +132,10 @@ public class ImportRestController {
 
   // get one collection by id
   @GetMapping("/collections/{collectionId}")
-  public String getCollectionPage(@PathVariable String collectionId) {
+  @Operation(summary = "Get collection by id")
+  @ApiResponse(responseCode = "200", description = "Successful operation")
+  public String getCollectionPage(
+      @Parameter(description = "The unique id of the collection.") @PathVariable String collectionId) {
 
     String collection = tinRepo.getCollection(collectionId);
 
@@ -124,7 +144,10 @@ public class ImportRestController {
 
   // get all items of one collection
   @GetMapping("/collections/{collectionId}/items")
-  public String getItemsPage(@PathVariable String collectionId) {
+  @Operation(summary = "Get all items of a collection")
+  @ApiResponse(responseCode = "200", description = "Successful operation")
+  public String getItemsPage(
+      @Parameter(description = "The unique id of the collection.") @PathVariable String collectionId) {
 
     List<String> items = new ArrayList<String>();
 
@@ -175,124 +198,98 @@ public class ImportRestController {
   }
 
   // get all items of one collection - in standard formats json, xml
-  @GetMapping(value = "/collections/{collectionId}/items/{featureId}", produces = { "application/geo+json",
-      "application/xml", "application/json" }) // , "text/plain","text/html", "text/csv", "application/yaml"
-  public @ResponseBody Object getFeaturePage(@PathVariable String collectionId, @PathVariable UUID featureId) {
-    // @RequestHeader(value = "accept") String contentType,
+  @GetMapping(value = "/collections/{collectionId}/items/{featureId}", produces = { "application/xml",
+      "application/json", "text/plain" }) // , "text/html", "text/csv",
+  // "application/yaml", "application/geo+json"
+  @Operation(summary = "Export feature by id")
+  @ApiResponse(responseCode = "200", description = "Successful operation") // , content = @Content(examples =
+                                                                           // @ExampleObject(value = exapmleFeature)))
+  public @ResponseBody Object getFeaturePage(
+      @Parameter(hidden = true) @RequestHeader(value = "accept") String contentType,
+      @Parameter(description = "The unique id of the collection.") @PathVariable String collectionId,
+      @Parameter(description = "The unique id of the geometry.") @PathVariable UUID featureId) {
+
     Object feature = null;
-
-    switch (collectionId) {
-      case "point_2d":
-        feature = point2dRepo.getItem(featureId);
-        break;
-      case "point_3d":
-        feature = point3dRepo.getItem(featureId);
-        break;
-      case "line_2d":
-        feature = line2dRepo.getItem(featureId);
-        break;
-      case "line_3d":
-        feature = line3dRepo.getItem(featureId);
-        break;
-      case "polygon_2d":
-        feature = poly2dRepo.getItem(featureId);
-        break;
-      case "polygon_3d":
-        feature = poly3dRepo.getItem(featureId);
-        break;
-      case "solid":
-        feature = solidRepo.getItem(featureId);
-        break;
-      case "dtm_tin":
-        feature = tinRepo.getItemTIN(featureId);
-        break;
-      case "dtm_breaklines":
-        feature = blRepo.getItem2(featureId);
-        break;
-      case "dtm_embarkment":
-        feature = embRepo.getItem2(featureId);
-        break;
-      case "dtm_specialpoints":
-        feature = sPntRepo.getItem2(featureId);
-        break;
-      default:
-        break;
-    }
-    if (feature != null) {
-    return feature;
-    } else {
-    return "CollectionId or featureId does not exist.";
-    }
-    
-  }
-
-  // get all items of one collection - in other formats z.B. plain text
-  @GetMapping(value = "/collections/{collectionId}/items/{featureId}", produces = { "text/plain"}) // , "text/html", "text/csv", "application/yaml" 
-  public @ResponseBody String getFeaturePage2(@RequestHeader(value = "accept") String contentType,
-      @PathVariable String collectionId, @PathVariable UUID featureId) {
-
     String text = "";
-
+try {
     switch (collectionId) {
       case "point_2d":
         Point2D point2d = point2dRepo.getItem(featureId);
         text = "id: " + point2d.getId() + ", origin_id: " + point2d.getOrigin_id() + ", geometry: "
-        + point2d.getGeometry();
+            + point2d.getGeometry();
+        feature = point2d;
         break;
       case "point_3d":
         Point3D point3d = point3dRepo.getItem(featureId);
         text = "id: " + point3d.getId() + ", origin_id: " + point3d.getOrigin_id() + ", geometry: "
             + point3d.getGeometry();
+        feature = point3d;
         break;
       case "line_2d":
         Line2D line2d = line2dRepo.getItem(featureId);
         text = "id: " + line2d.getId() + ", origin_id: " + line2d.getOrigin_id() + ", geometry: "
-        + line2d.getGeometry();
+            + line2d.getGeometry();
+        feature = line2d;
         break;
       case "line_3d":
         Line3D line3d = line3dRepo.getItem(featureId);
         text = "id: " + line3d.getId() + ", origin_id: " + line3d.getOrigin_id() + ", geometry: "
-        + line3d.getGeometry();
+            + line3d.getGeometry();
+        feature = line3d;
         break;
       case "polygon_2d":
         Polygon2D polygon2d = poly2dRepo.getItem(featureId);
         text = "id: " + polygon2d.getId() + ", origin_id: " + polygon2d.getOrigin_id() + ", geometry: "
-        + polygon2d.getGeometry();
+            + polygon2d.getGeometry();
+        feature = polygon2d;
         break;
       case "polygon_3d":
         Polygon3D polygon3d = poly3dRepo.getItem(featureId);
         text = "id: " + polygon3d.getId() + ", origin_id: " + polygon3d.getOrigin_id() + ", geometry: "
-        + polygon3d.getGeometry();
+            + polygon3d.getGeometry();
+        feature = polygon3d;
         break;
       case "solid":
         Solid solid = solidRepo.getItem(featureId);
-        text = "id: " + solid.getId() + ", origin_id: " + solid.getOrigin_id() + ", geometry: "
-        + solid.getGeometry();
+        text = "id: " + solid.getId() + ", origin_id: " + solid.getOrigin_id() + ", geometry: " + solid.getGeometry();
+        feature = solid;
         break;
       case "dtm_tin":
         TIN tin = tinRepo.getItemTIN(featureId);
-        text = "id: " + tin.getId() + ", geometry: "
-        + tin.getGeometry();
+        text = "id: " + tin.getId() + ", geometry: " + tin.getGeometry();
+        feature = tin;
         break;
       case "dtm_breaklines":
         Breaklines breaklines = blRepo.getItem2(featureId);
         text = "id: " + breaklines.getId() + ", tin_id: " + breaklines.getTin_id() + ", geometry: "
-        + breaklines.getGeometry();
+            + breaklines.getGeometry();
+        feature = breaklines;
         break;
       case "dtm_embarkment":
         Embarkment embarkment = embRepo.getItem2(featureId);
         text = "id: " + embarkment.getId() + ", tin_id: " + embarkment.getTin_id() + ", geometry: "
-        + embarkment.getGeometry();
+            + embarkment.getGeometry();
+        feature = embarkment;
         break;
       case "dtm_specialpoints":
         SpecialPoints spPoint = sPntRepo.getItem2(featureId);
-        text = "id: " + spPoint.getId() + ", tin_id: " + spPoint.getTin_id() + ", geometry: "
-        + spPoint.getGeometry();
+        text = "id: " + spPoint.getId() + ", tin_id: " + spPoint.getTin_id() + ", geometry: " + spPoint.getGeometry();
+        feature = spPoint;
         break;
       default:
         break;
     }
-    return text;
+  } catch (Exception e) {
+    text = "CollectionId or featureId does not exist.";
   }
 
+    if (contentType.equals("text/plain")) {
+      return text;
+    } else if (feature != null) {
+      return feature;
+    } else {
+      return text;
+    }
+
+  }
 }

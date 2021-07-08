@@ -32,8 +32,7 @@ public class MinIOUploadServiceApplication implements WebMvcConfigurer{
     }
 
     @Bean 
-    public OpenAPI springShopOpenAPI(@Value("${domain.url}") String url) {
-        return new OpenAPI().addServersItem(new Server().url(url)).addServersItem(new Server().url("http://localhost:7204"));
+    public OpenAPI serversOpenAPI(@Value("${domain.url}") String url, @Value("${server.port}") String port) {
+        return new OpenAPI().addServersItem(new Server().url(url)).addServersItem(new Server().url("http://localhost:" + port));
     }
-
 }

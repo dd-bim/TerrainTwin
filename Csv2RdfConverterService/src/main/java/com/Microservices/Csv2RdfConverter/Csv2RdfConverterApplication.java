@@ -29,9 +29,8 @@ public class Csv2RdfConverterApplication implements WebMvcConfigurer{
         registry.addMapping("/**")
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS").allowedOrigins("*");
     }
-
     @Bean 
-    public OpenAPI springShopOpenAPI(@Value("${domain.url}") String url) {
-        return new OpenAPI().addServersItem(new Server().url(url)).addServersItem(new Server().url("http://localhost:7202"));
+    public OpenAPI serversOpenAPI(@Value("${domain.url}") String url, @Value("${server.port}") String port) {
+        return new OpenAPI().addServersItem(new Server().url(url)).addServersItem(new Server().url("http://localhost:" + port));
     }
 }

@@ -64,7 +64,7 @@ paths:
     get:
       tags:
       - Export
-      summary: Get collection by Id
+      summary: Get collection by id
       operationId: collection
       parameters:
       - name: collectionId
@@ -96,8 +96,8 @@ paths:
     get:
       tags:
       - Export
-      summary: Export DGM by ID
-      operationId: dgm-export
+      summary: Export feature by id
+      operationId: feature-export
       parameters:
       - name: collectionId
         in: path
