@@ -33,6 +33,9 @@ public class LandXMLReader {
     @Autowired
     SpecialPointsRepository spRepository;
 
+    @Autowired
+    GraphDBImport graphdb;
+
     Logger log = LoggerFactory.getLogger(LandXMLReader.class);
 
     @Value("${domain.url}")
@@ -47,15 +50,14 @@ public class LandXMLReader {
 
         int srid = 25832; // muss noch variabel gestaltet werden
         int blCount = 0;
+        String urlPrefix = domain + "/geometry/export/collections/";
         readFile(stream);
-        GraphDBImport graphdb = new GraphDBImport();
 
         TIN tin = new TIN("SRID=" + srid + ";" + buildWktTIN());
         tinRepository.save(tin);
         log.info("'ID: " + tin.getId() + ", WKT: " + tin.getGeometry() + "'");
 
-        String table = "dtm_tin";
-        String postgresUrl = domain + "/postgres/" + table + "/id/" + tin.getId();
+        String postgresUrl = urlPrefix + "dtm_tin" + "/items/" + tin.getId();
         PostgresInfos p = new PostgresInfos(-1, tin.getId(), postgresUrl, 4, 3, filename, path, graphdbRepo);
         graphdb.graphdbImport(p);
 
@@ -65,8 +67,8 @@ public class LandXMLReader {
             blCount++;
             log.info("'ID: " + bl.getId() + ", WKT: " + bl.getGeometry() + ", tin_id: " + bl.getTin_id() + "'");
             
-            String tableBl = "dtm_breaklines";
-            String postgresUrlBl = domain + "/postgres/" + tableBl + "/id/" + bl.getId();
+
+            String postgresUrlBl = urlPrefix + "dtm_breaklines" + "/items/" + bl.getId();
             PostgresInfos pBl = new PostgresInfos(-1, bl.getId(), postgresUrlBl, 1, 3, filename, path, graphdbRepo);
             graphdb.graphdbImport(pBl);
         }
@@ -76,8 +78,7 @@ public class LandXMLReader {
             "SRID=" + srid + ";POINTZ (" + value + ")");
             spRepository.save(spPoint);
 
-            String tableSp = "dtm_specialpoints";
-            String postgresUrlSp = domain + "/postgres/" + tableSp + "/id/" + spPoint.getId();
+            String postgresUrlSp = urlPrefix + "dtm_specialpoints" + "/items/" + spPoint.getId();
             PostgresInfos pBl = new PostgresInfos(-1, spPoint.getId(), postgresUrlSp, 0, 3, filename, path, graphdbRepo);
             graphdb.graphdbImport(pBl);
         });
