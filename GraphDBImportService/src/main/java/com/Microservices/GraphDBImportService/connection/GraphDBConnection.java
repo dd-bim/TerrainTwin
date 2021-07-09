@@ -8,17 +8,21 @@ import java.nio.file.Paths;
 
 import com.ontotext.trree.MemoryConfig;
 
+import org.apache.http.client.HttpClient;
 import org.eclipse.rdf4j.model.Resource;
 import org.eclipse.rdf4j.model.impl.TreeModel;
 import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.repository.Repository;
 import org.eclipse.rdf4j.repository.RepositoryConnection;
 import org.eclipse.rdf4j.repository.config.RepositoryConfig;
 import org.eclipse.rdf4j.repository.config.RepositoryConfigSchema;
 import org.eclipse.rdf4j.repository.config.RepositoryImplConfig;
+import org.eclipse.rdf4j.repository.http.HTTPRepository;
 import org.eclipse.rdf4j.repository.manager.LocalRepositoryManager;
 import org.eclipse.rdf4j.repository.manager.RemoteRepositoryManager;
 import org.eclipse.rdf4j.repository.manager.RepositoryManager;
 import org.eclipse.rdf4j.repository.sail.config.SailRepositoryConfig;
+import org.eclipse.rdf4j.repository.sparql.SPARQLRepository;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.RDFHandlerException;
 import org.eclipse.rdf4j.rio.RDFParseException;
@@ -51,6 +55,7 @@ public class GraphDBConnection {
         manager.init();
         // RepositoryConnection connection;
         RepositoryConnection connection = manager.getRepository(repo).getConnection();
+
         // try {
         //     connection = manager.getRepository(repo).getConnection();
         // } catch (Exception r) {
@@ -99,5 +104,20 @@ public class GraphDBConnection {
         // log.info("Connected to repository " + repo + ".");
 
         return connection;
+    }
+
+    public RepositoryConnection connection2(String repo) {
+
+        // HTTPRepository ht = new HTTPRepository(graphdb_url,repo); 
+        // ht.setUsernameAndPassword(graphdb_username, graphdb_password);
+        // ht.init();
+        // RepositoryConnection rg = ht.getConnection();
+
+        SPARQLRepository ht = new SPARQLRepository(graphdb_url,repo); 
+        ht.setUsernameAndPassword(graphdb_username, graphdb_password);
+        ht.init();
+        RepositoryConnection rg = ht.getConnection();
+
+        return rg;
     }
 }

@@ -27,7 +27,7 @@ Microservice Architecture:
 
     Geometry Handler:
         ☐ EPSG Codes und Schemaname in Tabellendefinition und Insert Befehlen variabel gestalten
-        ☐ REST Schnittstelle für Postgres hinzufügen
+        ✔ REST Schnittstelle für Postgres hinzufügen @done (8.7.2021, 15:05:37)
             ✔ DTM über ID als EWKT ausgeben lassen @done (15.6.2021, 12:06:49)
         ✔ allgemeineren Namen für Service finden @done (8.7.2021, 14:58:47)
         ☐ direkter Import DGM für Rückschreiben durch LandplanOS?

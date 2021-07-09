@@ -11,8 +11,8 @@ import org.springframework.data.repository.NoRepositoryBean;
 
 @NoRepositoryBean
 public interface PostgresTableRepository<T extends PostgresTables> extends CrudRepository<T, UUID> {
-    
-    @Query( value = "select table_name from information_schema.tables where table_schema = 'terraintwinv2'", nativeQuery = true )
+
+    @Query(value = "select table_name from information_schema.tables where table_schema = 'terraintwinv2'", nativeQuery = true)
     List<String> getCollections();
 
     @Query(value = "select * from information_schema.tables where table_schema = 'terraintwinv2' and table_name = ?#{[0]}", nativeQuery = true)

@@ -1,6 +1,7 @@
 package com.Microservices.GraphDBImportService.controller;
 
 import com.Microservices.GraphDBImportService.domain.model.PostgresInfos;
+import com.Microservices.GraphDBImportService.service.DeleteTriple;
 import com.Microservices.GraphDBImportService.service.ImportFiles;
 import com.Microservices.GraphDBImportService.service.ImportPostgresGeometryInfos;
 import com.Microservices.GraphDBImportService.service.ImportTopology;
@@ -32,6 +33,9 @@ public class ImportRestController {
   @Autowired
   ImportTopology topo;
 
+  @Autowired
+  DeleteTriple triples;
+
   Logger log = LoggerFactory.getLogger(ImportRestController.class);
 
   // get bucket and use them
@@ -53,9 +57,17 @@ public class ImportRestController {
 
   // import topological relations from postgres geometry
   @PostMapping(path = "/graphdbimport/topology/graphdbrepo/{repo}")
-  public String importTopology( @PathVariable String repo, @RequestBody String topology) throws Exception {
+  public String importTopology(@PathVariable String repo, @RequestBody String topology) throws Exception {
 
     String result = topo.importTopo(topology, repo);
     return result;
   }
+
+  @PostMapping(path = "/graphdbimport/delete/{repo}")
+    public String delete(@PathVariable String repo) throws Exception { //, @RequestBody String topology
+  
+      String result = triples.delete(repo);
+      return result;
+    }
+
 }
