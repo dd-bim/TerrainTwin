@@ -49,75 +49,80 @@ public class GraphDBConnection {
     Logger log = LoggerFactory.getLogger(GraphDBConnection.class);
 
     // connect to GraphDB repository
-    public RepositoryConnection connection(String repo) throws RDFParseException, RDFHandlerException, IOException {
-        RemoteRepositoryManager manager = new RemoteRepositoryManager(graphdb_url);
-        manager.setUsernameAndPassword(graphdb_username, graphdb_password);
-        manager.init();
-        // RepositoryConnection connection;
-        RepositoryConnection connection = manager.getRepository(repo).getConnection();
+    public RepositoryConnection connection(String repo) {
+        String endpoint = graphdb_url + "/repositories/" + repo;
+        HTTPRepository connection = new HTTPRepository(endpoint);
+        connection.setUsernameAndPassword(graphdb_username, graphdb_password);
+        connection.init();
+        RepositoryConnection rc = connection.getConnection();
+
+        return rc;
+    }
+
+    // connect to GraphDB repository
+    // public RepositoryConnection connection(String repo) throws RDFParseException, RDFHandlerException, IOException {
+    //     RemoteRepositoryManager manager = new RemoteRepositoryManager(graphdb_url);
+    //     manager.setUsernameAndPassword(graphdb_username, graphdb_password);
+    //     manager.init();
+    //     // RepositoryConnection connection;
+    //     RepositoryConnection connection = manager.getRepository(repo).getConnection();
 
         // try {
-        //     connection = manager.getRepository(repo).getConnection();
+        // connection = manager.getRepository(repo).getConnection();
         // } catch (Exception r) {
-        //     log.info(r.getMessage());
-            // log.info(repo + " didn't exist. Trying to create it.");
-            // SailImplConfig backendConfig = new MemoryStoreConfig(true);
-            // RepositoryImplConfig repositoryTypeSpec = new
-            // SailRepositoryConfig(backendConfig);
-            // RepositoryConfig repConfig = new RepositoryConfig(repo, repositoryTypeSpec);
-            // manager.addRepositoryConfig(repConfig);
+        // log.info(r.getMessage());
+        // log.info(repo + " didn't exist. Trying to create it.");
+        // SailImplConfig backendConfig = new MemoryStoreConfig(true);
+        // RepositoryImplConfig repositoryTypeSpec = new
+        // SailRepositoryConfig(backendConfig);
+        // RepositoryConfig repConfig = new RepositoryConfig(repo, repositoryTypeSpec);
+        // manager.addRepositoryConfig(repConfig);
 
+        // RepositoryManager repositoryManager = new LocalRepositoryManager(new
+        // File("."));
+        // repositoryManager.init();
 
-//             RepositoryManager repositoryManager = new LocalRepositoryManager(new File("."));
-//       repositoryManager.init();
-      
-//             // Instantiate a repository graph model
-//             TreeModel graph = new TreeModel();
+        // // Instantiate a repository graph model
+        // TreeModel graph = new TreeModel();
 
-//             // Read repository configuration file
-//             InputStream config = RepositoryConnection.class.getResourceAsStream("/var/repo-defaults.ttl");
-//          if(config == null) System.out.println("Config empty");  
-//             RDFParser rdfParser = Rio.createParser(RDFFormat.TURTLE);
-//             rdfParser.setRDFHandler(new StatementCollector(graph));
-//             rdfParser.parse(config, RepositoryConfigSchema.NAMESPACE);
-//             config.close();
+        // // Read repository configuration file
+        // InputStream config =
+        // RepositoryConnection.class.getResourceAsStream("/var/repo-defaults.ttl");
+        // if(config == null) System.out.println("Config empty");
+        // RDFParser rdfParser = Rio.createParser(RDFFormat.TURTLE);
+        // rdfParser.setRDFHandler(new StatementCollector(graph));
+        // rdfParser.parse(config, RepositoryConfigSchema.NAMESPACE);
+        // config.close();
 
-//             // Retrieve the repository node as a resource
-//             // Resource repositoryNode = GraphUtil.getUniqueSubject(graph, RDF.TYPE, RepositoryConfigSchema.REPOSITORY);
-//             Resource repositoryNode = graph.filter(null, RDF.TYPE, RepositoryConfigSchema.REPOSITORY).subjects().iterator().next();
-// System.out.println(repositoryNode.toString());
-// System.out.println(graph.toString());
-//             // Create a repository configuration object and add it to the repositoryManager
-//             RepositoryConfig repositoryConfig = RepositoryConfig.create(graph, repositoryNode);
-//             repositoryManager.addRepositoryConfig(repositoryConfig);
+        // // Retrieve the repository node as a resource
+        // // Resource repositoryNode = GraphUtil.getUniqueSubject(graph, RDF.TYPE,
+        // RepositoryConfigSchema.REPOSITORY);
+        // Resource repositoryNode = graph.filter(null, RDF.TYPE,
+        // RepositoryConfigSchema.REPOSITORY).subjects().iterator().next();
+        // System.out.println(repositoryNode.toString());
+        // System.out.println(graph.toString());
+        // // Create a repository configuration object and add it to the
+        // repositoryManager
+        // RepositoryConfig repositoryConfig = RepositoryConfig.create(graph,
+        // repositoryNode);
+        // repositoryManager.addRepositoryConfig(repositoryConfig);
 
+        // Process process = Runtime.getRuntime().exec("curl -G
+        // https://terrain.dd-bim.org/graphdb/rest/repositories -H 'Accept:
+        // application/json' -u graphdb:123456");
+        // Process process = Runtime.getRuntime().exec("curl -X POST
+        // https://terrain.dd-bim.org/graphdb/rest/repositories -H 'Content-Type:
+        // multipart/form-data' -F \"config=@/var/repo-defaults.ttl\" -u
+        // graphdb:123456");
+        // System.out.println(process.info().toString() + process.exitValue());
 
-
-// Process process = Runtime.getRuntime().exec("curl -G https://terrain.dd-bim.org/graphdb/rest/repositories -H 'Accept: application/json' -u graphdb:123456");
-// Process process = Runtime.getRuntime().exec("curl -X POST https://terrain.dd-bim.org/graphdb/rest/repositories -H 'Content-Type: multipart/form-data' -F \"config=@/var/repo-defaults.ttl\" -u graphdb:123456");
-// System.out.println(process.info().toString() + process.exitValue());
-
-// log.info("Created new repository " + repo + ".");
-            // connection = manager.getRepository(repo).getConnection();
+        // log.info("Created new repository " + repo + ".");
+        // connection = manager.getRepository(repo).getConnection();
 
         // }
         // log.info("Connected to repository " + repo + ".");
 
-        return connection;
-    }
+    //     return connection;
+    // }
 
-    public RepositoryConnection connection2(String repo) {
-
-        // HTTPRepository ht = new HTTPRepository(graphdb_url,repo); 
-        // ht.setUsernameAndPassword(graphdb_username, graphdb_password);
-        // ht.init();
-        // RepositoryConnection rg = ht.getConnection();
-
-        SPARQLRepository ht = new SPARQLRepository(graphdb_url,repo); 
-        ht.setUsernameAndPassword(graphdb_username, graphdb_password);
-        ht.init();
-        RepositoryConnection rg = ht.getConnection();
-
-        return rg;
-    }
 }

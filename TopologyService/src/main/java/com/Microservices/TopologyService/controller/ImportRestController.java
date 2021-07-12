@@ -76,10 +76,10 @@ public class ImportRestController {
     // iterate over all repository classes and execute defined methods on there
     // instances
     Class[] classes = { Point2DRepository.class, Point3DRepository.class, Line2DRepository.class,
-        Line3DRepository.class, Polygon2DRepository.class, Polygon3DRepository.class, TINRepository.class,
-        BreaklinesRepository.class, EmbarkmentRepository.class, SpecialPointsRepository.class };
-    Repository[] objects = { point2dRepo, point3dRepo, line2dRepo, line3dRepo, poly2dRepo, poly3dRepo, tinRepo, blRepo,
-        embRepo, sPntRepo };
+        Line3DRepository.class, Polygon2DRepository.class, Polygon3DRepository.class,
+        BreaklinesRepository.class, EmbarkmentRepository.class, SpecialPointsRepository.class }; // TINRepository.class,
+    Repository[] objects = { point2dRepo, point3dRepo, line2dRepo, line3dRepo, poly2dRepo, poly3dRepo, blRepo,
+        embRepo, sPntRepo }; // tinRepo,
 
     try {
       for (int i = 0; i < classes.length; i++) {
@@ -106,14 +106,14 @@ public class ImportRestController {
               methods.put(5, allMethods[j]);
               // case "relateSolid":
               // methods.put(6, allMethods[j]);
-            case "relateTIN":
-              methods.put(6, allMethods[j]);
+            // case "relateTIN":
+            //   methods.put(6, allMethods[j]);
             case "relateBreaklines":
-              methods.put(7, allMethods[j]);
+              methods.put(6, allMethods[j]);
             case "relateEmbarkment":
-              methods.put(8, allMethods[j]);
+              methods.put(7, allMethods[j]);
             case "relateSpecialPoints":
-              methods.put(9, allMethods[j]);
+              methods.put(8, allMethods[j]);
             default:
               break;
           }

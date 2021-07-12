@@ -32,8 +32,8 @@ public interface PostgresTableRepository<T extends PostgresTables> extends CrudR
     // @Query(value = "select cast(a.id as varchar) as a_id, cast(b.id as varchar) as b_id, ST_Dimension(a.geometry) as dimA, ST_Dimension(b.geometry) as dimB, ST_Relate(a.geometry, b.geometry) from #{#entityName} a, terraintwinv2.solid b", nativeQuery = true)
     // String [][] relateSolid();
 
-    @Query(value = "select cast(a.id as varchar) as a_id, cast(b.id as varchar) as b_id, ST_Dimension(a.geometry) as dimA, ST_Dimension(b.geometry) as dimB, ST_Relate(a.geometry, b.geometry) from #{#entityName} a, terraintwinv2.dtm_tin b", nativeQuery = true)
-    String [][] relateTIN();
+    // @Query(value = "select cast(a.id as varchar) as a_id, cast(b.id as varchar) as b_id, ST_Dimension(a.geometry) as dimA, ST_Dimension(b.geometry) as dimB, ST_Relate(a.geometry, b.geometry) from #{#entityName} a, terraintwinv2.dtm_tin b", nativeQuery = true)
+    // String [][] relateTIN();
 
     @Query(value = "select cast(a.id as varchar) as a_id, cast(b.id as varchar) as b_id, ST_Dimension(a.geometry) as dimA, ST_Dimension(b.geometry) as dimB, ST_Relate(a.geometry, b.geometry) from #{#entityName} a, terraintwinv2.dtm_breaklines b", nativeQuery = true)
     String [][] relateBreaklines();

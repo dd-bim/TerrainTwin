@@ -23,6 +23,7 @@ Microservice Architecture:
     ☐ Nginx Proxy Container
     ☐ Geoserver Docker
     ☐ Geometrieexport mit Angabe des EPSG Code für Ausgabe in bestimmtem Ref.-Sys.
+    ☐ Datenausgabe als GeoJSON, GeoPKG
     
 
     Geometry Handler:
@@ -49,6 +50,7 @@ Microservice Architecture:
         ☐ Abfrage welche Objekte liegen übereinander (DE-9IM)
             ✔ Topologie explizit in GraphDB @done (1.7.2021, 15:15:23)
             ☐ Mögliche Abfragen zeigen
+            ☐ Umgang mit Solid?
         ☐ Umring von DGM als 3D-Polygon / 2D-Polygon
         ☐ GDAL Docker 
         ☐ Massenberechnungen, Differenz zw. 2 DGM
@@ -62,3 +64,7 @@ Microservice Architecture:
 
     Csv2RdfConverter:
         ☐ Dateiauswahl auf MinIO erweitern
+
+
+Test:
+Create tables, Dateien Importieren, Topologien berechnen, wieder löschen, Vergleich Input und gelöschte Elemente
