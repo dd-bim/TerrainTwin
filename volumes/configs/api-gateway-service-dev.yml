@@ -5,10 +5,10 @@ spring:
     cloud:
         gateway:
             routes:
-                - id: graphdbimport-service
-                  uri: lb://graphdb-import-service
+                - id: fileinputhandler-service
+                  uri: lb://file-input-handler
                   predicates:
-                      - Path=/graphdbimport/**
+                      - Path=/inputhandler/**
                 - id: csv2rdf-service
                   uri: lb://csv2rdf-converter-service
                   predicates:

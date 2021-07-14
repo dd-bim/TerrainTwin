@@ -1,0 +1,21 @@
+server:
+    port: 7201
+     
+springdoc:
+    api-docs:
+        path: /inputhandler/v3/api-docs
+    swagger-ui: 
+        path: /inputhandler
+        operationsSorter: method
+
+logging:
+    file:
+        name: /var/log/file-input-handler.log
+
+management:
+    endpoint:
+        logfile:
+            external-file: /var/log/file-input-handler.log
+    health:
+        neo4j:
+            enabled: false

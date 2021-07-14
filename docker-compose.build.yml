@@ -83,25 +83,26 @@ services:
         #     replicas: 2
 
             
-    graphdb-import-service:
+    file-input-handler:
         profiles: 
             - topoimport
             - terraintwin
             - import
-        container_name: graphdb-import-service
+        container_name: file-input-handler
         # hostname: ${DOMAIN_NAME}
         build:
-            context: ./GraphDBImportService
-        image: schi11er/tt_graphdb-import-service:latest
+            context: ./FileInputHandler
+        image: schi11er/tt_file-input-handler:latest
         restart: unless-stopped
         ports:
             - 7201:7201
         # networks:
         #     - terraintwin_microservices
         networks:
-            terraintwin_microservices:
-                aliases:
-                    - graphdbimporter
+            - terraintwin_microservices
+            # terraintwin_microservices:
+            #     aliases:
+            #         - graphdbimporter
         depends_on:
             - configserver
             - eurekaserver
@@ -123,6 +124,7 @@ services:
             - graphdb.password=${GRAPHDB_PASSWORD}
         volumes:
             - ./volumes/logs:/var/log
+            - ./volumes/configs/repo-config.ttl:/var/config/repo-config.ttl
 
     geometry-handler:
         profiles: 
