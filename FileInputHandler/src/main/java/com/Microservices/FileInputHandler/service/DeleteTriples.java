@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.Microservices.FileInputHandler.connection.GraphDBConnection;
-import com.Microservices.FileInputHandler.domain.model.Queries;
+import com.Microservices.FileInputHandler.domain.model.DeleteQuery;
 import com.Microservices.FileInputHandler.domain.model.Triple;
 
 import org.eclipse.rdf4j.repository.RepositoryConnection;
@@ -84,7 +84,7 @@ public class DeleteTriples {
     }
 
     // delete triples
-    public String deleteQuery(String repo, Queries queries) throws Exception {
+    public String deleteAsQuery(String repo, DeleteQuery queries) throws Exception {
 
         String results = "";
 

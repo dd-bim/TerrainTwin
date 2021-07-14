@@ -8,18 +8,18 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Queries {
+public class UpdateQuery {
 
     private HashMap<String, String> namespaces;
-    private List<Triple> triples;
+    private List<TriplePair> pairs;
 
-    public Queries() {
+    public UpdateQuery() {
 
     }
 
-    public Queries(HashMap<String, String> namespaces, List<Triple> triples) {
+    public UpdateQuery(HashMap<String, String> namespaces, List<TriplePair> pairs) {
         this.namespaces = namespaces;
-        this.triples = triples;
+        this.pairs = pairs;
     }
     
 }

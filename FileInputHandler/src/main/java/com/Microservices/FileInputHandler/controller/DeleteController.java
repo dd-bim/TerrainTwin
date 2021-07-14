@@ -1,7 +1,7 @@
 package com.Microservices.FileInputHandler.controller;
 
 import com.Microservices.FileInputHandler.connection.GraphDBConnection;
-import com.Microservices.FileInputHandler.domain.model.Queries;
+import com.Microservices.FileInputHandler.domain.model.DeleteQuery;
 import com.Microservices.FileInputHandler.service.DeleteTriples;
 
 import org.slf4j.Logger;
@@ -55,8 +55,8 @@ public class DeleteController {
   @DeleteMapping(path = "/query/repository/{repo}")
   @Operation(summary = "Delete triples from a GraphDB repository by creating a delete query")
   @ApiResponse(responseCode = "200", description = "Successful operation")
-  public String deleteQuery(@PathVariable String repo, @RequestBody Queries query) throws Exception {
-    String result = triples.deleteQuery(repo, query);
+  public String deleteQuery(@PathVariable String repo, @RequestBody DeleteQuery query) throws Exception {
+    String result = triples.deleteAsQuery(repo, query);
     return result;
   }
 }
