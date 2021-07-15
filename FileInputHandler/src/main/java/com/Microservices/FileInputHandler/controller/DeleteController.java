@@ -52,7 +52,7 @@ public class DeleteController {
   }
 
   // excecute a delete query
-  @DeleteMapping(path = "/query/repository/{repo}")
+  @DeleteMapping(path = "/repository/{repo}")
   @Operation(summary = "Delete triples from a GraphDB repository by creating a delete query")
   @ApiResponse(responseCode = "200", description = "Successful operation")
   public String deleteQuery(@PathVariable String repo, @RequestBody DeleteQuery query) throws Exception {

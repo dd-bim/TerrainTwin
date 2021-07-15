@@ -41,14 +41,14 @@ public class SomeController {
   }
 
   // create repository
-  @GetMapping(path = "/createRepo")
-  @Operation(summary = "Create a new GraphDB repository (not working now)")
+  @GetMapping(path = "/createRepo/{repo}")
+  @Operation(summary = "Create a new GraphDB repository")
   @ApiResponse(responseCode = "200", description = "Successful operation")
-  public String createRepository() {
+  public String createRepository(@PathVariable String repo) {
     String result = "";
     try {
-      dbconnection.createRepo();
-      result = "Repo created.";
+      dbconnection.createRepo(repo);
+      result = "Repo " + repo + " created.";
     } catch (Exception e) {
       result = "Problem: " + e.getMessage();
     }

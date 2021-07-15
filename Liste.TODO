@@ -43,7 +43,7 @@ Microservice Architecture:
     
     GraphDB-Import-Service:
         ☐ Repositories über REST/automatisch neu erstellen (FreeSailRepository)
-        ☐ Elemente Updaten
+        ✔ Elemente Updaten @done (15.7.2021, 10:08:48)
         ✔ Elemente Löschen @done (13.7.2021, 13:59:22)
         ☐ Prüfung auf CSV/RDF -> http-Request an CSV2RDF Converter -> dann Import der Ergebnis TTL
 

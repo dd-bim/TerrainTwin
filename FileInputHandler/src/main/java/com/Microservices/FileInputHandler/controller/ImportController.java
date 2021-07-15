@@ -46,7 +46,7 @@ public class ImportController {
   Logger log = LoggerFactory.getLogger(ImportController.class);
 
   // get bucket and use them
-  @GetMapping("/miniobucket/{bucket}/graphdbrepo/{repo}")
+  @GetMapping("/miniobucket/{bucket}/repository/{repo}")
   @Operation(summary = "Read files from MinIO bucket and import data into a GraphDB repository")
   @ApiResponse(responseCode = "200", description = "Successful operation")
   public String send(@PathVariable String bucket, @PathVariable String repo) throws Exception {
@@ -67,7 +67,7 @@ public class ImportController {
   }
 
   // import topological relations from postgres geometry
-  @PostMapping(path = "/topology/graphdbrepo/{repo}")
+  @PostMapping(path = "/topology/repository/{repo}")
   @Operation(summary = "Import topological relations of Postgres geometries")
   @ApiResponse(responseCode = "200", description = "Successful operation")
   public String importTopology(@PathVariable String repo, @RequestBody String topology) throws Exception {

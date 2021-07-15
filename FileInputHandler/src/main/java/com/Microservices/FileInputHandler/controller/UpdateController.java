@@ -34,7 +34,7 @@ public class UpdateController {
 
 
   // excecute a update query
-  @PostMapping(path = "/query/repository/{repo}")
+  @PostMapping(path = "/repository/{repo}")
   @Operation(summary = "Update one or more triples from a GraphDB repository by creating a delete and insert query")
   @ApiResponse(responseCode = "200", description = "Successful operation")
   public String updateQuery(@PathVariable String repo, @RequestBody UpdateQuery query) throws Exception {
