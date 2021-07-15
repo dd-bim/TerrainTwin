@@ -42,7 +42,7 @@ Microservice Architecture:
         ✔ File Upload Größe ändern @done (21.6.2021, 07:49:04)
     
     GraphDB-Import-Service:
-        ☐ Repositories über REST/automatisch neu erstellen (FreeSailRepository)
+        ✔ Repositories über REST/automatisch neu erstellen (FreeSailRepository) @done (15.7.2021, 13:34:44)
         ✔ Elemente Updaten @done (15.7.2021, 10:08:48)
         ✔ Elemente Löschen @done (13.7.2021, 13:59:22)
         ☐ Prüfung auf CSV/RDF -> http-Request an CSV2RDF Converter -> dann Import der Ergebnis TTL

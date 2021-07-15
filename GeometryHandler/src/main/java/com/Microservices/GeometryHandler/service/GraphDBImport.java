@@ -20,7 +20,7 @@ public class GraphDBImport {
                 String conn = "";
         try {
 
-            URL url = new URL("http://graphdb-import-service:7201/graphdbimport/postgresinfos");
+            URL url = new URL("http://file-input-handler:7201/inputhandler/import/postgresinfos");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setConnectTimeout(5000);// 5 secs
             connection.setReadTimeout(5000);// 5 secs

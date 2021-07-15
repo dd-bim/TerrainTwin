@@ -8,10 +8,9 @@
 		<!-- <relativePath>./libs</relativePath> -->
 	</parent>
 	<groupId>com.Microservices</groupId>
-	<artifactId>GraphDBImportService</artifactId>
+	<artifactId>FileInputHandler</artifactId>
 	<version>1.0</version>
-	<name>GraphDBImportService</name>
-	<description>Connection to GraphDB</description>
+	<name>FileInputHandler</name>
 
 	<properties>
 		<java.version>15</java.version>

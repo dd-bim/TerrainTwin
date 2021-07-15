@@ -100,9 +100,6 @@ services:
         #     - terraintwin_microservices
         networks:
             - terraintwin_microservices
-            # terraintwin_microservices:
-            #     aliases:
-            #         - graphdbimporter
         depends_on:
             - configserver
             - eurekaserver
