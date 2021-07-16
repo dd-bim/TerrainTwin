@@ -1,0 +1,19 @@
+server:
+    port: 7209
+
+springdoc:
+    api-docs:
+        path: /test/v3/api-docs
+    swagger-ui: 
+        path: /test
+        operationsSorter: method
+        disable-swagger-default-url: true
+
+logging:
+    file:
+        name: /var/log/test-service.log
+
+management:
+    endpoint:
+        logfile:
+            external-file: /var/log/test-service.log

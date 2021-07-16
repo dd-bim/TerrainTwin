@@ -302,6 +302,23 @@ services:
         volumes:
             - ./volumes/logs:/var/log
 
+    ifcterrain: 
+        container_name: test-service
+        build:
+            context: ./TestService
+        image: schi11er/tt_test-service:latest
+        restart: unless-stopped
+        ports:
+            - 7207:7207
+        depends_on:
+            - configserver
+            - eurekaserver
+        networks:
+            - terraintwin_microservices
+        environment:
+            - domain.url=${DOMAIN_URL}
+        volumes:
+            - ./volumes/example:/var/lib/example
 
 networks:
     terraintwin_microservices:
@@ -397,3 +414,5 @@ networks:
 
 # # volumes:
 # #     pgadmin:
+
+
