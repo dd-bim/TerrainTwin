@@ -1,10 +1,14 @@
-package com.Microservices.TestService.controller;
+package com.Microservices.IFCTerrainTest.controller;
 
-import com.Microservices.TestService.service.Service;
+import java.io.IOException;
+
+import com.Microservices.IFCTerrainTest.service.Service;
 
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,13 +18,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Test API", description = "Documentation")
 public class TestRestController {
 
-  @GetMapping("/test/")
-  public String hello() {
-      return "Hello World!";
-  }
+  // @GetMapping("/test/")
+  // public String hello() {
+  //     return "Hello World!";
+  // }
 
-  @PostMapping("/test/{name}")
-  public String helloService(@PathVariable String name) {
+  @PostMapping("/test/json")
+  public String helloService(@RequestBody String name) throws IOException, InterruptedException {
     Service service = new Service();
       return service.sayHello(name);
   }

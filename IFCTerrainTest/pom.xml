@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.Microservices</groupId>
-	<artifactId>TestService</artifactId>
+	<artifactId>IFCTerrainTest</artifactId>
 	<version>1.0</version>
-	<name>TestService</name>
-	<description>TestService</description>
+	<name>IFCTerrainTest</name>
+
 	<properties>
 		<java.version>15</java.version>
 		<spring-cloud.version>2020.0.1</spring-cloud.version>

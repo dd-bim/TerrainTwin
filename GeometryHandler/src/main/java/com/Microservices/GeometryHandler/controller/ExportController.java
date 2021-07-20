@@ -197,8 +197,8 @@ public class ExportController {
   }
 
   // get all items of one collection - in standard formats json, xml
-  @GetMapping(value = "/collections/{collectionId}/items/{featureId}", produces = { "application/xml",
-      "application/json", "text/plain" }) // , "text/html", "text/csv",
+  @GetMapping(value = "/collections/{collectionId}/items/{featureId}", produces = { "application/json",
+      "application/xml", "text/plain" }) // , "text/html", "text/csv",
   // "application/yaml", "application/geo+json"
   @Operation(summary = "Export feature by id")
   @ApiResponse(responseCode = "200", description = "Successful operation") // , content = @Content(examples =
@@ -210,77 +210,173 @@ public class ExportController {
 
     Object feature = null;
     String text = "";
-try {
-    switch (collectionId) {
-      case "point_2d":
-        Point2D point2d = point2dRepo.getItem(featureId);
-        text = "id: " + point2d.getId() + ", origin_id: " + point2d.getOrigin_id() + ", geometry: "
-            + point2d.getGeometry();
-        feature = point2d;
-        break;
-      case "point_3d":
-        Point3D point3d = point3dRepo.getItem(featureId);
-        text = "id: " + point3d.getId() + ", origin_id: " + point3d.getOrigin_id() + ", geometry: "
-            + point3d.getGeometry();
-        feature = point3d;
-        break;
-      case "line_2d":
-        Line2D line2d = line2dRepo.getItem(featureId);
-        text = "id: " + line2d.getId() + ", origin_id: " + line2d.getOrigin_id() + ", geometry: "
-            + line2d.getGeometry();
-        feature = line2d;
-        break;
-      case "line_3d":
-        Line3D line3d = line3dRepo.getItem(featureId);
-        text = "id: " + line3d.getId() + ", origin_id: " + line3d.getOrigin_id() + ", geometry: "
-            + line3d.getGeometry();
-        feature = line3d;
-        break;
-      case "polygon_2d":
-        Polygon2D polygon2d = poly2dRepo.getItem(featureId);
-        text = "id: " + polygon2d.getId() + ", origin_id: " + polygon2d.getOrigin_id() + ", geometry: "
-            + polygon2d.getGeometry();
-        feature = polygon2d;
-        break;
-      case "polygon_3d":
-        Polygon3D polygon3d = poly3dRepo.getItem(featureId);
-        text = "id: " + polygon3d.getId() + ", origin_id: " + polygon3d.getOrigin_id() + ", geometry: "
-            + polygon3d.getGeometry();
-        feature = polygon3d;
-        break;
-      case "solid":
-        Solid solid = solidRepo.getItem(featureId);
-        text = "id: " + solid.getId() + ", origin_id: " + solid.getOrigin_id() + ", geometry: " + solid.getGeometry();
-        feature = solid;
-        break;
-      case "dtm_tin":
-        TIN tin = tinRepo.getItemTIN(featureId);
-        text = "id: " + tin.getId() + ", geometry: " + tin.getGeometry();
-        feature = tin;
-        break;
-      case "dtm_breaklines":
-        Breaklines breaklines = blRepo.getItem2(featureId);
-        text = "id: " + breaklines.getId() + ", tin_id: " + breaklines.getTin_id() + ", geometry: "
-            + breaklines.getGeometry();
-        feature = breaklines;
-        break;
-      case "dtm_embarkment":
-        Embarkment embarkment = embRepo.getItem2(featureId);
-        text = "id: " + embarkment.getId() + ", tin_id: " + embarkment.getTin_id() + ", geometry: "
-            + embarkment.getGeometry();
-        feature = embarkment;
-        break;
-      case "dtm_specialpoints":
-        SpecialPoints spPoint = sPntRepo.getItem2(featureId);
-        text = "id: " + spPoint.getId() + ", tin_id: " + spPoint.getTin_id() + ", geometry: " + spPoint.getGeometry();
-        feature = spPoint;
-        break;
-      default:
-        break;
+    try {
+      switch (collectionId) {
+        case "point_2d":
+          Point2D point2d = point2dRepo.getItem(featureId);
+          text = "id: " + point2d.getId() + ", origin_id: " + point2d.getOrigin_id() + ", geometry: "
+              + point2d.getGeometry();
+          feature = point2d;
+          break;
+        case "point_3d":
+          Point3D point3d = point3dRepo.getItem(featureId);
+          text = "id: " + point3d.getId() + ", origin_id: " + point3d.getOrigin_id() + ", geometry: "
+              + point3d.getGeometry();
+          feature = point3d;
+          break;
+        case "line_2d":
+          Line2D line2d = line2dRepo.getItem(featureId);
+          text = "id: " + line2d.getId() + ", origin_id: " + line2d.getOrigin_id() + ", geometry: "
+              + line2d.getGeometry();
+          feature = line2d;
+          break;
+        case "line_3d":
+          Line3D line3d = line3dRepo.getItem(featureId);
+          text = "id: " + line3d.getId() + ", origin_id: " + line3d.getOrigin_id() + ", geometry: "
+              + line3d.getGeometry();
+          feature = line3d;
+          break;
+        case "polygon_2d":
+          Polygon2D polygon2d = poly2dRepo.getItem(featureId);
+          text = "id: " + polygon2d.getId() + ", origin_id: " + polygon2d.getOrigin_id() + ", geometry: "
+              + polygon2d.getGeometry();
+          feature = polygon2d;
+          break;
+        case "polygon_3d":
+          Polygon3D polygon3d = poly3dRepo.getItem(featureId);
+          text = "id: " + polygon3d.getId() + ", origin_id: " + polygon3d.getOrigin_id() + ", geometry: "
+              + polygon3d.getGeometry();
+          feature = polygon3d;
+          break;
+        case "solid":
+          Solid solid = solidRepo.getItem(featureId);
+          text = "id: " + solid.getId() + ", origin_id: " + solid.getOrigin_id() + ", geometry: " + solid.getGeometry();
+          feature = solid;
+          break;
+        case "dtm_tin":
+          TIN tin = tinRepo.getItemTIN(featureId);
+          text = "id: " + tin.getId() + ", geometry: " + tin.getGeometry();
+          feature = tin;
+          break;
+        case "dtm_breaklines":
+          Breaklines breaklines = blRepo.getItem2(featureId);
+          text = "id: " + breaklines.getId() + ", tin_id: " + breaklines.getTin_id() + ", geometry: "
+              + breaklines.getGeometry();
+          feature = breaklines;
+          break;
+        case "dtm_embarkment":
+          Embarkment embarkment = embRepo.getItem2(featureId);
+          text = "id: " + embarkment.getId() + ", tin_id: " + embarkment.getTin_id() + ", geometry: "
+              + embarkment.getGeometry();
+          feature = embarkment;
+          break;
+        case "dtm_specialpoints":
+          SpecialPoints spPoint = sPntRepo.getItem2(featureId);
+          text = "id: " + spPoint.getId() + ", tin_id: " + spPoint.getTin_id() + ", geometry: " + spPoint.getGeometry();
+          feature = spPoint;
+          break;
+        default:
+          break;
+      }
+    } catch (Exception e) {
+      text = "CollectionId or featureId does not exist.";
     }
-  } catch (Exception e) {
-    text = "CollectionId or featureId does not exist.";
+
+    if (contentType.equals("text/plain")) {
+      return text;
+    } else if (feature != null) {
+      return feature;
+    } else {
+      return text;
+    }
   }
+
+  // get all items of one collection - in standard formats json, xml
+  @GetMapping(value = "/collections/{collectionId}/items/{featureId}/epsg/{epsg}", produces = { "application/json",
+      "application/xml", "text/plain" }) // , "text/html", "text/csv",
+  // "application/yaml", "application/geo+json"
+  @Operation(summary = "Export feature by id in the specified spatial reference system")
+  @ApiResponse(responseCode = "200", description = "Successful operation") // , content = @Content(examples =
+  // @ExampleObject(value = exapmleFeature)))
+  public @ResponseBody Object getFeaturePageEpsg(
+      @Parameter(hidden = true) @RequestHeader(value = "accept") String contentType,
+      @Parameter(description = "The unique id of the collection.") @PathVariable String collectionId,
+      @Parameter(description = "The unique id of the geometry.") @PathVariable UUID featureId,
+      @Parameter(description = "The epsg code of the spatial reference system.") @PathVariable int epsg) {
+
+    Object feature = null;
+    String text = "";
+    try {
+      switch (collectionId) {
+        case "point_2d":
+          Point2D point2d = point2dRepo.getItemEpsg(featureId, epsg);
+          text = "id: " + point2d.getId() + ", origin_id: " + point2d.getOrigin_id() + ", geometry: "
+              + point2d.getGeometry();
+          feature = point2d;
+          break;
+        case "point_3d":
+          Point3D point3d = point3dRepo.getItemEpsg(featureId, epsg);
+          text = "id: " + point3d.getId() + ", origin_id: " + point3d.getOrigin_id() + ", geometry: "
+              + point3d.getGeometry();
+          feature = point3d;
+          break;
+        case "line_2d":
+          Line2D line2d = line2dRepo.getItemEpsg(featureId, epsg);
+          text = "id: " + line2d.getId() + ", origin_id: " + line2d.getOrigin_id() + ", geometry: "
+              + line2d.getGeometry();
+          feature = line2d;
+          break;
+        case "line_3d":
+          Line3D line3d = line3dRepo.getItemEpsg(featureId, epsg);
+          text = "id: " + line3d.getId() + ", origin_id: " + line3d.getOrigin_id() + ", geometry: "
+              + line3d.getGeometry();
+          feature = line3d;
+          break;
+        case "polygon_2d":
+          Polygon2D polygon2d = poly2dRepo.getItemEpsg(featureId, epsg);
+          text = "id: " + polygon2d.getId() + ", origin_id: " + polygon2d.getOrigin_id() + ", geometry: "
+              + polygon2d.getGeometry();
+          feature = polygon2d;
+          break;
+        case "polygon_3d":
+          Polygon3D polygon3d = poly3dRepo.getItemEpsg(featureId, epsg);
+          text = "id: " + polygon3d.getId() + ", origin_id: " + polygon3d.getOrigin_id() + ", geometry: "
+              + polygon3d.getGeometry();
+          feature = polygon3d;
+          break;
+        case "solid":
+          Solid solid = solidRepo.getItemEpsg(featureId, epsg);
+          text = "id: " + solid.getId() + ", origin_id: " + solid.getOrigin_id() + ", geometry: " + solid.getGeometry();
+          feature = solid;
+          break;
+        case "dtm_tin":
+          TIN tin = tinRepo.getItemTINEpsg(featureId, epsg);
+          text = "id: " + tin.getId() + ", geometry: " + tin.getGeometry();
+          feature = tin;
+          break;
+        case "dtm_breaklines":
+          Breaklines breaklines = blRepo.getItemEpsg2(featureId, epsg);
+          text = "id: " + breaklines.getId() + ", tin_id: " + breaklines.getTin_id() + ", geometry: "
+              + breaklines.getGeometry();
+          feature = breaklines;
+          break;
+        case "dtm_embarkment":
+          Embarkment embarkment = embRepo.getItemEpsg2(featureId, epsg);
+          text = "id: " + embarkment.getId() + ", tin_id: " + embarkment.getTin_id() + ", geometry: "
+              + embarkment.getGeometry();
+          feature = embarkment;
+          break;
+        case "dtm_specialpoints":
+          SpecialPoints spPoint = sPntRepo.getItemEpsg2(featureId, epsg);
+          text = "id: " + spPoint.getId() + ", tin_id: " + spPoint.getTin_id() + ", geometry: " + spPoint.getGeometry();
+          feature = spPoint;
+          break;
+        default:
+          break;
+      }
+    } catch (Exception e) {
+      text = "CollectionId or featureId does not exist.";
+    }
 
     if (contentType.equals("text/plain")) {
       return text;
@@ -291,4 +387,5 @@ try {
     }
 
   }
+
 }

@@ -1,4 +1,4 @@
-package com.Microservices.TestService;
+package com.Microservices.IFCTerrainTest;
 
 import java.io.IOException;
 

@@ -12,13 +12,13 @@ Microservice Architecture:
     (Topology abstract Intersects Klasse)
     ☐ Linkmodell zwischen den Persistenzdiensten
     ☐ Ontologie TerrainTwin
-    ☐ Namespace einheitlich in .env für RDF Resources definieren
+    ✔ Namespace einheitlich in .env für RDF Resources definieren @done (19.7.2021, 13:36:41)
     ✔ GitLab Projekte vereinigen @done (18.6.2021, 13:06:23)
     ☐ Dokumentation erweitern 
     ✔ Docker-Stack (Postgres DB, GraphDB, MinIO Object Storage) einbinden @done (14.6.2021, 08:40:26)
     ☐ Datacat in Microservice-Architektur einbinden
     ✔ Sachdaten und Geometrie in einer CSV/TXT @done (18.6.2021, 13:07:17)
-    ☐ allgemeines Projekt anlegen (Bucket, Schema, Repository)
+    ☐ allgemeines Projekt anlegen (Bucket, Schema, Repository) z.B. als Profil, welches immer übergeben wird
     ☐ 3D-Objekte verwenden
     ☐ Nginx Proxy Container
     ☐ Geoserver Docker
@@ -46,6 +46,7 @@ Microservice Architecture:
         ✔ Elemente Updaten @done (15.7.2021, 10:08:48)
         ✔ Elemente Löschen @done (13.7.2021, 13:59:22)
         ☐ Prüfung auf CSV/RDF -> http-Request an CSV2RDF Converter -> dann Import der Ergebnis TTL
+        ☐ IFC Import
 
     Berechnungen:
         ☐ Abfrage welche Objekte liegen übereinander (DE-9IM)

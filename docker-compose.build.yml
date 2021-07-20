@@ -305,11 +305,11 @@ services:
     ifcterrain: 
         container_name: test-service
         build:
-            context: ./TestService
+            context: ./IFCTerrainTest
         image: schi11er/tt_test-service:latest
         restart: unless-stopped
         ports:
-            - 7207:7207
+            - 7209:7209
         depends_on:
             - configserver
             - eurekaserver
@@ -318,7 +318,8 @@ services:
         environment:
             - domain.url=${DOMAIN_URL}
         volumes:
-            - ./volumes/example:/var/lib/example
+            - ./volumes/example:/app/example
+                #/var/lib/example
 
 networks:
     terraintwin_microservices:

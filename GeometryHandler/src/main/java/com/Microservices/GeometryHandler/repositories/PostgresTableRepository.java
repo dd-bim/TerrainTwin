@@ -27,4 +27,11 @@ public interface PostgresTableRepository<T extends PostgresTables> extends CrudR
     @Query(value = "select id, tin_id, ST_ASEWKT(geometry) as geometry from #{#entityName} where id = ?#{[0]}", nativeQuery = true)
     T getItem2(UUID featureId);
 
+    @Query(value = "select id, origin_id, ST_ASEWKT(ST_TRANSFORM(geometry, ?#{[1]})) as geometry from #{#entityName} where id = ?#{[0]}", nativeQuery = true)
+    T getItemEpsg(UUID featureId, int epsg);
+
+    @Query(value = "select id, tin_id, ST_ASEWKT(ST_TRANSFORM(geometry, ?#{[1]})) as geometry from #{#entityName} where id = ?#{[0]}", nativeQuery = true)
+    T getItemEpsg2(UUID featureId, int epsg);
+
+
 }
