@@ -3,17 +3,17 @@ server:
 
 springdoc:
     api-docs:
-        path: /test/v3/api-docs
+        path: /ifcterrain/v3/api-docs
     swagger-ui: 
-        path: /test
+        path: /ifcterrain
         operationsSorter: method
         disable-swagger-default-url: true
 
 logging:
     file:
-        name: /var/log/test-service.log
+        name: /var/log/ifcterrain-service.log
 
 management:
     endpoint:
         logfile:
-            external-file: /var/log/test-service.log
+            external-file: /var/log/ifcterrain-service.log

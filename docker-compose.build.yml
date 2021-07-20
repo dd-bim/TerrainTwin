@@ -302,11 +302,11 @@ services:
         volumes:
             - ./volumes/logs:/var/log
 
-    ifcterrain: 
-        container_name: test-service
+    ifcterrain-service: 
+        container_name: ifcterrain-service
         build:
-            context: ./IFCTerrainTest
-        image: schi11er/tt_test-service:latest
+            context: ./IFCTerrain
+        image: schi11er/tt_ifcterrain-service:latest
         restart: unless-stopped
         ports:
             - 7209:7209
@@ -318,8 +318,8 @@ services:
         environment:
             - domain.url=${DOMAIN_URL}
         volumes:
-            - ./volumes/example:/app/example
-                #/var/lib/example
+            - ./volumes/files:/app/files
+            - ./volumes/logs:/var/log
 
 networks:
     terraintwin_microservices:

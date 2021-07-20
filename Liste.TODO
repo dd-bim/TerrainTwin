@@ -70,3 +70,27 @@ Microservice Architecture:
 
 Test:
 Create tables, Dateien Importieren, Topologien berechnen, wieder löschen, Vergleich Input und gelöschte Elemente
+
+
+# Unhandled Exception:
+# System.IO.FileNotFoundException: Could not load file or assembly 'PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35' or one of its dependencies.
+# File name: 'PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'
+#   at IFCTerrainCommand.Program.startConverison (System.String[] files) [0x00063] in <aa0e31fb9bcd436692481a2ee34c11af>:0
+#   at IFCTerrainCommand.Program.Main (System.String[] args) [0x00046] in <aa0e31fb9bcd436692481a2ee34c11af>:0     
+# [ERROR] FATAL UNHANDLED EXCEPTION: System.IO.FileNotFoundException: Could not load file or assembly 'PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35' or one of its dependencies.        
+# File name: 'PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'
+#   at IFCTerrainCommand.Program.startConverison (System.String[] files) [0x00063] in <aa0e31fb9bcd436692481a2ee34c11af>:0
+#   at IFCTerrainCommand.Program.Main (System.String[] args) [0x00046] in <aa0e31fb9bcd436692481a2ee34c11af>:0    
+
+
+Unhandled Exception:
+    System.NullReferenceException: Object reference not set to an instance of an object
+      at BIMGISInteropLibs.DXF.ReaderTerrain.ReadDxfTin (IxMilia.Dxf.DxfFile dxfFile, BIMGISInteropLibs.IfcTerrain.JsonSettings jsonSettings) [0x00014] in <220f1144375140cfbf42793ec75fc289>:0
+      at BIMGISInteropLibs.IfcTerrain.ConnectionInterface.mapProcess (BIMGISInteropLibs.IfcTerrain.JsonSettings jSettings, BIMGISInteropLibs.IfcTerrain.JsonSettings_DIN_SPEC_91391_2 jSettings_DIN91931, BIMGISInteropLibs.IfcTerrain.JsonSettings_DIN_18740_6 jSettings_DIN18740, System.Nullable`1[T] breakDist, System.Nullable`1[T] refLatitude, System.Nullable`1[T] refLongitude, System.Nullable`1[T] refElevation) [0x00079] in <220f1144375140cfbf42793ec75fc289>:0
+      at IFCTerrainCommand.Program.startConverison (System.String[] files) [0x00063] in <aa0e31fb9bcd436692481a2ee34c11af>:0
+      at IFCTerrainCommand.Program.Main (System.String[] args) [0x00046] in <aa0e31fb9bcd436692481a2ee34c11af>:0
+    [ERROR] FATAL UNHANDLED EXCEPTION: System.NullReferenceException: Object reference not set to an instance of an object
+      at BIMGISInteropLibs.DXF.ReaderTerrain.ReadDxfTin (IxMilia.Dxf.DxfFile dxfFile, BIMGISInteropLibs.IfcTerrain.JsonSettings jsonSettings) [0x00014] in <220f1144375140cfbf42793ec75fc289>:0
+      at BIMGISInteropLibs.IfcTerrain.ConnectionInterface.mapProcess (BIMGISInteropLibs.IfcTerrain.JsonSettings jSettings, BIMGISInteropLibs.IfcTerrain.JsonSettings_DIN_SPEC_91391_2 jSettings_DIN91931, BIMGISInteropLibs.IfcTerrain.JsonSettings_DIN_18740_6 jSettings_DIN18740, System.Nullable`1[T] breakDist, System.Nullable`1[T] refLatitude, System.Nullable`1[T] refLongitude, System.Nullable`1[T] refElevation) [0x00079] in <220f1144375140cfbf42793ec75fc289>:0
+      at IFCTerrainCommand.Program.startConverison (System.String[] files) [0x00063] in <aa0e31fb9bcd436692481a2ee34c11af>:0
+      at IFCTerrainCommand.Program.Main (System.String[] args) [0x00046] in <aa0e31fb9bcd436692481a2ee34c11af>:0
