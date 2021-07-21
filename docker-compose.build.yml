@@ -317,6 +317,10 @@ services:
             - terraintwin_microservices
         environment:
             - domain.url=${DOMAIN_URL}
+            - minio.url=${MINIO_URL}
+            - minio.port=${MINIO_PORT}
+            - minio.access_key=${MINIO_ACCESS_KEY}
+            - minio.secret_key=${MINIO_SECRET_KEY}
         volumes:
             - ./volumes/files:/app/files
             - ./volumes/logs:/var/log

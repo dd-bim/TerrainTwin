@@ -24,6 +24,7 @@ Microservice Architecture:
     ☐ Geoserver Docker
     ☐ Geometrieexport mit Angabe des EPSG Code für Ausgabe in bestimmtem Ref.-Sys.
     ☐ Datenausgabe als GeoJSON, GeoPKG
+    ☐ Eureka region
     
 
     Geometry Handler:
@@ -47,6 +48,7 @@ Microservice Architecture:
         ✔ Elemente Löschen @done (13.7.2021, 13:59:22)
         ☐ Prüfung auf CSV/RDF -> http-Request an CSV2RDF Converter -> dann Import der Ergebnis TTL
         ☐ IFC Import
+        ☐ CRS speichern?
 
     Berechnungen:
         ☐ Abfrage welche Objekte liegen übereinander (DE-9IM)
@@ -72,25 +74,14 @@ Test:
 Create tables, Dateien Importieren, Topologien berechnen, wieder löschen, Vergleich Input und gelöschte Elemente
 
 
-# Unhandled Exception:
-# System.IO.FileNotFoundException: Could not load file or assembly 'PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35' or one of its dependencies.
-# File name: 'PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'
-#   at IFCTerrainCommand.Program.startConverison (System.String[] files) [0x00063] in <aa0e31fb9bcd436692481a2ee34c11af>:0
-#   at IFCTerrainCommand.Program.Main (System.String[] args) [0x00046] in <aa0e31fb9bcd436692481a2ee34c11af>:0     
-# [ERROR] FATAL UNHANDLED EXCEPTION: System.IO.FileNotFoundException: Could not load file or assembly 'PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35' or one of its dependencies.        
-# File name: 'PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35'
-#   at IFCTerrainCommand.Program.startConverison (System.String[] files) [0x00063] in <aa0e31fb9bcd436692481a2ee34c11af>:0
-#   at IFCTerrainCommand.Program.Main (System.String[] args) [0x00046] in <aa0e31fb9bcd436692481a2ee34c11af>:0    
-
-
 Unhandled Exception:
     System.NullReferenceException: Object reference not set to an instance of an object
-      at BIMGISInteropLibs.DXF.ReaderTerrain.ReadDxfTin (IxMilia.Dxf.DxfFile dxfFile, BIMGISInteropLibs.IfcTerrain.JsonSettings jsonSettings) [0x00014] in <220f1144375140cfbf42793ec75fc289>:0
-      at BIMGISInteropLibs.IfcTerrain.ConnectionInterface.mapProcess (BIMGISInteropLibs.IfcTerrain.JsonSettings jSettings, BIMGISInteropLibs.IfcTerrain.JsonSettings_DIN_SPEC_91391_2 jSettings_DIN91931, BIMGISInteropLibs.IfcTerrain.JsonSettings_DIN_18740_6 jSettings_DIN18740, System.Nullable`1[T] breakDist, System.Nullable`1[T] refLatitude, System.Nullable`1[T] refLongitude, System.Nullable`1[T] refElevation) [0x00079] in <220f1144375140cfbf42793ec75fc289>:0
+      at BimGisCad.Representation.Geometry.Composed.Tin.get_NumTriangles () [0x00006] in <130eefd6445941ba8b7c0a5a23402813>:0
+      at BIMGISInteropLibs.IfcTerrain.ConnectionInterface.mapProcess (BIMGISInteropLibs.IfcTerrain.JsonSettings jSettings, BIMGISInteropLibs.IfcTerrain.JsonSettings_DIN_SPEC_91391_2 jSettings_DIN91931, BIMGISInteropLibs.IfcTerrain.JsonSettings_DIN_18740_6 jSettings_DIN18740, System.Nullable`1[T] breakDist, System.Nullable`1[T] refLatitude, System.Nullable`1[T] refLongitude, System.Nullable`1[T] refElevation) [0x001de] in <4814cc81312a471b97abfd33a26be4e9>:0
       at IFCTerrainCommand.Program.startConverison (System.String[] files) [0x00063] in <aa0e31fb9bcd436692481a2ee34c11af>:0
       at IFCTerrainCommand.Program.Main (System.String[] args) [0x00046] in <aa0e31fb9bcd436692481a2ee34c11af>:0
     [ERROR] FATAL UNHANDLED EXCEPTION: System.NullReferenceException: Object reference not set to an instance of an object
-      at BIMGISInteropLibs.DXF.ReaderTerrain.ReadDxfTin (IxMilia.Dxf.DxfFile dxfFile, BIMGISInteropLibs.IfcTerrain.JsonSettings jsonSettings) [0x00014] in <220f1144375140cfbf42793ec75fc289>:0
-      at BIMGISInteropLibs.IfcTerrain.ConnectionInterface.mapProcess (BIMGISInteropLibs.IfcTerrain.JsonSettings jSettings, BIMGISInteropLibs.IfcTerrain.JsonSettings_DIN_SPEC_91391_2 jSettings_DIN91931, BIMGISInteropLibs.IfcTerrain.JsonSettings_DIN_18740_6 jSettings_DIN18740, System.Nullable`1[T] breakDist, System.Nullable`1[T] refLatitude, System.Nullable`1[T] refLongitude, System.Nullable`1[T] refElevation) [0x00079] in <220f1144375140cfbf42793ec75fc289>:0
+      at BimGisCad.Representation.Geometry.Composed.Tin.get_NumTriangles () [0x00006] in <130eefd6445941ba8b7c0a5a23402813>:0
+      at BIMGISInteropLibs.IfcTerrain.ConnectionInterface.mapProcess (BIMGISInteropLibs.IfcTerrain.JsonSettings jSettings, BIMGISInteropLibs.IfcTerrain.JsonSettings_DIN_SPEC_91391_2 jSettings_DIN91931, BIMGISInteropLibs.IfcTerrain.JsonSettings_DIN_18740_6 jSettings_DIN18740, System.Nullable`1[T] breakDist, System.Nullable`1[T] refLatitude, System.Nullable`1[T] refLongitude, System.Nullable`1[T] refElevation) [0x001de] in <4814cc81312a471b97abfd33a26be4e9>:0
       at IFCTerrainCommand.Program.startConverison (System.String[] files) [0x00063] in <aa0e31fb9bcd436692481a2ee34c11af>:0
       at IFCTerrainCommand.Program.Main (System.String[] args) [0x00046] in <aa0e31fb9bcd436692481a2ee34c11af>:0

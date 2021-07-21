@@ -1,5 +1,7 @@
 package com.Microservices.IFCTerrainAPI.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,15 +9,18 @@ import lombok.Setter;
 @Setter
 public class InputConfigs {
 
-  private String filePath = "files/dgm.dxf";
+  @JsonIgnore
+  private String filePath;
   private String fileName;
   private String fileType;
   private String destFileName;
   private String outIFCType;
   private String outFileType;
+  @JsonIgnore
   private String logFilePath;
   private String verbosityLevel;
   private boolean calculateTin;
+  private boolean recalculateTin;
   private String siteName;
   private String projectName;
   private String editorsFamilyName;
@@ -77,16 +82,17 @@ public class InputConfigs {
   }
 
 
-  public InputConfigs(String filePath, String fileName, String fileType, String destFileName, String outIFCType, String outFileType, String logFilePath, String verbosityLevel, boolean calculateTin, String siteName, String projectName, String editorsFamilyName, String editorsGivenName, String editorsOrganisationName, boolean exportMetadataFile, boolean outIfcPropertySet, boolean exportMetadataDin91391, boolean exportMetadataDin18740, boolean is3D, double minDist, String surfaceType, boolean geoElement, int logeoref, boolean customOrigin, double xOrigin, double yOrigin, double zOrigin, double trueNorth, double scale, String crsName, String crsDescription, String geodeticDatum, String verticalDatum, String projectionName, String projectionZone, String layer, boolean isTin, int horizon, int gridSize, boolean bBox, double bbNorth, double bbEast, double bbSouth, double bbWest, boolean onlyHorizon, String horizonFilter, boolean onlyTypes, boolean ignPos, boolean ignHeight, String breakline_layer, boolean breakline, String host, int port, String user, String password, String database, String schema, String tin_table, String tin_column, String tinid_column, String tin_id, String breakline_table, String breakline_column, String breakline_tin_id) {
-    this.filePath = filePath;
+  public InputConfigs(String fileName, String fileType, String destFileName, String outIFCType, String outFileType, String verbosityLevel, boolean calculateTin, boolean recalculateTin, String siteName, String projectName, String editorsFamilyName, String editorsGivenName, String editorsOrganisationName, boolean exportMetadataFile, boolean outIfcPropertySet, boolean exportMetadataDin91391, boolean exportMetadataDin18740, boolean is3D, double minDist, String surfaceType, boolean geoElement, int logeoref, boolean customOrigin, double xOrigin, double yOrigin, double zOrigin, double trueNorth, double scale, String crsName, String crsDescription, String geodeticDatum, String verticalDatum, String projectionName, String projectionZone, String layer, boolean isTin, int horizon, int gridSize, boolean bBox, double bbNorth, double bbEast, double bbSouth, double bbWest, boolean onlyHorizon, String horizonFilter, boolean onlyTypes, boolean ignPos, boolean ignHeight, String breakline_layer, boolean breakline, String host, int port, String user, String password, String database, String schema, String tin_table, String tin_column, String tinid_column, String tin_id, String breakline_table, String breakline_column, String breakline_tin_id) {
+    this.filePath = "files/" + fileName;
     this.fileName = fileName;
     this.fileType = fileType;
-    this.destFileName = destFileName;
+    this.destFileName = "files/" + destFileName;
     this.outIFCType = outIFCType;
     this.outFileType = outFileType;
-    this.logFilePath = logFilePath;
+    this.logFilePath = "files";
     this.verbosityLevel = verbosityLevel;
     this.calculateTin = calculateTin;
+    this.recalculateTin = recalculateTin;
     this.siteName = siteName;
     this.projectName = projectName;
     this.editorsFamilyName = editorsFamilyName;
@@ -219,6 +225,18 @@ public class InputConfigs {
 
   public void setCalculateTin(boolean calculateTin) {
     this.calculateTin = calculateTin;
+  }
+
+  public boolean isRecalculateTin() {
+    return this.recalculateTin;
+  }
+
+  public boolean getRecalculateTin() {
+    return this.recalculateTin;
+  }
+
+  public void setRecalculateTin(boolean recalculateTin) {
+    this.recalculateTin = recalculateTin;
   }
 
   public String getSiteName() {
