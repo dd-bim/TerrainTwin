@@ -32,7 +32,7 @@ public class SomeController {
 
   // get all namespaces
   @GetMapping(path = "/namespaces/repository/{repo}")
-  @Operation(summary = "Get all namespaces used in the GrapgDB repository")
+  @Operation(summary = "Get all namespaces used in the GraphDB repository")
   @ApiResponse(responseCode = "200", description = "Successful operation")
   public String getNamespaces(@PathVariable String repo) throws Exception {
 

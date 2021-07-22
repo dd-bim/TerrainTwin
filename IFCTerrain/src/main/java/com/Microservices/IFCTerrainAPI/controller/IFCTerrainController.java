@@ -51,50 +51,50 @@ public class IFCTerrainController {
 
     // check if data comes from a source file and has a convertable type
 
-
     String type = config.getFileType().toUpperCase();
-    if (type.equals("LANDXML") || type.equals("1"))
-      type = "XML";
     if (type.equals("0"))
       type = "DXF";
-    if (type.equals("2") || type.equals("CITYGML")) type = "GML";
-    if (type.equals("3")) type = "OUT";
-    if (type.equals("6")) type = "REB";
+    if (type.equals("LANDXML") || type.equals("1"))
+      type = "XML";
+    if (type.equals("2") || type.equals("CITYGML"))
+      type = "GML";
+    if (type.equals("3") || type.equals("GRAFBAT"))
+      type = "OUT";
+    if (type.equals("5") || type.equals("GRID"))
+      type = "XYZ";
+    if (type.equals("6"))
+      type = "REB";
 
-    // if (type.equals("DXF") || type.equals("XML")) {
+    if (config.getFileName() != null) {
 
-      
-      if (config.getFileName() != null)  {
+      // copy source file into container if exists
+      result = files.getFileFromMinIO(bucket, config.getFileName());
 
-        // copy source file into container if exists
-        result = files.getFileFromMinIO(bucket, config.getFileName());
+    } else if (config.getHost() != null) {
+      // should only be, if data come from PostGIS
+      result = "OK";
+    } else {
+      result = "Problem";
+    }
 
-      } else if (config.getHost() != null) {
-        // should only be, if data come from PostGIS
-        result = "OK";
-      } else {
-        result = "Problem";
-      }
+    // check if copy was successful
+    if (result.equals("OK")) {
 
-      // check if copy was successful
-      if (result.equals("OK")) {
+      // create file from configs
+      String configFile = files.createConfigFile(config);
 
-        // create file from configs
-        String configFile = files.createConfigFile(config);
+      // call converter with config file as input
+      result = execService.callConverter(configFile);
 
-        // call converter with config file as input
-        result = execService.callConverter(configFile);
+      // upload all created files to MinIO bucket
+      // if conversion fails, log and configs file will be uploaded
+      result += files.upload(bucket, type);
 
-        // upload all created files to MinIO bucket
-        // if conversion fails, log and configs file will be uploaded
-        result += files.upload(bucket, type);
+      // delete all created files in container
+      files.removeFiles();
+    }
 
-        // delete all created files in container
-        files.removeFiles();
-      }
-    // }
-
-  return result;
-}
+    return result;
+  }
 
 }

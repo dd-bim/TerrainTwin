@@ -48,8 +48,9 @@ public class ProcessFiles {
         }
         File file = new File("files/" + name + "_configs.json");
         FileWriter writer = new FileWriter(file);
-        Gson gson = new GsonBuilder().serializeNulls().create();
-        String content = gson.toJson(configs);
+        // Gson gson = new GsonBuilder().serializeNulls().create();
+        // String content = gson.toJson(configs);
+        String content = new Gson().toJson(configs);
         log.info(content);
         writer.write(content);
         writer.close();

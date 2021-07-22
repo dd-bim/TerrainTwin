@@ -47,7 +47,7 @@ public class ImportTopology {
         Type type = new TypeToken<ArrayList<Triple>>(){}.getType();
         List<Triple> triples = gson.fromJson(topo, type);
         
-        System.out.println("Anzahl Triples: " + triples.size()); // 782 stimmt
+        System.out.println("Anzahl Triples: " + triples.size());
         
         // get connection to graphdb repository
         try {
