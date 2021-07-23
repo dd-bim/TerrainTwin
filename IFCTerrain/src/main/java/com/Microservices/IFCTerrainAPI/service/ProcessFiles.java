@@ -11,8 +11,6 @@ import java.security.NoSuchAlgorithmException;
 import com.Microservices.IFCTerrainAPI.connection.MinIOConnection;
 import com.Microservices.IFCTerrainAPI.domain.model.InputConfigs;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +46,6 @@ public class ProcessFiles {
         }
         File file = new File("files/" + name + "_configs.json");
         FileWriter writer = new FileWriter(file);
-        // Gson gson = new GsonBuilder().serializeNulls().create();
-        // String content = gson.toJson(configs);
         String content = new Gson().toJson(configs);
         log.info(content);
         writer.write(content);

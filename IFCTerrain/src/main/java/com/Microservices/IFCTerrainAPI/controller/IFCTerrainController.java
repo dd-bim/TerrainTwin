@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import io.minio.errors.ErrorResponseException;
@@ -36,6 +38,7 @@ public class IFCTerrainController {
   ExecService execService;
 
   @PostMapping("/ifcterrain/converter/bucket/{bucket}")
+  @Operation(summary = "Convert terrain to IFC", description = "Not all configs are need vor every conversion. For more information see the IFCTerrain Wiki.", externalDocs = @ExternalDocumentation(description = "IFCTerrain Wiki", url = "https://github.com/dd-bim/City2BIM/wiki/IFCTerrain-Command"))
   @ApiResponse(responseCode = "200", description = "Successful operation")
   public String convertToIFC(@PathVariable String bucket, @RequestBody InputConfigs config)
       throws IOException, InterruptedException, InvalidKeyException, ErrorResponseException, InsufficientDataException,
@@ -47,7 +50,7 @@ public class IFCTerrainController {
     // set docker internal paths
     config.setFilePath("files/" + config.getFileName());
     config.setDestFileName("files/" + config.getDestFileName());
-    config.setLogFilePath("files");
+    config.setLogFilePath("files/");
 
     // check if data comes from a source file and has a convertable type
 
