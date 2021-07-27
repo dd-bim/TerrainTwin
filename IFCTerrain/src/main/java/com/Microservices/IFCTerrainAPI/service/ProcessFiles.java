@@ -5,6 +5,9 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
@@ -91,7 +94,8 @@ public class ProcessFiles {
                     }
                 }
             }
-        if (fileUsed == 0) results = "Can't find file with name " + filenameConfig;
+            if (fileUsed == 0)
+                results = "Can't find file with name " + filenameConfig;
 
         } catch (IOException e) {
             log.error("Error occurred: " + e.getMessage());
@@ -112,6 +116,21 @@ public class ProcessFiles {
         String[] flist = directory.list();
         for (int i = 0; i < flist.length; i++) {
             if (!flist[i].toUpperCase().endsWith(type)) {
+
+                // remove leading \ from filename, because \ from windows path is interpreted as part of the filename by linux
+                if (flist[i].endsWith(".log")) {
+                Path source = Paths.get("files/" + flist[i]);
+
+                try {
+                    log.info(flist[i]);
+                    flist[i] = flist[i].substring(1);
+                    File target = new File("files/" + flist[i]);
+                    Files.copy(source, target.toPath());
+                    log.info(flist[i]);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                }
 
                 // Upload to MinIO
                 client.uploadObject(UploadObjectArgs.builder().bucket(bucket).object(flist[i])

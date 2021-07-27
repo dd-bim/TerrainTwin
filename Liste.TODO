@@ -22,7 +22,7 @@ Microservice Architecture:
     ☐ 3D-Objekte verwenden
     ☐ Nginx Proxy Container
     ☐ Geoserver Docker
-    ☐ Geometrieexport mit Angabe des EPSG Code für Ausgabe in bestimmtem Ref.-Sys.
+    ✔ Geometrieexport mit Angabe des EPSG Code für Ausgabe in bestimmtem Ref.-Sys. @done (27.7.2021, 08:26:22)
     ☐ Datenausgabe als GeoJSON, GeoPKG
     ☐ Eureka region
     
@@ -60,8 +60,9 @@ Microservice Architecture:
         ☐ Massenberechnungen, Differenz zw. 2 DGM
 
     IfcTerrain als Webservice:
-        ☐ Dockerfile mit Microsoft Image
-        ☐ REST Schnittstelle zur Übergabe einer JSON an IfcTerrainCommand 
+        ✘ Dockerfile mit Microsoft Image @cancelled (27.7.2021, 08:26:57)
+        ✔ Dockerfile mit Mono und Java @done (27.7.2021, 08:27:37)
+        ✔ REST Schnittstelle zur Übergabe einer JSON an IfcTerrainCommand @done (27.7.2021, 08:27:40)
         
     Dashboard-Service:
         ☐ Bountingbox für Elemente gesamt ausgeben
@@ -72,16 +73,3 @@ Microservice Architecture:
 
 Test:
 Create tables, Dateien Importieren, Topologien berechnen, wieder löschen, Vergleich Input und gelöschte Elemente
-
-
-Unhandled Exception:
-    System.NullReferenceException: Object reference not set to an instance of an object
-      at BimGisCad.Representation.Geometry.Composed.Tin.get_NumTriangles () [0x00006] in <130eefd6445941ba8b7c0a5a23402813>:0
-      at BIMGISInteropLibs.IfcTerrain.ConnectionInterface.mapProcess (BIMGISInteropLibs.IfcTerrain.JsonSettings jSettings, BIMGISInteropLibs.IfcTerrain.JsonSettings_DIN_SPEC_91391_2 jSettings_DIN91931, BIMGISInteropLibs.IfcTerrain.JsonSettings_DIN_18740_6 jSettings_DIN18740, System.Nullable`1[T] breakDist, System.Nullable`1[T] refLatitude, System.Nullable`1[T] refLongitude, System.Nullable`1[T] refElevation) [0x001de] in <4814cc81312a471b97abfd33a26be4e9>:0
-      at IFCTerrainCommand.Program.startConverison (System.String[] files) [0x00063] in <aa0e31fb9bcd436692481a2ee34c11af>:0
-      at IFCTerrainCommand.Program.Main (System.String[] args) [0x00046] in <aa0e31fb9bcd436692481a2ee34c11af>:0
-    [ERROR] FATAL UNHANDLED EXCEPTION: System.NullReferenceException: Object reference not set to an instance of an object
-      at BimGisCad.Representation.Geometry.Composed.Tin.get_NumTriangles () [0x00006] in <130eefd6445941ba8b7c0a5a23402813>:0
-      at BIMGISInteropLibs.IfcTerrain.ConnectionInterface.mapProcess (BIMGISInteropLibs.IfcTerrain.JsonSettings jSettings, BIMGISInteropLibs.IfcTerrain.JsonSettings_DIN_SPEC_91391_2 jSettings_DIN91931, BIMGISInteropLibs.IfcTerrain.JsonSettings_DIN_18740_6 jSettings_DIN18740, System.Nullable`1[T] breakDist, System.Nullable`1[T] refLatitude, System.Nullable`1[T] refLongitude, System.Nullable`1[T] refElevation) [0x001de] in <4814cc81312a471b97abfd33a26be4e9>:0
-      at IFCTerrainCommand.Program.startConverison (System.String[] files) [0x00063] in <aa0e31fb9bcd436692481a2ee34c11af>:0
-      at IFCTerrainCommand.Program.Main (System.String[] args) [0x00046] in <aa0e31fb9bcd436692481a2ee34c11af>:0
