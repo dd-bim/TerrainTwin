@@ -5,7 +5,7 @@ spring:
     cloud:
         gateway:
             routes:
-                - id: fileinputhandler-service
+                - id: inputhandler-service
                   uri: lb://file-input-handler
                   predicates:
                       - Path=/inputhandler/**
@@ -25,6 +25,10 @@ spring:
                   uri: lb://topology-service
                   predicates:
                       - Path=/topology/**
+                - id: ifcterrain-service
+                  uri: lb://ifcterrain-service
+                  predicates:
+                      - Path=/ifcterrain/**
                 # - id: dashboard-service
                 #   uri: lb://dashboard-service
                 #   predicates:

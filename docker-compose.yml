@@ -67,36 +67,35 @@ services:
         volumes:
             - ./volumes/logs/:/var/log/
 
-            
-            file-input-handler:
-                container_name: file-input-handler
-                image: schi11er/tt_file-input-handler:latest
-                restart: unless-stopped
-                ports:
-                    - 7201:7201
-                networks:
-                    - terraintwin_microservices
-                depends_on:
-                    - configserver
-                    - eurekaserver
-                healthcheck:
-                    test: wget --spider http://localhost:7201/actuator/health || exit 1
-                    interval: 30s
-                    timeout: 5s
-                    retries: 5
-                    start_period: 20s
-                environment:
-                    - domain.url=${DOMAIN_URL}
-                    - minio.url=${MINIO_URL}
-                    - minio.port=${MINIO_PORT}
-                    - minio.access_key=${MINIO_ACCESS_KEY}
-                    - minio.secret_key=${MINIO_SECRET_KEY}
-                    - graphdb.url=${GRAPHDB_URL}
-                    - graphdb.username=${GRAPHDB_USERNAME}
-                    - graphdb.password=${GRAPHDB_PASSWORD}
-                volumes:
-                    - ./volumes/logs:/var/log
-                    # - ./volumes/configs/repo-config.ttl:/var/config/repo-config.ttl
+    file-input-handler:
+        container_name: file-input-handler
+        image: schi11er/tt_file-input-handler:latest
+        restart: unless-stopped
+        ports:
+            - 7201:7201
+        networks:
+            - terraintwin_microservices
+        depends_on:
+            - configserver
+            - eurekaserver
+        healthcheck:
+            test: wget --spider http://localhost:7201/actuator/health || exit 1
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 20s
+        environment:
+            - domain.url=${DOMAIN_URL}
+            - minio.url=${MINIO_URL}
+            - minio.port=${MINIO_PORT}
+            - minio.access_key=${MINIO_ACCESS_KEY}
+            - minio.secret_key=${MINIO_SECRET_KEY}
+            - graphdb.url=${GRAPHDB_URL}
+            - graphdb.username=${GRAPHDB_USERNAME}
+            - graphdb.password=${GRAPHDB_PASSWORD}
+        volumes:
+            - ./volumes/logs:/var/log
+            - ./volumes/configs/repo-config.ttl:/var/config/repo-config.ttl
 
     geometry-handler:
         container_name: geometry-handler
@@ -241,6 +240,27 @@ services:
             - postgres.database.username=${POSTGRES_USERNAME}
             - postgres.database.password=${POSTGRES_PASSWORD}
         volumes:
+            - ./volumes/logs:/var/log
+
+    ifcterrain-service: 
+        container_name: ifcterrain-service
+        image: schi11er/tt_ifcterrain-service:latest
+        restart: unless-stopped
+        ports:
+            - 7209:7209
+        depends_on:
+            - configserver
+            - eurekaserver
+        networks:
+            - terraintwin_microservices
+        environment:
+            - domain.url=${DOMAIN_URL}
+            - minio.url=${MINIO_URL}
+            - minio.port=${MINIO_PORT}
+            - minio.access_key=${MINIO_ACCESS_KEY}
+            - minio.secret_key=${MINIO_SECRET_KEY}
+        volumes:
+            - ./volumes/files:/app/files
             - ./volumes/logs:/var/log
 
 networks:

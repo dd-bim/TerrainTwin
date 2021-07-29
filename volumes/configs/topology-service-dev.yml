@@ -5,10 +5,8 @@ springdoc:
     api-docs:
         path: /topology/v3/api-docs
     swagger-ui: 
-        path: /topology
+        path: /topology/swagger-ui.html
         operationsSorter: method
-        url: /openapi.yml
-        # configUrl: /openapi.yml
 
 spring:
     datasource:

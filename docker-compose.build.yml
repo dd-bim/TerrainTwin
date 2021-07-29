@@ -96,8 +96,6 @@ services:
         restart: unless-stopped
         ports:
             - 7201:7201
-        # networks:
-        #     - terraintwin_microservices
         networks:
             - terraintwin_microservices
         depends_on:
@@ -313,6 +311,12 @@ services:
         depends_on:
             - configserver
             - eurekaserver
+        healthcheck:
+            test: wget --spider http://localhost:7209/actuator/health || exit 1
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 20s
         networks:
             - terraintwin_microservices
         environment:

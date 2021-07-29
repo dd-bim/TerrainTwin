@@ -29,8 +29,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RefreshScope
 @RestController
+@Tag(name = "Calculations")
 public class ImportRestController {
 
   @Autowired
@@ -66,7 +72,9 @@ public class ImportRestController {
   Logger log = LoggerFactory.getLogger(ImportRestController.class);
 
   @GetMapping("/topology/relations/graphdbrepo/{repo}")
-  public String relations(@PathVariable String repo) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+  @Operation(summary = "Create topology")
+  @ApiResponse(responseCode = "200", description = "Successful operation")
+  public String relations(@Parameter(description = "The name of the target graphdb repository.") @PathVariable String repo) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
     GraphDBImport graphdb = new GraphDBImport();
     long start = System.currentTimeMillis();
 

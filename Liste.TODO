@@ -25,6 +25,7 @@ Microservice Architecture:
     ✔ Geometrieexport mit Angabe des EPSG Code für Ausgabe in bestimmtem Ref.-Sys. @done (27.7.2021, 08:26:22)
     ☐ Datenausgabe als GeoJSON, GeoPKG
     ☐ Eureka region
+    ☐ IFCTerrain + MinIO Standalone
     
 
     Geometry Handler:
