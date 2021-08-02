@@ -19,9 +19,10 @@ public class Metadata {
     @Hidden
     private String location;
     @Hidden
-    private String mimetype;
+    private String mimeType;
     private String type;
     private String description;
+    // private String uploaded;
     private String creator;
     private String sender;
     private String recipients;
@@ -59,7 +60,7 @@ public class Metadata {
         this.schemaSubset = schemaSubset;
     }
 
-    public Metadata(UUID id, String name, String created, String mimetype, String type, String description,
+    public Metadata(UUID id, String name, String created, String mimeType, String type, String description,
             String creator, String sender, String recipients, String suitability, String revision, String version,
             String status, String projectId, String metadataSchema, String schema, String schemaVersion,
             String schemaSubset) {
@@ -67,7 +68,7 @@ public class Metadata {
         this.id = id;
         this.name = name;
         this.created = created;
-        this.mimetype = mimetype;
+        this.mimeType = mimeType;
         this.type = type;
         this.description = description;
         this.creator = creator;
@@ -96,28 +97,28 @@ public class Metadata {
         String ext = name.split("\\.")[1];
         switch (ext) {
         case "ifc":
-            this.mimetype = "application/x-step";
+            this.mimeType = "application/x-step";
             break;
         case "dwg":
-            this.mimetype = "application/acad";
+            this.mimeType = "application/acad";
             break;
         case "dxf":
-            this.mimetype = "application/dxf";
+            this.mimeType = "application/dxf";
             break;
         case "gml":
-            this.mimetype = "application/gml+xml";
+            this.mimeType = "application/gml+xml";
             break;
         case "ttl":
-            this.mimetype = "text/turtle";
+            this.mimeType = "text/turtle";
             break;
         case "owl":
-            this.mimetype = "application/rdf+xml";
+            this.mimeType = "application/rdf+xml";
             break;
         case "xml":
-            this.mimetype = "application/xml";
+            this.mimeType = "application/xml";
             break;
         default:
-            this.mimetype = "";
+            this.mimeType = "";
         }
 
         this.type = type;

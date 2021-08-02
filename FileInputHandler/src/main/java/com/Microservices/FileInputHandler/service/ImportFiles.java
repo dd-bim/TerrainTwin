@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.UUID;
 
 import com.Microservices.FileInputHandler.connection.GraphDBConnection;
 import com.Microservices.FileInputHandler.connection.MinIOConnection;
@@ -86,7 +87,7 @@ public class ImportFiles {
                                 db.add(stream, baseURI, RDFFormat.RDFXML);
                             }
 
-                            results += (filename + " importiert.") + "\n";
+                            results += (filename + " imported.") + "\n";
 
                         } catch (IOException e) {
                             log.error(e.getMessage());
@@ -105,10 +106,10 @@ public class ImportFiles {
                             HashMap<String, Object> json = new HashMap<String, Object>();
                             @SuppressWarnings("unchecked")
                             HashMap<String, Object> obj = new ObjectMapper().readValue(stream, HashMap.class);
+
                             obj.forEach((k, v) -> {
                                 if (v == null) {
-                                }
-                                else if (v.getClass() == String.class) {
+                                } else if (v.getClass() == String.class) {
                                     json.put(k, v);
                                 } else {
                                     @SuppressWarnings("unchecked")
@@ -117,28 +118,31 @@ public class ImportFiles {
                                 }
                             });
 
-                            // create rdf model from key-value-paires and remove all paires with empty value
-                            // standard namespace
-                            String r = domain + "/" + json.get("name").toString();
-                            String namespace = domain + "/";
-                            // specific namespace from location, if exists in metadata
-                            if (!json.get("location").toString().isEmpty()) {
-                                r = json.get("location").toString();
-                                namespace = r.replace(json.get("name").toString(), "");
-                            }
-                            String resource = r;
-
+                            // remove all paires with empty value
                             json.entrySet().removeIf(entry -> "".equals(entry.getValue()));
                             json.entrySet().removeIf(entry -> entry.getValue() == null);
 
+                            // create namespace and resources
+                            String source = json.get("name").toString();
+                            String namespace = "";
+                            if (json.get("location").toString() == null) {
+                                namespace = url + "/" + bucket + "/";
+                            } else {
+                                namespace = json.get("location").toString().replace(source, "");
+                            }
+                            String doc = bucket + ":" + source;
+                            String content = bucket + ":" + UUID.randomUUID().toString();
+
+                            // create rdf model from key-value-paires
                             ModelBuilder builder = new ModelBuilder();
-                            builder.setNamespace("files", namespace).setNamespace("meta",
-                                    domain + "/ontology/metadaten_ontology/");
+                            builder.setNamespace(bucket, namespace).setNamespace("tto",
+                                    domain + "/terraintwin/ontology/");
+                            builder.add(doc, RDF.TYPE, "tto:Document").add(doc, "tto:hasContent", content);
                             json.forEach((k, v) -> {
                                 if (k.equals("type")) {
-                                    builder.add(resource, RDF.TYPE, "meta:" + v);
+                                    builder.add(content, RDF.TYPE, "tto:" + v);
                                 } else {
-                                    builder.add(resource, "meta:" + k, v);
+                                    builder.add(content, "tto:" + k, v);
                                 }
                             });
                             Model m = builder.build();
@@ -152,7 +156,7 @@ public class ImportFiles {
                                 out.close();
                             }
                             db.add(tmp, namespace, RDFFormat.TURTLE);
-                            results += ("Metadaten zur Datei " + resource + " importiert.") + "\n";
+                            results += ("Metadata to file " + source + " imported.") + "\n";
 
                         } catch (IOException e) {
                             log.error(e.getMessage());

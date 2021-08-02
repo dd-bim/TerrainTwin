@@ -109,28 +109,28 @@ public class UploadRestController {
       String ext = file.getName().split("\\.")[1];
       switch (ext) {
         case "ifc":
-          metadata.setMimetype("application/x-step");
+          metadata.setMimeType("application/x-step");
           break;
         case "dwg":
-          metadata.setMimetype("application/acad");
+          metadata.setMimeType("application/acad");
           break;
         case "dxf":
-          metadata.setMimetype("application/dxf");
+          metadata.setMimeType("application/dxf");
           break;
         case "gml":
-          metadata.setMimetype("application/gml+xml");
+          metadata.setMimeType("application/gml+xml");
           break;
         case "ttl":
-          metadata.setMimetype("text/turtle");
+          metadata.setMimeType("text/turtle");
           break;
         case "owl":
-          metadata.setMimetype("application/rdf+xml");
+          metadata.setMimeType("application/rdf+xml");
           break;
         case "xml":
-          metadata.setMimetype("application/xml");
+          metadata.setMimeType("application/xml");
           break;
         default:
-          metadata.setMimetype("");
+          metadata.setMimeType("");
       }
 
       MetaFile metaFile;
