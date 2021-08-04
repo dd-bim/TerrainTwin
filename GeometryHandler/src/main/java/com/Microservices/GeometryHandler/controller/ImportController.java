@@ -29,12 +29,30 @@ public class ImportController {
 
   // get folder and use them
   @GetMapping("/bucket/{bucket}/graphDbRepo/{graphDbRepo}")
-  @Operation(summary = "Import geometries into Postgres")
+  @Operation(summary = "Import geometries into Postgres from a bucket")
   @ApiResponse(responseCode = "200", description = "Successful operation")
-  public String send(@Parameter(description = "The name of the source MinIO bucket.") @PathVariable String bucket, @Parameter(description = "The name of the target repository for the import of extra information into GraphDB.") @PathVariable String graphDbRepo) throws Exception {
+  public String importFromBucket(@Parameter(description = "The name of the source MinIO bucket.") @PathVariable String bucket,
+      @Parameter(description = "The name of the target repository for the import of extra information into GraphDB.") @PathVariable String graphDbRepo)
+      throws Exception {
 
     log.info("Start import of geometries into postgres database");
-    String results = minio.getFiles(bucket, graphDbRepo);
+    String results = minio.getGeoFromBucket(bucket, graphDbRepo);
+
+    return results;
+  }
+
+  // get specific file from folder and use them
+  @GetMapping("/bucket/{bucket}/graphDbRepo/{graphDbRepo}/file/{filename}")
+  @Operation(summary = "Import geometries into Postgres from a specific file")
+  @ApiResponse(responseCode = "200", description = "Successful operation")
+  public String importFromFile(
+      @Parameter(description = "The name of the source MinIO bucket.") @PathVariable String bucket,
+      @Parameter(description = "The name of the target repository for the import of extra information into GraphDB.") @PathVariable String graphDbRepo,
+      @Parameter(description = "Name of file, whitch should be imported.") @PathVariable String filename)
+      throws Exception {
+
+    log.info("Start import of geometries into postgres database");
+    String results = minio.getGeoFromFile(bucket, graphDbRepo, filename);
 
     return results;
   }

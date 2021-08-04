@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,14 +39,7 @@ public class Csv2rdfController {
     @Autowired
     Csv2RdfService converter;
 
-    @GetMapping("/csv2rdf/")
-    @Operation(summary = "Shows, if service works.")
-    @ApiResponse(responseCode = "200", description = "Service works", content = @Content)
-    @ApiResponse(responseCode = "404", description = "Service not found", content = @Content)
-    public String hello() {
-        return "csv2rdf Converter works";
-    }
-
+    // upload source file for conversion
     @PostMapping(path = "/csv2rdf/convert", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Convert a csv file to a rdf file in turtle sysntax.", description = "Possible value combinations in request body:<br><br> file <br> file, delimiter <br> file, namespace, prefix, superclass <br> all")
     @ApiResponse(responseCode = "200", description = "Conversion performed successfully", content = @Content)
@@ -54,11 +48,45 @@ public class Csv2rdfController {
     public ResponseEntity<?> createRDF(@RequestParam("file") MultipartFile multiFile, @RequestParam String bucket,
             @RequestParam(required = false) String delimiter, @RequestParam(required = false) String namespace,
             @RequestParam(required = false) String prefix, @RequestParam(required = false) String superclass)
-            throws IllegalStateException, IOException, InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException {
+            throws IllegalStateException, IOException, InvalidKeyException, ErrorResponseException,
+            InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException,
+            ServerException, XmlParserException, IllegalArgumentException {
         ConvertInfos infos = new ConvertInfos();
         File file = converter.multipartToFile(multiFile);
-        String f = multiFile.getOriginalFilename();
-        System.out.println(f);
+
+        if (delimiter != null && namespace != null && prefix != null && superclass != null) {
+            infos = new ConvertInfos(file, namespace, prefix, superclass, delimiter);
+        } else if (delimiter == null && namespace == null && prefix == null && superclass == null) {
+            infos = new ConvertInfos(file);
+        } else if (namespace == null && prefix == null && superclass == null) {
+            infos = new ConvertInfos(file, delimiter);
+        } else if (delimiter == null) {
+            infos = new ConvertInfos(file, namespace, prefix, superclass);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("This is not a valid value combination.");
+        }
+
+        String feedback = converter.convert(infos, 0, bucket);
+        if (feedback.contains("400")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(feedback);
+        } else {
+            return ResponseEntity.ok(feedback);
+        }
+    }
+
+    // get source file for conversion from MinIO bucket
+    @GetMapping("/csv2rdf/convert/bucket/{bucket}/file/{filename}")
+    @Operation(summary = "Convert a csv file to a rdf file in turtle sysntax.", description = "Possible value combinations in request body:<br><br> file <br> file, delimiter <br> file, namespace, prefix, superclass <br> all")
+    public ResponseEntity<?> convertFile(@PathVariable String bucket, @PathVariable String filename,
+            @RequestParam(required = false) String delimiter, @RequestParam(required = false) String namespace,
+            @RequestParam(required = false) String prefix, @RequestParam(required = false) String superclass)
+            throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException,
+            InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException,
+            IllegalArgumentException {
+
+        File file = converter.getSourceFile(bucket, filename);
+        ConvertInfos infos = new ConvertInfos();
+
         if (delimiter != null && namespace != null && prefix != null && superclass != null) {
             infos = new ConvertInfos(file, namespace, prefix, superclass, delimiter);
         } else if (delimiter == null && namespace == null && prefix == null && superclass == null) {

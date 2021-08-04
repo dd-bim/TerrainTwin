@@ -21,7 +21,6 @@ import io.minio.Result;
 import io.minio.errors.MinioException;
 import io.minio.messages.Item;
 
-// check, which files are in bucket
 @Service
 public class CheckFiles {
 
@@ -34,62 +33,61 @@ public class CheckFiles {
     @Autowired
     LandXMLReader readTin;
 
-    @Value("${minio.url}")
-    private String url;
-    
+    @Value("${domain.url}")
+    private String domain;
+
     Logger log = LoggerFactory.getLogger(CheckFiles.class);
 
-    // get files of spezified bucket,
-    public String getFiles(String bucket, String graphdbRepo) throws Exception {
+    // get files from bucket
+    public String getGeoFromBucket(String bucket, String graphdbRepo) throws Exception {
         String results = "";
-        String filename = "";
         MinioClient client = connection.connection();
 
-        // Lists objects information.
+        // list all files in bucket
         try {
             Iterable<Result<Item>> objects = client.listObjects(ListObjectsArgs.builder().bucket(bucket).build());
             for (Result<Item> result : objects) {
-                filename = result.get().objectName();
-                String path = url + "/minio/" + bucket;
-                String extension = FilenameUtils.getExtension(filename);
+                String filename = result.get().objectName();
 
-                // LandXML File
-                if (extension.equals("xml")) {
+                // import geometries
+                results += getGeoFromFile(bucket, graphdbRepo, filename);
 
-                    // get object given the bucket and object name
-                    try (InputStream XMLStream = client
-                            .getObject(GetObjectArgs.builder().bucket(bucket).object(filename).build())) {
-
-                        // Insert TIN and Breaklines into database
-                        results += "\n" + filename + ": " + readTin.importTIN(XMLStream, path, filename, graphdbRepo);
-
-                    } catch (IOException e) {
-                        log.error(e.getMessage());
-                        results += "\n" + e.getMessage();
-                    }
-                }
-
-                // text files (csv/txt) with WKT
-                if (extension.equals("txt") || extension.equals("csv")) {
-
-                    try (InputStream TXTStream = client
-                            .getObject(GetObjectArgs.builder().bucket(bucket).object(filename).build())) {
-
-                        // Insert surfaces into database
-                        results += "\n" + filename + ": " + readwrite.importWKT(TXTStream, path, filename, graphdbRepo);
-
-                    } catch (IOException e) {
-                        log.error(e.getMessage());
-                        results += "\n" + e.getMessage();
-                    }
-
-                }
             }
         } catch (MinioException | InvalidKeyException | IllegalArgumentException | NoSuchAlgorithmException
                 | IOException e) {
             log.error("Error occurred: " + e.getMessage());
-            results += "\n" + filename + " - Error: " + e.getMessage();
+            results += "\nError occurred: " + e.getMessage();
         }
+        return results;
+    }
+
+      // get geometry from file and import it
+      public String getGeoFromFile(String bucket, String graphdbRepo, String filename) throws Exception {
+        String results = "";
+        String path = domain + "/minio/" + bucket;
+        String extension = FilenameUtils.getExtension(filename);
+        MinioClient client = connection.connection();
+
+                // get object from given bucket and object name
+                try (InputStream stream = client
+                        .getObject(GetObjectArgs.builder().bucket(bucket).object(filename).build())) {
+                    // LandXML File
+                    if (extension.equals("xml")) {
+
+                        // Insert TIN and Breaklines into database
+                        results += "\n" + filename + ": " + readTin.importTIN(stream, path, filename, graphdbRepo);
+                    }
+                    // text files (csv/txt) with WKT
+                    else if (extension.equals("txt") || extension.equals("csv")) {
+
+                        // Insert surfaces into database
+                        results += "\n" + filename + ": " + readwrite.importWKT(stream, path, filename, graphdbRepo);
+                    }
+                } catch (IOException e) {
+                    log.error(e.getMessage());
+                    results += "\n" + e.getMessage();
+                }
+
         return results;
     }
 

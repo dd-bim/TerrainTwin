@@ -49,6 +49,7 @@ public class ImportController {
   @GetMapping("/miniobucket/{bucket}/repository/{repo}")
   @Operation(summary = "Read files from MinIO bucket and import data into a GraphDB repository")
   @ApiResponse(responseCode = "200", description = "Successful operation")
+  @ApiResponse(responseCode = "500", description = "File is not valid for a conversion to RDF syntax")
   public String send(@PathVariable String bucket, @PathVariable String repo) throws Exception {
 
     String results = minio.getFiles(bucket, repo);

@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -14,6 +16,10 @@ import java.util.Date;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import com.Microservices.Csv2RdfConverter.connection.MinIOConnection;
+import com.Microservices.Csv2RdfConverter.domain.model.ConvertInfos;
+
+import org.apache.commons.io.IOUtils;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.util.ModelBuilder;
 import org.eclipse.rdf4j.model.vocabulary.OWL;
@@ -28,6 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.minio.BucketExistsArgs;
+import io.minio.GetObjectArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.UploadObjectArgs;
@@ -37,9 +44,6 @@ import io.minio.errors.InternalException;
 import io.minio.errors.InvalidResponseException;
 import io.minio.errors.ServerException;
 import io.minio.errors.XmlParserException;
-
-import com.Microservices.Csv2RdfConverter.connection.MinIOConnection;
-import com.Microservices.Csv2RdfConverter.domain.model.ConvertInfos;
 
 @Service
 public class Csv2RdfService {
@@ -141,7 +145,9 @@ public class Csv2RdfService {
             } else {
 
                 // create file locally
-                convFile = timestamp + filename.getName().split(Pattern.quote("."))[0] + ".ttl";
+                convFile = filename.getName().split(Pattern.quote("."))[0] + ".ttl";
+                // convFile = timestamp + filename.getName().split(Pattern.quote("."))[0] +
+                // ".ttl";
                 String path = System.getProperty("java.io.tmpdir") + "/" + convFile;
                 File file = new File(path);
                 FileOutputStream out = new FileOutputStream(file);
@@ -195,4 +201,21 @@ public class Csv2RdfService {
         log.info(results);
         return results;
     }
+
+    // get file from MinIO bucket
+    public File getSourceFile(String bucket, String filename) {
+        MinioClient client = connection.connection();
+        File file = new File(filename);
+        try (InputStream stream = client.getObject(GetObjectArgs.builder().bucket(bucket).object(filename).build())) {
+
+            OutputStream outputStream = new FileOutputStream(file);
+            IOUtils.copy(stream, outputStream);
+            outputStream.close();
+
+        } catch (Exception e) {
+            log.info("Couldn't read source file.");
+        }
+        return file;
+    }
+
 }

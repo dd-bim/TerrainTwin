@@ -5,11 +5,11 @@ Microservice Architecture:
     ☐ Paper Idee
 
     ☐ DGM Ausgabe über WCS/WFS
-    ☐ ID's einheitlich gestalten
+    ✔ ID's einheitlich gestalten @done (4.8.2021, 08:50:11)
     ✔ neuer Service mit Coverage Berechnungen (DE-9IM, Walthers Masterarbeit) @done (2.7.2021, 10:02:21)
     ☐ Automation der Überführung nach PostGIS und GraphDB 
-    ☐ Linkmodell für Daten eines TerrainTwinObject
-    (Topology abstract Intersects Klasse)
+    ✔ Linkmodell für Daten eines TerrainTwinObject @done (4.8.2021, 08:50:25)
+    ✔ (Topology abstract Intersects Klasse) @done (4.8.2021, 08:51:00)
     ☐ Linkmodell zwischen den Persistenzdiensten
     ☐ Ontologie TerrainTwin
     ✔ Namespace einheitlich in .env für RDF Resources definieren @done (19.7.2021, 13:36:41)
@@ -47,7 +47,7 @@ Microservice Architecture:
         ✔ Repositories über REST/automatisch neu erstellen (FreeSailRepository) @done (15.7.2021, 13:34:44)
         ✔ Elemente Updaten @done (15.7.2021, 10:08:48)
         ✔ Elemente Löschen @done (13.7.2021, 13:59:22)
-        ☐ Prüfung auf CSV/RDF -> http-Request an CSV2RDF Converter -> dann Import der Ergebnis TTL
+        ✔ Prüfung auf CSV/RDF -> http-Request an CSV2RDF Converter -> dann Import der Ergebnis TTL @done (4.8.2021, 08:51:40)
         ☐ IFC Import
         ☐ CRS speichern?
 
@@ -69,7 +69,7 @@ Microservice Architecture:
         ☐ Bountingbox für Elemente gesamt ausgeben
 
     Csv2RdfConverter:
-        ☐ Dateiauswahl auf MinIO erweitern
+        ✔ Dateiauswahl auf MinIO erweitern @done (4.8.2021, 08:52:06)
 
 
 Test:

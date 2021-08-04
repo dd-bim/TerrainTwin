@@ -5,7 +5,7 @@ springdoc:
     api-docs:
         path: /inputhandler/v3/api-docs
     swagger-ui: 
-        path: /inputhandler
+        path: /inputhandler/swagger-ui.html
         operationsSorter: method
 
 logging:
