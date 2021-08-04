@@ -1,6 +1,6 @@
-package com.Microservices.TestService.controller;
+package com.Microservices.SchedulerService.controller;
 
-import com.Microservices.TestService.service.Service;
+import com.Microservices.SchedulerService.service.Service;
 
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RefreshScope
 @RestController
 @Tag(name = "Test API", description = "Documentation")
-public class TestRestController {
+public class TaskController {
 
   @GetMapping("/test/")
   public String hello() {

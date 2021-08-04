@@ -1,0 +1,21 @@
+server:
+    port: 7210
+     
+springdoc:
+    api-docs:
+        path: /scheduler/v3/api-docs
+    swagger-ui: 
+        path: /scheduler/swagger-ui.html
+        operationsSorter: method
+
+logging:
+    file:
+        name: /var/log/scheduler-service.log
+
+management:
+    endpoint:
+        logfile:
+            external-file: /var/log/scheduler-service.log
+    health:
+        neo4j:
+            enabled: false

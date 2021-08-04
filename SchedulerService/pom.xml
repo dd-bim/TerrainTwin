@@ -9,10 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.Microservices</groupId>
-	<artifactId>TestService</artifactId>
+	<artifactId>SchedulerService</artifactId>
 	<version>1.0</version>
-	<name>TestService</name>
-	<description>TestService</description>
+	<name>SchedulerService</name>
 	<properties>
 		<java.version>15</java.version>
 		<spring-cloud.version>2020.0.1</spring-cloud.version>
@@ -81,6 +80,12 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
 			<version>2.12.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.awaitility</groupId>
+			<artifactId>awaitility</artifactId>
+			<version>3.1.2</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>
