@@ -26,6 +26,8 @@ Microservice Architecture:
     ☐ Datenausgabe als GeoJSON, GeoPKG
     ☐ Eureka region
     ☐ IFCTerrain + MinIO Standalone
+    ☐ Swagger überall umgestalten
+    ☐ BIMServer dockern und einbinden
     
 
     Geometry Handler:

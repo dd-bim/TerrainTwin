@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.Microservices.TopologyService.connection.FileInputHandlerConnection;
 import com.Microservices.TopologyService.domain.model.Triple;
 import com.Microservices.TopologyService.repositories.BreaklinesRepository;
 import com.Microservices.TopologyService.repositories.EmbarkmentRepository;
@@ -18,7 +19,6 @@ import com.Microservices.TopologyService.repositories.Polygon3DRepository;
 import com.Microservices.TopologyService.repositories.SpecialPointsRepository;
 import com.Microservices.TopologyService.repositories.TINRepository;
 import com.Microservices.TopologyService.service.GetRelationsService;
-import com.Microservices.TopologyService.service.GraphDBImport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +75,7 @@ public class ImportRestController {
   @Operation(summary = "Create topology")
   @ApiResponse(responseCode = "200", description = "Successful operation")
   public String relations(@Parameter(description = "The name of the target graphdb repository.") @PathVariable String repo) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-    GraphDBImport graphdb = new GraphDBImport();
+    FileInputHandlerConnection graphdb = new FileInputHandlerConnection();
     long start = System.currentTimeMillis();
 
     String result = "";

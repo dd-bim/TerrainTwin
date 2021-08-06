@@ -1,4 +1,4 @@
-package com.Microservices.GeometryHandler.service;
+package com.Microservices.GeometryHandler.connection;
 
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -12,9 +12,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GraphDBImport {
+public class FileInputHandlerConnection {
 
-    Logger log = LoggerFactory.getLogger(GraphDBImport.class);
+    Logger log = LoggerFactory.getLogger(FileInputHandlerConnection.class);
 
     public String graphdbImport(PostgresInfos info) {
                 String conn = "";

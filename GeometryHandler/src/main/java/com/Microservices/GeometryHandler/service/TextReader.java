@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import com.Microservices.GeometryHandler.connection.FileInputHandlerConnection;
 import com.Microservices.GeometryHandler.domain.model.PostgresInfos;
 import com.Microservices.GeometryHandler.repositories.Line2DRepository;
 import com.Microservices.GeometryHandler.repositories.Line3DRepository;
@@ -58,7 +59,7 @@ public class TextReader {
     SolidRepository solidRepo;
 
     @Autowired
-    GraphDBImport graphdb;
+    FileInputHandlerConnection graphdb;
 
     @Value("${domain.url}")
     private String domain;

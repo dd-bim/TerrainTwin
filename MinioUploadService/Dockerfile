@@ -6,7 +6,6 @@ COPY ./settings.xml /root/.m2/settings.xml
 
 COPY ./src ./src
 COPY pom.xml .
-RUN mvn dependency:go-offline -B
 RUN mvn package -Dmaven.test.skip=true
 
 FROM alpine-jdk:base

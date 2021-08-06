@@ -7,6 +7,7 @@ import java.util.HashMap;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
+import com.Microservices.GeometryHandler.connection.FileInputHandlerConnection;
 import com.Microservices.GeometryHandler.domain.model.PostgresInfos;
 import com.Microservices.GeometryHandler.repositories.BreaklinesRepository;
 import com.Microservices.GeometryHandler.repositories.SpecialPointsRepository;
@@ -34,7 +35,7 @@ public class LandXMLReader {
     SpecialPointsRepository spRepository;
 
     @Autowired
-    GraphDBImport graphdb;
+    FileInputHandlerConnection graphdb;
 
     Logger log = LoggerFactory.getLogger(LandXMLReader.class);
 

@@ -1,4 +1,4 @@
-package com.Microservices.TopologyService.service;
+package com.Microservices.TopologyService.connection;
 
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -11,9 +11,9 @@ import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GraphDBImport {
+public class FileInputHandlerConnection {
 
-    Logger log = LoggerFactory.getLogger(GraphDBImport.class);
+    Logger log = LoggerFactory.getLogger(FileInputHandlerConnection.class);
 
     public String graphdbImport(List<Triple> relations, String repo) {
         String conn = "";

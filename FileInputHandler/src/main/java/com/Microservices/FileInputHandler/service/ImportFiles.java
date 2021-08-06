@@ -139,7 +139,7 @@ public class ImportFiles {
                     // if files contain WKT import geometries into postgres database
                     else if (extension.equals("txt") || extension.equals("csv")) {
 
-                        String[] res = csvconn.convertCsv2Rdf(bucket, filename); 
+                        String[] res = csvconn.convertCsv2Rdf(bucket, filename);
                         results += res[0];
                         if (res[1] == "200") {
                             String ttlFile = filename.split(Pattern.quote("."))[0] + ".ttl";
@@ -168,9 +168,10 @@ public class ImportFiles {
             bucketlist.add(fname);
             log.info("Updated bucketlist.txt.");
 
-            if (p == 0)
+            if (p == 0) {
                 results += "Nothing to do.";
-
+                log.info("Nothing to do.");
+            }
         } catch (Exception e) {
             results += "Could not connect to GraphDB. Possibly the database is not available. \n Message: "
                     + e.getMessage();
