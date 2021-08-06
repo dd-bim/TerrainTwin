@@ -7,7 +7,7 @@ Microservice Architecture:
     ☐ DGM Ausgabe über WCS/WFS
     ✔ ID's einheitlich gestalten @done (4.8.2021, 08:50:11)
     ✔ neuer Service mit Coverage Berechnungen (DE-9IM, Walthers Masterarbeit) @done (2.7.2021, 10:02:21)
-    ☐ Automation der Überführung nach PostGIS und GraphDB 
+    ✔ Automation der Überführung nach PostGIS und GraphDB @done (6.8.2021, 11:27:44)
     ✔ Linkmodell für Daten eines TerrainTwinObject @done (4.8.2021, 08:50:25)
     ✔ (Topology abstract Intersects Klasse) @done (4.8.2021, 08:51:00)
     ☐ Linkmodell zwischen den Persistenzdiensten

@@ -27,6 +27,7 @@ import io.minio.errors.InvalidResponseException;
 import io.minio.errors.ServerException;
 import io.minio.errors.XmlParserException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,9 +46,13 @@ public class Csv2rdfController {
     @ApiResponse(responseCode = "200", description = "Conversion performed successfully", content = @Content)
     @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
     @ApiResponse(responseCode = "404", description = "Service not found", content = @Content)
-    public ResponseEntity<?> createRDF(@RequestParam("file") MultipartFile multiFile, @RequestParam String bucket,
-            @RequestParam(required = false) String delimiter, @RequestParam(required = false) String namespace,
-            @RequestParam(required = false) String prefix, @RequestParam(required = false) String superclass)
+    public ResponseEntity<?> createRDF(
+            @Parameter(description = "The CSV/TXT source file.") @RequestParam("file") MultipartFile multiFile,
+            @Parameter(description = "The name of the target MinIO bucket.") @RequestParam String bucket,
+            @Parameter(description = "The delimiter in the source file.") @RequestParam(required = false) String delimiter,
+            @Parameter(description = "The namespace for the generated triples.") @RequestParam(required = false) String namespace,
+            @Parameter(description = "The prefic for the namespace.") @RequestParam(required = false) String prefix,
+            @Parameter(description = "The class to which all generated classes are subordinated.") @RequestParam(required = false) String superclass)
             throws IllegalStateException, IOException, InvalidKeyException, ErrorResponseException,
             InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException,
             ServerException, XmlParserException, IllegalArgumentException {
@@ -77,9 +82,13 @@ public class Csv2rdfController {
     // get source file for conversion from MinIO bucket
     @GetMapping("/csv2rdf/convert/bucket/{bucket}/file/{filename}")
     @Operation(summary = "Convert a csv file to a rdf file in turtle sysntax.", description = "Possible value combinations in request body:<br><br> file <br> file, delimiter <br> file, namespace, prefix, superclass <br> all")
-    public ResponseEntity<?> convertFile(@PathVariable String bucket, @PathVariable String filename,
-            @RequestParam(required = false) String delimiter, @RequestParam(required = false) String namespace,
-            @RequestParam(required = false) String prefix, @RequestParam(required = false) String superclass)
+    public ResponseEntity<?> convertFile(
+            @Parameter(description = "The name of the source and target MinIO bucket.") @PathVariable String bucket,
+            @Parameter(description = "The name of the source file in MinIO bucket.") @PathVariable String filename,
+            @Parameter(description = "The delimiter in the source file.") @RequestParam(required = false) String delimiter,
+            @Parameter(description = "The namespace for the generated triples.") @RequestParam(required = false) String namespace,
+            @Parameter(description = "The prefic for the namespace.") @RequestParam(required = false) String prefix,
+            @Parameter(description = "The class to which all generated classes are subordinated.") @RequestParam(required = false) String superclass)
             throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException,
             InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException,
             IllegalArgumentException {

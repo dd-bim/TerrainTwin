@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -34,7 +35,7 @@ public class SomeController {
   @GetMapping(path = "/namespaces/repository/{repo}")
   @Operation(summary = "Get all namespaces used in the GraphDB repository")
   @ApiResponse(responseCode = "200", description = "Successful operation")
-  public String getNamespaces(@PathVariable String repo) throws Exception {
+  public String getNamespaces(@Parameter(description = "The name of the GraphDB repository.") @PathVariable String repo) throws Exception {
 
     String result = data.getNamespace(repo);
     return result;
@@ -44,7 +45,7 @@ public class SomeController {
   @GetMapping(path = "/createRepo/{repo}")
   @Operation(summary = "Create a new GraphDB repository")
   @ApiResponse(responseCode = "200", description = "Successful operation")
-  public String createRepository(@PathVariable String repo) {
+  public String createRepository(@Parameter(description = "The name of the GraphDB repository.") @PathVariable String repo) {
     String result = "";
     try {
       dbconnection.createRepo(repo);

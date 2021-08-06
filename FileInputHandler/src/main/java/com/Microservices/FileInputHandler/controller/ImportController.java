@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -50,7 +51,7 @@ public class ImportController {
   @Operation(summary = "Read files from MinIO bucket and import data into a GraphDB repository")
   @ApiResponse(responseCode = "200", description = "Successful operation")
   @ApiResponse(responseCode = "500", description = "File is not valid for a conversion to RDF syntax")
-  public String send(@PathVariable String bucket, @PathVariable String repo) throws Exception {
+  public String send(@Parameter(description = "The name of the source MinIO bucket.")  @PathVariable String bucket, @Parameter(description = "The name of the GraphDB repository.") @PathVariable String repo) throws Exception {
 
     String results = minio.getFiles(bucket, repo);
 
@@ -61,7 +62,7 @@ public class ImportController {
   @PostMapping(path = "/postgresinfos")
   @Operation(summary = "Import infos of Postgres geometries")
   @ApiResponse(responseCode = "200", description = "Successful operation")
-  public String importPostgres(@RequestBody PostgresInfos infos) throws Exception {
+  public String importPostgres(@Parameter(description = "Some metadata of postgres geometry.") @RequestBody PostgresInfos infos) throws Exception {
 
     String results = postgres.importPostgresInfos(infos);
     return results;
@@ -71,7 +72,7 @@ public class ImportController {
   @PostMapping(path = "/topology/repository/{repo}")
   @Operation(summary = "Import topological relations of Postgres geometries")
   @ApiResponse(responseCode = "200", description = "Successful operation")
-  public String importTopology(@PathVariable String repo, @RequestBody String topology) throws Exception {
+  public String importTopology(@Parameter(description = "The name of the GraphDB repository.") @PathVariable String repo, @Parameter(description = "The topology triples to be imported.") @RequestBody String topology) throws Exception {
 
     String result = topo.importTopo(topology, repo);
     return result;

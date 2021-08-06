@@ -34,6 +34,7 @@ import io.minio.errors.ServerException;
 import io.minio.errors.XmlParserException;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -51,7 +52,7 @@ public class UploadRestController {
 
   @GetMapping("/minioupload/createbucket/{bucket}")
   @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
-  public ResponseEntity<?> create(@PathVariable String bucket) throws Exception {
+  public ResponseEntity<?> create(@Parameter(description = "The name of the new MinIO bucket.") @PathVariable String bucket) throws Exception {
     if (bucket.matches("^[a-z0-9][a-z0-9-.]{1,61}[a-z0-9]$")) {
 
       String results = minio.createBucket(bucket);
@@ -65,7 +66,7 @@ public class UploadRestController {
 
   @GetMapping("/minioupload/deletebucket/{bucket}")
   @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
-  public ResponseEntity<?> delete(@PathVariable String bucket) throws Exception {
+  public ResponseEntity<?> delete(@Parameter(description = "The name of the old MinIO bucket.") @PathVariable String bucket) throws Exception {
     if (bucket.matches("^[a-z0-9][a-z0-9-.]{1,61}[a-z0-9]$")) {
       
       String results = minio.deleteBucket(bucket);
@@ -85,9 +86,9 @@ public class UploadRestController {
   // @Schema(implementation = Metadata.class))})
   // @ApiResponse(responseCode = "200", content = {@Content(schema =
   // @Schema(implementation = DTM.class))})
-  public ResponseEntity<?> uploadFileUI(@RequestParam("file") MultipartFile multiFile, @RequestParam String bucket,
-      @RequestPart(name = "metadata for all (DIN SPEC 91391-2)") String meta1,
-      @RequestPart(name = "additional metadata for dtm (DIN 18740-6)", required = false) String meta2)
+  public ResponseEntity<?> uploadFileUI(@Parameter(description = "The source file to upload.") @RequestParam("file") MultipartFile multiFile, @Parameter(description = "The name of the target MinIO bucket.") @RequestParam String bucket,
+  @Parameter(description = "Some metadata for all files.") @RequestPart(name = "metadata for all (DIN SPEC 91391-2)") String meta1,
+  @Parameter(description = "Some metadata for files containing DTM's.") @RequestPart(name = "additional metadata for dtm (DIN 18740-6)", required = false) String meta2)
       throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException,
       InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException,
       IOException {
@@ -161,7 +162,7 @@ public class UploadRestController {
   @PostMapping(path = "/minioupload/uploadFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @Operation(summary = "Upload a file to MinIO without metadata.")
   @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
-  public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile multiFile, @RequestParam String bucket)
+  public ResponseEntity<?> uploadFile(@Parameter(description = "The source file to upload.") @RequestParam("file") MultipartFile multiFile, @Parameter(description = "The name of the target MinIO bucket.") @RequestParam String bucket)
       throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException,
       InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException,
       IOException {

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -37,7 +38,7 @@ public class UpdateController {
   @PostMapping(path = "/repository/{repo}")
   @Operation(summary = "Update one or more triples from a GraphDB repository by creating a delete and insert query")
   @ApiResponse(responseCode = "200", description = "Successful operation")
-  public String updateQuery(@PathVariable String repo, @RequestBody UpdateQuery query) throws Exception {
+  public String updateQuery(@Parameter(description = "The name of the GraphDB repository.") @PathVariable String repo, @RequestBody UpdateQuery query) throws Exception {
     String result = uQuery.update(repo, query);
     return result;
   }
