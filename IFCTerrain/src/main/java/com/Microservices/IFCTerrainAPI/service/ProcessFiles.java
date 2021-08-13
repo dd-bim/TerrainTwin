@@ -122,11 +122,9 @@ public class ProcessFiles {
                 Path source = Paths.get("files/" + flist[i]);
 
                 try {
-                    log.info(flist[i]);
                     flist[i] = flist[i].substring(1);
                     File target = new File("files/" + flist[i]);
                     Files.copy(source, target.toPath());
-                    log.info(flist[i]);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

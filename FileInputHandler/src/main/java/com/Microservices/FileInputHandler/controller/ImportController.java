@@ -46,7 +46,7 @@ public class ImportController {
 
   Logger log = LoggerFactory.getLogger(ImportController.class);
 
-  // get bucket and use them
+  // import files from bucket
   @GetMapping("/miniobucket/{bucket}/repository/{repo}")
   @Operation(summary = "Read files from MinIO bucket and import data into a GraphDB repository")
   @ApiResponse(responseCode = "200", description = "Successful operation")

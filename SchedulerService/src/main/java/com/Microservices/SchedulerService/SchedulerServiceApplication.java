@@ -2,6 +2,7 @@ package com.Microservices.SchedulerService;
 
 import java.io.IOException;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -25,27 +26,26 @@ import io.swagger.v3.oas.models.servers.Server;
 @SpringBootApplication
 @Configuration
 @EnableAutoConfiguration
-// @OpenAPIDefinition(info = @Info(title = "Scheduler API", description = "Documentation", version = "v1.0", license = @License(name = "Apache 2.0", url = "http://www.apache.org/licenses/")))
+@OpenAPIDefinition(info = @Info(title = "Scheduler API", description = "Documentation for automation of HTTP requests", version = "v1.1", license = @License(name = "Apache 2.0", url = "http://www.apache.org/licenses/LICENSE-2.0.html")))
 public class SchedulerServiceApplication implements WebMvcConfigurer{
 
 	public static void main(String[] args) throws IOException {
 		SpringApplication.run(SchedulerServiceApplication.class, args);
 	}
 
-	// @Override
-    // public void addCorsMappings(CorsRegistry registry) {
-    //     registry.addMapping("/**")
-    //             .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS").allowedOrigins("*");
-    // }
-
-    // @Bean 
-    // public OpenAPI springOpenAPI() {
-    //     return new OpenAPI().addServersItem(new Server().url("http://localhost:7210"));
-    // }
-
     @Bean
     TaskScheduler threadPoolTaskScheduler() {
         return new ThreadPoolTaskScheduler();
     }
 
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS").allowedOrigins("*");
+    }
+
+    @Bean 
+    public OpenAPI serversOpenAPI(@Value("${domain.url}") String url, @Value("${server.port}") String port) {
+        return new OpenAPI().addServersItem(new Server().url(url)).addServersItem(new Server().url("http://localhost:" + port));
+    }
 }

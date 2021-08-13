@@ -57,5 +57,18 @@ services:
             # - ./volumes/pgadmin:/var/lib/pgadmin:Z
             - pgadmin:/var/lib/pgadmin
 
+    geoserver:
+        image: thinkwhere/geoserver:latest
+        container_name: geoserver
+        restart: unless-stopped
+        ports: 
+            - 8085:8080
+        environment: 
+            # - GEOSERVER_ADMIN_USER=${GEOSERVER_ADMIN_USER}
+            # - GEOSERVER_ADMIN_PASSWORD=${GEOSERVER_ADMIN_PASSWORD}
+            - GEOSERVER_LOG_LOCATION=/opt/geoserver/data_dir/logs/geoserver.log
+        volumes: 
+            - ./volumes/geoserver:/opt/geoserver/data_dir
+
 volumes:
     pgadmin:
