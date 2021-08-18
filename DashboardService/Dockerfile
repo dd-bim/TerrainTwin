@@ -1,9 +1,6 @@
 FROM maven:3.8-openjdk-15-slim as mvn-build
 WORKDIR /app/build
 
-# Proxy Settings für HTW
-COPY ./settings.xml /root/.m2/settings.xml
-
 COPY ./src ./src
 COPY pom.xml .
 RUN mvn package -Dmaven.test.skip=true

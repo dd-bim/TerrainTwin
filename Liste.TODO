@@ -21,12 +21,11 @@ Microservice Architecture:
     ☐ allgemeines Projekt anlegen (Bucket, Schema, Repository) z.B. als Profil, welches immer übergeben wird
     ☐ 3D-Objekte verwenden
     ☐ Nginx Proxy Container
-    ☐ Geoserver Docker
+    ✔ Geoserver Docker @done (17.8.2021, 11:09:15)
     ✔ Geometrieexport mit Angabe des EPSG Code für Ausgabe in bestimmtem Ref.-Sys. @done (27.7.2021, 08:26:22)
     ☐ Datenausgabe als GeoJSON, GeoPKG
-    ☐ Eureka region
     ☐ IFCTerrain + MinIO Standalone
-    ☐ Swagger überall umgestalten
+    ✔ Swagger überall umgestalten @done (17.8.2021, 11:37:07)
     ☐ BIMServer dockern und einbinden
     
 

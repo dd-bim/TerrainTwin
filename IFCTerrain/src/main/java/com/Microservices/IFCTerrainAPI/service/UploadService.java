@@ -78,8 +78,10 @@ public class UploadService {
 
     // convert multipart class file to java class file
     public File multipartToFile(MultipartFile file) throws IllegalStateException, IOException {
-        File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + file.getOriginalFilename());
-        file.transferTo(convFile);
+        File sourceFile = new File(System.getProperty("java.io.tmpdir") + "/"  + file.getOriginalFilename());
+        file.transferTo(sourceFile);
+        File convFile = new File("files/"+ file.getOriginalFilename());
+        Files.copy(sourceFile.toPath(), convFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         return convFile;
     }
 
