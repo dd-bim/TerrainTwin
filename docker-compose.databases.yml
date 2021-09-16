@@ -33,17 +33,39 @@ services:
         volumes:
             - ./volumes/postgres:/var/lib/postgresql/data:Z
 
+    # minio:
+    #     image: minio/minio:RELEASE.2020-11-12T22-33-34Z
+    #     restart: unless-stopped
+    #     ports:
+    #         - ${MINIO_PORT:-9000}:9000
+    #     environment:
+    #         - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+    #         - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+    #     volumes:
+    #         - ./volumes/minio:/data:Z
+    #     command: ["server", "/data"]
+
     minio:
-        image: minio/minio:RELEASE.2020-11-12T22-33-34Z
+        container_name: minio
+        image: minio/minio:RELEASE.2021-08-31T05-46-54Z
         restart: unless-stopped
         ports:
             - ${MINIO_PORT:-9000}:9000
+            - 9001:9001
+        networks:
+            - terraintwin_microservices
         environment:
-            - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
-            - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+            - MINIO_ROOT_USER=${MINIO_ACCESS_KEY}
+            - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY}
+        healthcheck:
+           test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+           interval: 30s
+           timeout: 20s
+           retries: 3
         volumes:
             - ./volumes/minio:/data:Z
-        command: ["server", "/data"]
+        command: server /data --console-address ":9001"
+
 
     pgadmin:
         image: dpage/pgadmin4:5.3
@@ -69,6 +91,79 @@ services:
             - GEOSERVER_LOG_LOCATION=/opt/geoserver/data_dir/logs/geoserver.log
         volumes: 
             - ./volumes/geoserver:/opt/geoserver/data_dir
+
+
+    db:
+        image: neo4j:4.1
+        restart: unless-stopped
+        ports:
+            - 7474:7474
+        environment:
+            - NEO4J_AUTH=neo4j/${NEO4J_PASSWORD}
+            - NEO4JLABS_PLUGINS=["apoc"]
+        volumes:
+            - ./volumes/dbdata:/data
+            - ./volumes/dblogs:/logs
+        healthcheck:
+            test: perl -MIO::Socket::INET -e 'exit(! defined( IO::Socket::INET->new("localhost:7687")))'
+
+    api:
+        image: bentrm/datacat:${DATACAT_VERSION}
+        restart: unless-stopped
+        environment:
+            - logging.level.de.bentrm=INFO
+            - datacat.client.url=${DATACAT_EDITOR_URL}
+            - datacat.auth.secret=${DATACAT_SECRET}
+            - datacat.auth.issuer=${DATACAT_ISSUER}
+            - datacat.users.admin.password=${DATACAT_ADMIN_PASSWORD}
+            - spring.mail.port=${MAIL_PORT}
+            - spring.mail.host=${MAIL_HOST}
+            - spring.data.neo4j.username=neo4j
+            - spring.data.neo4j.password=${NEO4J_PASSWORD}
+            - spring.data.neo4j.uri=bolt://db:7687
+            - spring.mail.username=postmaster@my.domain
+            - spring.mail.password=mypassword
+            - spring.mail.properties.mail.smtp.auth=true
+            - spring.mail.properties.mail.smtp.connectiontimeout=5000
+            - spring.mail.properties.mail.smtp.timeout=5000
+            - spring.mail.properties.mail.smtp.writetimeout=5000
+            - spring.mail.properties.mail.smtp.starttls.enable=true
+        depends_on:
+            - db
+        command: [
+            "wait-for-it", "db:7687", "--timeout=300", "--",
+            "wait-for-it", "${MAIL_HOST}:${MAIL_PORT}", "--timeout=30", "--",
+            "java", "--enable-preview", "org.springframework.boot.loader.JarLauncher" ]
+
+    web:
+        build:
+            context: "./services/proxy/"
+            args:
+                VERSION: ${DATACAT_EDITOR_VERSION}
+        restart: unless-stopped
+        depends_on:
+            - api
+        ports:
+            - ${DATACAT_PORT:-3000}:80
+
+    mail:
+        image: bentrm/mailslurper:1.14.1
+        ports:
+            - "2500:2500"
+            - "9080:9080"
+            - "9085:9085"
+        volumes:
+            - ./volumes/mailslurper-config.json:/config.json:ro
+            - ./volumes/mail:/data
+
+
+volumes:
+  dbdata:
+  dblogs:
+
+
+
+
 
 volumes:
     pgadmin:

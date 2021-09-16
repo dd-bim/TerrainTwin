@@ -143,7 +143,7 @@ public class ImportFiles {
                         results += res[0];
                         if (res[1] == "200") {
                             String ttlFile = filename.split(Pattern.quote("."))[0] + ".ttl";
-                            results += processSemantics(bucket, ttlFile, extension, db);
+                            results += processSemantics(bucket, ttlFile, "ttl", db);
                             bucketlist.add(ttlFile);
                         }
                         results += geoconn.geometryImport(bucket, repo, filename);
@@ -166,11 +166,11 @@ public class ImportFiles {
 
             client.uploadObject(UploadObjectArgs.builder().bucket(bucket).object(fname).filename(fname).build());
             bucketlist.add(fname);
-            log.info("Updated bucketlist.txt.");
+            // log.info("Updated bucketlist.txt.");
 
             if (p == 0) {
                 results += "Nothing to do.";
-                log.info("Nothing to do.");
+                // log.info("Nothing to do.");
             }
         } catch (Exception e) {
             results += "Could not connect to GraphDB. Possibly the database is not available. \n Message: "

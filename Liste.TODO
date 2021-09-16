@@ -16,7 +16,7 @@ Microservice Architecture:
     ✔ GitLab Projekte vereinigen @done (18.6.2021, 13:06:23)
     ☐ Dokumentation erweitern 
     ✔ Docker-Stack (Postgres DB, GraphDB, MinIO Object Storage) einbinden @done (14.6.2021, 08:40:26)
-    ☐ Datacat in Microservice-Architektur einbinden
+    ✔ Datacat in Microservice-Architektur einbinden @done (14.9.2021, 09:39:39)
     ✔ Sachdaten und Geometrie in einer CSV/TXT @done (18.6.2021, 13:07:17)
     ☐ allgemeines Projekt anlegen (Bucket, Schema, Repository) z.B. als Profil, welches immer übergeben wird
     ☐ 3D-Objekte verwenden
@@ -24,7 +24,7 @@ Microservice Architecture:
     ✔ Geoserver Docker @done (17.8.2021, 11:09:15)
     ✔ Geometrieexport mit Angabe des EPSG Code für Ausgabe in bestimmtem Ref.-Sys. @done (27.7.2021, 08:26:22)
     ☐ Datenausgabe als GeoJSON, GeoPKG
-    ☐ IFCTerrain + MinIO Standalone
+    ✔ IFCTerrain + MinIO Standalone @done (14.9.2021, 09:39:57)
     ✔ Swagger überall umgestalten @done (17.8.2021, 11:37:07)
     ☐ BIMServer dockern und einbinden
     
@@ -44,7 +44,7 @@ Microservice Architecture:
         ☐ Check der Dateien/Daten bei MinIO Upload
         ✔ File Upload Größe ändern @done (21.6.2021, 07:49:04)
     
-    GraphDB-Import-Service:
+    File-Input-Service:
         ✔ Repositories über REST/automatisch neu erstellen (FreeSailRepository) @done (15.7.2021, 13:34:44)
         ✔ Elemente Updaten @done (15.7.2021, 10:08:48)
         ✔ Elemente Löschen @done (13.7.2021, 13:59:22)
