@@ -19,8 +19,8 @@ public class Csv2RdfConverterConnection {
 
             URL url = new URL("http://csv2rdf-converter-service:7202/csv2rdf/convert/bucket/" + bucket + "/file/" + filename);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(5000);
+            // connection.setConnectTimeout(5000);
+            // connection.setReadTimeout(5000);
 
             connection.setRequestMethod("GET");
             connection.setDoOutput(true);

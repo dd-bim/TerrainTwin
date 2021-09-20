@@ -19,8 +19,8 @@ public class GeometryHandlerConnection {
             URL url = new URL("http://geometry-handler:7203/geometry/import/bucket/" + bucket + "/graphDbRepo/" + repo
                     + "/file/" + filename);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setConnectTimeout(10000);
-            connection.setReadTimeout(10000);
+            // connection.setConnectTimeout(10000);
+            // connection.setReadTimeout(10000);
 
             connection.setRequestMethod("GET");
             connection.setDoOutput(true);

@@ -24,7 +24,7 @@
       <div class="shadow-md border border-gray-200 rounded-md px-5 pt-4 mb-5">
         <div class="mb-4">
           <div class="flex space-x-2">
-            <form th:action="@{/ifcterrain}" method="post" enctype="multipart/form-data">
+            <form th:action="@{/terraintoifc}" method="post" enctype="multipart/form-data">
               <input type="file" name="file" id="file" hidden>
               <label for="file" onclick="enableUpload()"
                 class="w-28 items-center px-3.5 py-1 border border-button-green-2 rounded-md shadow-sm text-sm font-medium text-black hover:bg-button-green-2 focus:outline-none">
@@ -47,7 +47,7 @@
               </button>
               </script>
             </form>
-            <form th:action="@{/ifcterrain/download}" method="get" enctype="application/json">
+            <form th:action="@{/terraintoifc/download}" method="get" enctype="application/json">
               <button type="submit" name="download" id="id2"
                 class="w-28 items-center px-1 py-1 border border-button-green-2 rounded-md shadow-sm text-sm font-medium text-black hover:bg-button-green-2 focus:outline-none">
                 Download IFC

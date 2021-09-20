@@ -38,7 +38,7 @@ public class IFCTerrainController {
   @Autowired
   ExecService execService;
 
-  @PostMapping("/ifcterrain/converter/bucket/{bucket}")
+  @PostMapping("/terraintoifc/converter/bucket/{bucket}")
   @Operation(summary = "Convert terrain to IFC", description = "Not all configs are need vor every conversion. For more information see the IFCTerrain Wiki.", externalDocs = @ExternalDocumentation(description = "IFCTerrain Wiki", url = "https://github.com/dd-bim/City2BIM/wiki/IFCTerrain-Command"))
   @ApiResponse(responseCode = "200", description = "Successful operation")
   public String convertToIFC(@Parameter(description = "The name of the source and target MinIO bucket.") @PathVariable String bucket, @Parameter(description = "The configurations for the ifc conversion.") @RequestBody InputConfigs config)

@@ -72,9 +72,9 @@ public class TextReader {
         log.info("Import WKT from CSV/TXT");
         CSVReader reader;
         // try { -> funktioniert nicht
-        //     reader = new CSVReader(new InputStreamReader(stream), ';', '"', 0);
+        //     reader = new CSVReader(new InputStreamReader(stream), ',', '"', 0);
         // } catch (Exception e) {
-            reader = new CSVReader(new InputStreamReader(stream), ',', '"', 0); // seperator sollte variabel sein
+            reader = new CSVReader(new InputStreamReader(stream), ';', '"', 0); // seperator sollte variabel sein
         // }
 
         String[] nextLine;
@@ -95,10 +95,12 @@ public class TextReader {
 
 
         // read the first line, where the table header should be
+        // nextLine =reader.readNext()[0].split(";");
         nextLine =reader.readNext();
 
         // find out, in whitch column of each row are id, the geometry and possibly the epsg code
         for (int j = 0; j < nextLine.length; j++) {
+            log.info(nextLine[j]);
             if (nextLine[j].toLowerCase().contains("id")){
                 idRow = j;
             } else if (nextLine[j].toLowerCase().contains("wkt") || nextLine[j].toLowerCase().contains("geometry")) {
@@ -107,7 +109,7 @@ public class TextReader {
                 epsgRow = j;
             }
         }
-
+log.info(idRow + ", " + wktRow + ", " + epsgRow);
         // read each line, check which geometry it is, create an object and save it in the database
         while ((nextLine = reader.readNext()) != null) {
             if (nextLine != null && !nextLine[idRow].isEmpty()) {

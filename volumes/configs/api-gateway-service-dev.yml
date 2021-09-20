@@ -28,7 +28,7 @@ spring:
                 - id: ifcterrain-service
                   uri: lb://ifcterrain-service
                   predicates:
-                      - Path=/ifcterrain/**
+                      - Path=/terraintoifc/**
                 # - id: dashboard-service
                 #   uri: lb://dashboard-service
                 #   predicates:

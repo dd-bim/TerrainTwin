@@ -3,9 +3,9 @@ server:
 
 springdoc:
     api-docs:
-        path: /ifcterrain/v3/api-docs
+        path: /terraintoifc/v3/api-docs
     swagger-ui: 
-        path: /ifcterrain/swagger-ui.html
+        path: /terraintoifc/swagger-ui.html
         operationsSorter: method
         disable-swagger-default-url: true
 

@@ -55,13 +55,13 @@ public class InterfaceController {
   public static final String BUCKET = "ifctest";
 
   // start page
-  @GetMapping("/ifcterrain")
+  @GetMapping("/terraintoifc")
   public String index(Model model) throws Exception {
     model.addAttribute("erg", "");
     return "index";
   }
 
-  @PostMapping("/ifcterrain")
+  @PostMapping("/terraintoifc")
   public String uploadFiles(@RequestParam("file") MultipartFile multipartFile, @RequestParam String configs, // Map<String,
                                                                                                              // String>
                                                                                                              // data
@@ -136,7 +136,7 @@ public class InterfaceController {
     return "index.html";
   }
 
-  @GetMapping("/ifcterrain/download")
+  @GetMapping("/terraintoifc/download")
   public ResponseEntity<Resource> downloadIFC() throws IOException, InvalidKeyException, ErrorResponseException,
       InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException, ServerException,
       XmlParserException, IllegalArgumentException {

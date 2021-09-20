@@ -135,6 +135,14 @@ public class ImportFiles {
 
                     }
 
+                    // process file if it is of type ifc
+                    else if (extension.equals("ifc")) {
+
+                        results += "IFC is currently not supported.";
+                        // Verbindung zum BIMServer und Import
+
+                    }
+
                     // try to convert txt and csv files to semantic triples
                     // if files contain WKT import geometries into postgres database
                     else if (extension.equals("txt") || extension.equals("csv")) {
