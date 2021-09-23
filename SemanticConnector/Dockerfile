@@ -8,4 +8,4 @@ FROM alpine-jdk:base
 LABEL maintainer="maintainer"
 COPY --from=mvn-build /app/build/target/*.jar /opt/lib/application.jar
 CMD ["java", "-jar", "/opt/lib/application.jar"]
-EXPOSE 7204
+EXPOSE 7207

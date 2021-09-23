@@ -9,4 +9,4 @@ FROM alpine-jdk:base
 LABEL maintainer="Schilling"
 COPY --from=mvn-build /app/build/target/*.jar /opt/lib/application.jar
 CMD ["java", "-jar", "/opt/lib/application.jar"]
-EXPOSE 7203
+EXPOSE 7206

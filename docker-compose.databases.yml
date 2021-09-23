@@ -168,12 +168,12 @@ services:
             - 9005:8080
         networks:
             - terraintwin_microservices
-        healthcheck:
-            test: wget --spider http://localhost:9005/actuator/health || exit 1
-            interval: 30s
-            timeout: 5s
-            retries: 5
-            start_period: 10s
+        # healthcheck:  wget fehlt im container
+        #     test: wget --spider http://localhost:9005/actuator/health || exit 1
+        #     interval: 30s
+        #     timeout: 5s
+        #     retries: 5
+        #     start_period: 10s
         volumes:
             - ./volumes/bimserver:/usr/local/tomcat/webapps
 
@@ -186,6 +186,3 @@ networks:
     terraintwin_microservices:
         driver: bridge
         name: terraintwin_microservices
-    # default:
-    #     external: true
-    #     name: terraintwin_microservices
