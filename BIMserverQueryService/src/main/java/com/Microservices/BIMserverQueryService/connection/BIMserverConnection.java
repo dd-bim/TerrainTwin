@@ -23,7 +23,6 @@ public class BIMserverConnection {
 String result = "";
         try {
 			JsonBimServerClientFactory factory = new JsonBimServerClientFactory("http://localhost:9005");
-            // JsonBimServerClientFactory factory = new JsonBimServerClientFactory("http://localhost:9005");
 			BimServerClient client = factory.create(new UsernamePasswordAuthenticationInfo("sebastian.schilling@htw-dresden.de", "Master19!"));
 			
 			SProject newProject = client.getServiceInterface().addProject("Test1", "ifc2x3tc1");
