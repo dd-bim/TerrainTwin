@@ -51,6 +51,7 @@ Microservice Architecture:
         ✔ Prüfung auf CSV/RDF -> http-Request an CSV2RDF Converter -> dann Import der Ergebnis TTL @done (4.8.2021, 08:51:40)
         ☐ IFC Import
         ☐ CRS speichern?
+        ☐ Ontologieordner in MinIO automatisch anlegen, Ontologien hochladen und bei Erstellen eines Repo importieren
 
     Berechnungen:
         ☐ Abfrage welche Objekte liegen übereinander (DE-9IM)

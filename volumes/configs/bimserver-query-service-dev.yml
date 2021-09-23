@@ -1,0 +1,21 @@
+server:
+    port: 7208
+     
+springdoc:
+    api-docs:
+        path: /querybimserver/v3/api-docs
+    swagger-ui: 
+        path: /querybimserver/swagger-ui.html
+        operationsSorter: method
+
+logging:
+    file:
+        name: /var/log/bimserver-query-service.log
+
+management:
+    endpoint:
+        logfile:
+            external-file: /var/log/bimserver-query-service.log
+    health:
+        neo4j:
+            enabled: false

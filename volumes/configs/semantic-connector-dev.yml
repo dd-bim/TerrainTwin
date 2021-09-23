@@ -1,0 +1,21 @@
+server:
+    port: 7207
+     
+springdoc:
+    api-docs:
+        path: /semanticconnector/v3/api-docs
+    swagger-ui: 
+        path: /semanticconnector/swagger-ui.html
+        operationsSorter: method
+
+logging:
+    file:
+        name: /var/log/semantic-connector.log
+
+management:
+    endpoint:
+        logfile:
+            external-file: /var/log/semantic-connector.log
+    health:
+        neo4j:
+            enabled: false

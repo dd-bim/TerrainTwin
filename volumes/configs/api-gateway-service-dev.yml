@@ -25,7 +25,7 @@ spring:
                   uri: lb://topology-service
                   predicates:
                       - Path=/topology/**
-                - id: ifcterrain-service
+                - id: terraintoifc-service
                   uri: lb://ifcterrain-service
                   predicates:
                       - Path=/terraintoifc/**
