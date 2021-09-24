@@ -117,6 +117,8 @@ services:
             - graphdb.url=${GRAPHDB_URL}
             - graphdb.username=${GRAPHDB_USERNAME}
             - graphdb.password=${GRAPHDB_PASSWORD}
+            - bimserver.usermail=${BIMSERVER_USERMAIL}
+            - bimserver.password=${BIMSERVER_PASSWORD}
         volumes:
             - ./volumes/logs:/var/log
             - ./volumes/configs/repo-config.ttl:/var/config/repo-config.ttl
@@ -405,8 +407,11 @@ services:
             start_period: 20s
         environment:
             - domain.url=${DOMAIN_URL}
+            - bimserver.usermail=${BIMSERVER_USERMAIL}
+            - bimserver.password=${BIMSERVER_PASSWORD}
         volumes:
             - ./volumes/logs:/var/log
+            - ./volumes/files:/app/files
 
 networks:
     terraintwin_microservices:

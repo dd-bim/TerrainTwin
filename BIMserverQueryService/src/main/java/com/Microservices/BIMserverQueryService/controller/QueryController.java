@@ -1,9 +1,21 @@
 package com.Microservices.BIMserverQueryService.controller;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.List;
+
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+
 import com.Microservices.BIMserverQueryService.connection.BIMserverConnection;
 import com.Microservices.BIMserverQueryService.domain.EnumIfcVersion;
 
 import org.bimserver.client.BimServerClient;
+import org.bimserver.interfaces.objects.SDeserializerPluginConfiguration;
+import org.bimserver.interfaces.objects.SLongCheckinActionState;
 import org.bimserver.interfaces.objects.SProject;
 import org.bimserver.shared.exceptions.PublicInterfaceNotFoundException;
 import org.bimserver.shared.exceptions.ServerException;
@@ -27,16 +39,112 @@ public class QueryController {
   Logger log = LoggerFactory.getLogger(QueryController.class);
 
   @GetMapping("/querybimserver/create")
-  public String createProject(@RequestParam String name, @RequestParam EnumIfcVersion version) throws ServerException, UserException, PublicInterfaceNotFoundException {
+  public String createProject(@RequestParam String name, @RequestParam EnumIfcVersion version)
+      throws ServerException, UserException, PublicInterfaceNotFoundException {
     String result = "";
-log.info("V: " + version);
-log.info("V1: " + version.toString());
+
     BimServerClient client = bimserver.getConnection();
 
-    SProject newProject = client.getServiceInterface().addProject(name, version.toString());
-    System.out.println(newProject.getOid());
-    result = "Oid: " + newProject.getOid();
+    try {
+      SProject newProject = client.getServiceInterface().addProject(name, version.toString());
+      result = "Oid: " + newProject.getOid();
+    } catch (Exception e) {
+      result = e.getMessage();
+    }
 
     return result;
   }
+
+  @GetMapping(path = "/querybimserver/checkin")
+  public String checkinFile(@RequestParam Long poid)
+      throws ServerException, UserException, PublicInterfaceNotFoundException, IllegalStateException, IOException {
+    String result = "";
+    BimServerClient client = bimserver.getConnection();
+
+    File file = new File("/app/files/Haus14d.ifc");
+
+    // Look for a deserializer
+    SDeserializerPluginConfiguration deserializer = client.getServiceInterface().getSuggestedDeserializerForExtension("ifc", poid);
+
+    DataSource source = new FileDataSource(file);
+    DataHandler data = new DataHandler(source);
+    try {
+      SLongCheckinActionState state = client.getServiceInterface().checkinSync(poid, "", deserializer.getOid(), file.getTotalSpace(),
+          file.getName(), data, false);
+      result = "\n Title: " + state.getTitle() + "\n Oid: " + state.getOid() + "\n Roid: " + state.getRoid()
+          + "\n Rid: " + state.getRid() + "\n Stage: " + state.getStage() + "\n TopicId: " + state.getTopicId()
+          + "\n Progress: " + state.getProgress() + "\n Uuid: " + state.getUuid() + "\n State: " + state.getState();
+
+    } catch (Exception e) {
+      result = e.getMessage();
+    }
+
+    return result;
+  }
+
+  @GetMapping("/querybimserver/getAllProjects")
+  public String getAllProjects() throws ServerException, UserException, PublicInterfaceNotFoundException {
+    String result = "";
+    List<SProject> pList = null;
+    BimServerClient client = bimserver.getConnection();
+
+    try {
+      pList = client.getServiceInterface().getAllProjects(true, true);
+      for (SProject p : pList) {
+        result += "Project name: " + p.getName() + ", Oid: " + p.getOid() + "\n";
+      }
+    } catch (Exception e) {
+      result = e.getMessage();
+    }
+
+    return result;
+  }
+
+
+  @GetMapping("/querybimserver/createAndCheckin")
+  public String createAndCheckin()
+      throws ServerException, UserException, PublicInterfaceNotFoundException, IOException {
+    String result = "";
+
+    BimServerClient client = bimserver.getConnection();
+
+    File file = new File("/app/files/Haus14d.ifc");
+    String pName = file.getName().replace(".ifc", ""); 
+    String version = null;
+    
+    BufferedReader reader = new BufferedReader(new FileReader(file));
+    while (reader.readLine() != null && version == null) {
+      String line = reader.readLine();
+      if (line.contains("FILE_SCHEMA")) {
+        if (line.toUpperCase().contains("IFC4")) {
+          version = "IFC4";
+        } else if (line.toUpperCase().contains("IFC2X3")) {
+          version = "IFC2X3TC1";
+        }
+      }
+    }
+    reader.close();
+
+    SProject newProject = client.getServiceInterface().addProject(pName, version);
+    result = "Poid: " + newProject.getOid() + "\n";
+
+    SDeserializerPluginConfiguration deserializer = client.getServiceInterface().getSuggestedDeserializerForExtension("ifc", newProject.getOid());
+
+    DataSource source = new FileDataSource(file);
+    DataHandler data = new DataHandler(source);
+    try {
+      SLongCheckinActionState state = client.getServiceInterface().checkinSync(newProject.getOid(), "", deserializer.getOid(), file.getTotalSpace(),
+          file.getName(), data, false);
+      result += "\n Title: " + state.getTitle() + "\n Oid: " + state.getOid() + "\n Roid: " + state.getRoid()
+          + "\n Rid: " + state.getRid() + "\n Stage: " + state.getStage() + "\n TopicId: " + state.getTopicId()
+          + "\n Progress: " + state.getProgress() + "\n Uuid: " + state.getUuid() + "\n State: " + state.getState();
+
+    } catch (Exception e) {
+      result = e.getMessage();
+    }
+
+
+    return result;
+  }
+
 }

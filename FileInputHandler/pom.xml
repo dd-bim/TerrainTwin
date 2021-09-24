@@ -121,6 +121,11 @@
 			<artifactId>openrdf-model</artifactId>
 			<version>1.2.7</version>
 		</dependency>
+		<dependency>
+			<groupId>org.opensourcebim</groupId>
+			<artifactId>bimserverclientlib</artifactId>
+			<version>1.5.182</version>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

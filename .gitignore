@@ -25,3 +25,4 @@ logs/
 graphdb/
 minio/
 postgres/ 
+bimserver/

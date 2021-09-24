@@ -62,6 +62,9 @@ public class ImportFiles {
     @Autowired
     Csv2RdfConverterConnection csvconn;
 
+    @Autowired
+    ImportIfc importIfc;
+
     Logger log = LoggerFactory.getLogger(ImportFiles.class);
 
     @Value("${minio.url}")
@@ -138,7 +141,7 @@ public class ImportFiles {
                     // process file if it is of type ifc
                     else if (extension.equals("ifc")) {
 
-                        results += "IFC is currently not supported.";
+                        results += importIfc.importIfcFile(bucket, filename);
                         // Verbindung zum BIMServer und Import
 
                     }

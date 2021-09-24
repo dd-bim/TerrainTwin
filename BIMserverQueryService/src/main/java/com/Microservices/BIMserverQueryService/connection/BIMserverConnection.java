@@ -8,11 +8,17 @@ import org.bimserver.shared.exceptions.BimServerClientException;
 import org.bimserver.shared.exceptions.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class BIMserverConnection {
 
+    @Value("${bimserver.usermail}")
+    private String user;
+    @Value("${bimserver.password}")
+    private String password;
+    
     Logger log = LoggerFactory.getLogger(BIMserverConnection.class);
 
     public BimServerClient getConnection() {
@@ -22,7 +28,7 @@ public class BIMserverConnection {
         try {
             // BIMserver connection in docker network needs to be on internal port 8080
 			factory = new JsonBimServerClientFactory("http://bimserver:8080");
-			client = factory.create(new UsernamePasswordAuthenticationInfo("sebastian.schilling@htw-dresden.de", "Master19!"));
+			client = factory.create(new UsernamePasswordAuthenticationInfo(user, password));
 			
 		} catch (BimServerClientException e) {
 			e.printStackTrace();
