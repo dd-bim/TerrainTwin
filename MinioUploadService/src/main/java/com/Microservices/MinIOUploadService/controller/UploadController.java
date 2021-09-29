@@ -121,7 +121,6 @@ public class UploadController {
 
       return ResponseEntity.ok(results);
     } else {
-      ;
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
           "The bucket name is not valid. The name must be at least 3 characters long, start and end with a digit or lowercase letter and contain only 'a-z', '0-9', '.' and '-''. More than one dot or hyphen in a row is also not allowed.");
     }

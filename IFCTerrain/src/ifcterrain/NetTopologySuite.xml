@@ -765,7 +765,10 @@
             Creates a new instance of a Maximum Inscribed Circle computation.
             </summary>
             <param name="polygonal">An areal geometry</param>
-            <param name="tolerance">The distance tolerance for computing the centre point</param>
+            <param name="tolerance">The distance tolerance for computing the centre point
+            (must be positive)</param>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown if the tolerance is non-positive</exception>
+            <exception cref="T:System.ArgumentException">Thrown if the input geometry is non-polygonal or empty</exception>
         </member>
         <member name="M:NetTopologySuite.Algorithm.Construct.MaximumInscribedCircle.GetCenter">
             <summary>
@@ -2674,7 +2677,6 @@
             </summary>
             <param name="ring">An array of <c>Coordinate</c>s forming a ring (with first and last point identical)</param>
             <returns><c>true</c> if the ring is oriented counter-clockwise.</returns>
-            <exception cref="T:System.ArgumentException">Thrown if there are too few points to determine orientation (&lt; 4)</exception>
         </member>
         <member name="M:NetTopologySuite.Algorithm.Orientation.IsCCW(NetTopologySuite.Geometries.CoordinateSequence)">
             <summary>
@@ -2693,7 +2695,6 @@
             </summary>
             <param name="ring">A <c>CoordinateSequence</c>s forming a ring (with first and last point identical).</param>
             <returns><c>true</c> if the ring is oriented counter-clockwise.</returns>
-            <exception cref="T:System.ArgumentException">Thrown if there are too few points to determine orientation (&lt; 4)</exception>
         </member>
         <member name="M:NetTopologySuite.Algorithm.Orientation.IsCCWArea(NetTopologySuite.Geometries.Coordinate[])">
             <summary>
@@ -3382,8 +3383,10 @@
             <summary>
             Densifies a geometry by inserting extra vertices along the line segments
             contained in the geometry.
-            All segments in the created densified geometry will be no longer than
-            than the given distance tolerance.
+            All segments in the created densified geometry will be <b>no longer</b>
+            than the given distance tolerance
+            (that is, all segments in the output will have length less than or equal to
+            the distance tolerance).
             </summary>
             <remarks>
             Densified polygonal geometries are guaranteed to be topologically correct.
@@ -3408,10 +3411,10 @@
         </member>
         <member name="M:NetTopologySuite.Densify.Densifier.DensifyPoints(NetTopologySuite.Geometries.Coordinate[],System.Double,NetTopologySuite.Geometries.PrecisionModel)">
             <summary>
-            Densifies a coordinate sequence.
+            Densifies a list of coordinates.
             </summary>
-            <param name="pts">The coordinate sequence to densify</param>
-            <param name="distanceTolerance">The distance tolerance (<see cref="P:NetTopologySuite.Densify.Densifier.DistanceTolerance"/>)</param>
+            <param name="pts">The coordinate list</param>
+            <param name="distanceTolerance">The densify tolerance</param>
             <param name="precModel">The precision model to apply on the new coordinates</param>
             <returns>The densified coordinate sequence</returns>
         </member>
@@ -3429,7 +3432,6 @@
             <summary>
             Gets or sets the distance tolerance for the densification. All line segments
             in the densified geometry will be no longer than the distance tolerance.
-            Simplified geometry will be within this distance of the original geometry.
             The distance tolerance must be positive.
             </summary>
         </member>
@@ -4133,6 +4135,25 @@
             </summary>
             <returns>A copy of this coordinate.</returns>
         </member>
+        <member name="M:NetTopologySuite.Geometries.Coordinate.Create(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Create a Coordinate of the same type as this Coordinate, using the provided values.
+            </summary>
+            <remarks>Depending on the actual type the following limitations are in place:
+            <list type="table">
+            <listheader><term>Coordinate (Sub-)Class</term><description>Limitation</description></listheader>
+            <item><term><c>Coordinate</c></term><description><paramref name="z"/>-parameter and <paramref name="m"/>-parameter are silently dropped.</description></item>
+            <item><term><c>CoordinateZ</c></term><description><paramref name="m"/>-parameter is silently dropped.</description></item>
+            <item><term><c>CoordinateM</c></term><description><paramref name="z"/>-parameter is silently dropped.</description></item>
+            <item><term><c>CoordinateZM</c></term><description>No parameter is dropped.</description></item>
+            </list>
+            </remarks>
+            <param name="x">The x-ordinate value, if not provided, it is <c>0d</c>.</param>
+            <param name="y">The y-ordinate value, if not provided, it is <c>0d</c>.</param>
+            <param name="z">The z-ordinate value, if not provided, it is <see cref="F:NetTopologySuite.Geometries.Coordinate.NullOrdinate"/>.</param>
+            <param name="m">The m-ordinate value, if not provided, it is <see cref="F:NetTopologySuite.Geometries.Coordinate.NullOrdinate"/>.</param>
+            <returns>A new <see cref="T:NetTopologySuite.Geometries.Coordinate"/></returns>
+        </member>
         <member name="M:NetTopologySuite.Geometries.Coordinate.Distance(NetTopologySuite.Geometries.Coordinate)">
             <summary>
             Computes the 2-dimensional Euclidean distance to another location.
@@ -4713,6 +4734,18 @@
             <summary>
             Gets/Sets <c>CoordinateM</c>s (x,y,z) values.
             </summary>
+        </member>
+        <member name="M:NetTopologySuite.Geometries.CoordinateM.Create(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Create a Coordinate of the same type as this Coordinate,
+            using the provided values for <paramref name="x"/>, <paramref name="y"/> and <paramref name="m"/>.
+            </summary>
+            <remarks>A provided value for <paramref name="z"/> will be silently dropped.</remarks>
+            <param name="x">The x-ordinate value, if not provided, it is <c>0d</c>.</param>
+            <param name="y">The y-ordinate value, if not provided, it is <c>0d</c>.</param>
+            <param name="z">The z-ordinate value, if not provided, it is <see cref="F:NetTopologySuite.Geometries.Coordinate.NullOrdinate"/>.</param>
+            <param name="m">The m-ordinate value, if not provided, it is <see cref="F:NetTopologySuite.Geometries.Coordinate.NullOrdinate"/>.</param>
+            <returns>A new <see cref="T:NetTopologySuite.Geometries.CoordinateM"/></returns>
         </member>
         <member name="M:NetTopologySuite.Geometries.CoordinateM.ToString">
             <summary>
@@ -5487,6 +5520,18 @@
             Gets/Sets <c>CoordinateZ</c>s (x,y,z) values.
             </summary>
         </member>
+        <member name="M:NetTopologySuite.Geometries.CoordinateZ.Create(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Create a Coordinate of the same type as this Coordinate,
+            using the provided values for <paramref name="x"/>, <paramref name="y"/> and <paramref name="z"/>.
+            </summary>
+            <remarks>A provided value for <paramref name="m"/> will be silently dropped.</remarks>
+            <param name="x">The x-ordinate value, if not provided, it is <c>0d</c>.</param>
+            <param name="y">The y-ordinate value, if not provided, it is <c>0d</c>.</param>
+            <param name="z">The z-ordinate value, if not provided, it is <see cref="F:NetTopologySuite.Geometries.Coordinate.NullOrdinate"/>.</param>
+            <param name="m">The m-ordinate value, if not provided, it is <see cref="F:NetTopologySuite.Geometries.Coordinate.NullOrdinate"/>.</param>
+            <returns>A new <see cref="T:NetTopologySuite.Geometries.CoordinateZ"/></returns>
+        </member>
         <member name="M:NetTopologySuite.Geometries.CoordinateZ.Equals3D(NetTopologySuite.Geometries.CoordinateZ)">
             <summary>
             Returns <c>true</c> if <paramref name="other"/> 
@@ -5596,6 +5641,17 @@
             <summary>
             Gets/Sets <c>CoordinateZM</c>s (x,y,z) values.
             </summary>
+        </member>
+        <member name="M:NetTopologySuite.Geometries.CoordinateZM.Create(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Create a Coordinate of the same type as this Coordinate,
+            using the provided values for <paramref name="x"/>, <paramref name="y"/>, <paramref name="z"/>  and <paramref name="m"/>.
+            </summary>
+            <param name="x">The x-ordinate value, if not provided, it is <c>0d</c>.</param>
+            <param name="y">The y-ordinate value, if not provided, it is <c>0d</c>.</param>
+            <param name="z">The z-ordinate value, if not provided, it is <see cref="F:NetTopologySuite.Geometries.Coordinate.NullOrdinate"/>.</param>
+            <param name="m">The m-ordinate value, if not provided, it is <see cref="F:NetTopologySuite.Geometries.Coordinate.NullOrdinate"/>.</param>
+            <returns>A new <see cref="T:NetTopologySuite.Geometries.CoordinateZM"/></returns>
         </member>
         <member name="M:NetTopologySuite.Geometries.CoordinateZM.ToString">
             <summary>
@@ -7968,14 +8024,7 @@
             </summary>
         </member>
         <member name="M:NetTopologySuite.Geometries.GeometryCollection.GetEnumerator">
-            <summary>
-            Returns a <c>GeometryCollectionEnumerator</c>:
-            this IEnumerator returns the parent geometry as first element.
-            In most cases is more useful the code
-            <c>geometryCollectionInstance.Geometries.GetEnumerator()</c>:
-            this returns an IEnumerator over geometries composing GeometryCollection.
-            </summary>
-            <returns></returns>
+            <inheritdoc />
         </member>
         <member name="P:NetTopologySuite.Geometries.GeometryCollection.Item(System.Int32)">
             <summary>
@@ -9780,6 +9829,367 @@
         <member name="M:NetTopologySuite.Geometries.Implementation.PackedCoordinateSequenceFactory.Create(System.Int32,System.Int32,System.Int32)">
             <inheritdoc />
         </member>
+        <member name="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence">
+            <summary>
+            An implementation of <see cref="T:NetTopologySuite.Geometries.CoordinateSequence"/> that packs its contents in a way that
+            can be customized by the creator.
+            </summary>
+        </member>
+        <member name="M:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence.#ctor(System.Memory{System.Double}[],System.ValueTuple{System.Int32,System.Int32}[],System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence"/> class.
+            </summary>
+            <param name="rawData">
+            Contains the raw data for this sequence.
+            </param>
+            <param name="dimensionMap">
+            Contains a pair of indexes to tell us, for each dimension, where to find its data in
+            <paramref name="rawData"/>.
+            </param>
+            <param name="measures">
+            The value for <see cref="P:NetTopologySuite.Geometries.CoordinateSequence.Measures"/>.
+            </param>
+        </member>
+        <member name="M:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence.GetRawCoordinatesAndStride(System.Int32)">
+            <summary>
+            Gets the underlying <see cref="T:System.Memory`1"/> for the ordinates at the given index, along
+            with a "stride" value that represents how many slots there are between elements.
+            </summary>
+            <param name="ordinateIndex">
+            The index of the ordinate whose values to get, from
+            <see cref="M:NetTopologySuite.Geometries.CoordinateSequence.TryGetOrdinateIndex(NetTopologySuite.Geometries.Ordinate,System.Int32@)"/>.
+            </param>
+            <returns>
+            The underlying <see cref="T:System.Memory`1"/> and stride.
+            </returns>
+            <remarks>
+            Assuming <see cref="P:NetTopologySuite.Geometries.CoordinateSequence.Count"/> is nonzero, the first element of the
+            returned array holds the first coordinate's value for the requested ordinate, and the
+            last element of the returned array holds the last coordinate's value for the requested
+            ordinate.
+            </remarks>
+        </member>
+        <member name="M:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence.GetOrdinate(System.Int32,System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence.SetOrdinate(System.Int32,System.Int32,System.Double)">
+            <inheritdoc />
+        </member>
+        <member name="M:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence.Copy">
+            <inheritdoc />
+        </member>
+        <member name="M:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence.Reversed">
+            <inheritdoc />
+        </member>
+        <member name="M:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence.ExpandEnvelope(NetTopologySuite.Geometries.Envelope)">
+            <inheritdoc />
+        </member>
+        <member name="M:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence.ToCoordinateArray">
+            <inheritdoc />
+        </member>
+        <member name="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequenceFactory">
+            <summary>
+            Factory for creating <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence"/> instances.
+            </summary>
+        </member>
+        <member name="M:NetTopologySuite.Geometries.Implementation.RawCoordinateSequenceFactory.#ctor(System.Collections.Generic.IEnumerable{NetTopologySuite.Geometries.Ordinates})">
+            <summary>
+            Initializes a new instance of the <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequenceFactory"/> class.
+            </summary>
+            <param name="ordinateGroups">
+            A sequence of zero or more <see cref="T:NetTopologySuite.Geometries.Ordinates"/> flags representing ordinate values
+            that should be allocated together.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown when <paramref name="ordinateGroups"/> is <see langword="null"/>.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+            Thrown when a given flag appears in more than one element of
+            <paramref name="ordinateGroups"/>.
+            </exception>
+            <remarks>
+            Any flags not represented in <paramref name="ordinateGroups"/>, and any spatial or
+            measure dimensions beyond the 16th, will be allocated together, SoA-style.
+            <para/>
+            Elements without any bits set will be silently ignored.
+            </remarks>
+        </member>
+        <member name="M:NetTopologySuite.Geometries.Implementation.RawCoordinateSequenceFactory.CreateXY(System.Memory{System.Double},System.Memory{System.Double})">
+            <summary>
+            Creates a new <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence"/> that uses the given arrays for reading
+            and writing X and Y data ignoring the <see cref="T:NetTopologySuite.Geometries.Ordinates"/> flags that were passed
+            into the constructor for this factory instance.
+            </summary>
+            <param name="x">
+            An array of X values, laid out as
+            <c>[x0, x1, x2, ..., xn]</c>.
+            </param>
+            <param name="y">
+            An array of Y values, laid out as
+            <c>[y0, y1, y2, ..., yn]</c>.
+            </param>
+            <returns>
+            A <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence"/> instance that's backed by the given arrays.
+            </returns>
+            <exception cref="T:System.ArgumentException">
+            Thrown when the input arrays do not contain data for the same number of coordinates.
+            </exception>
+        </member>
+        <member name="M:NetTopologySuite.Geometries.Implementation.RawCoordinateSequenceFactory.CreateXY(System.Memory{System.Double})">
+            <summary>
+            Creates a new <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence"/> that uses the given array for reading
+            and writing X and Y data ignoring the <see cref="T:NetTopologySuite.Geometries.Ordinates"/> flags that were passed
+            into the constructor for this factory instance.
+            </summary>
+            <param name="xy">
+            An array of X and Y values, laid out as
+            <c>[x0, y0, x1, y1, x2, y2, ..., xn, yn]</c>.
+            </param>
+            <returns>
+            A <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence"/> instance that's backed by the given array.
+            </returns>
+            <remarks>
+            The resulting instance is essentially a <see cref="T:NetTopologySuite.Geometries.Implementation.PackedDoubleCoordinateSequence"/>
+            with slightly more overhead, so the main reason to prefer this over that one would be if
+            you <b>really</b> need to avoid copying the data to fit it into that format.
+            </remarks>
+            <exception cref="T:System.ArgumentException">
+            Thrown when the length of <paramref name="xy"/> is not a multiple of 2.
+            </exception>
+        </member>
+        <member name="M:NetTopologySuite.Geometries.Implementation.RawCoordinateSequenceFactory.CreateXYZ(System.Memory{System.Double},System.Memory{System.Double},System.Memory{System.Double})">
+            <summary>
+            Creates a new <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence"/> that uses the given arrays for reading
+            and writing X, Y, and Z data ignoring the <see cref="T:NetTopologySuite.Geometries.Ordinates"/> flags that were passed
+            into the constructor for this factory instance.
+            </summary>
+            <param name="x">
+            An array of X values, laid out as
+            <c>[x0, x1, x2, ..., xn]</c>.
+            </param>
+            <param name="y">
+            An array of Y values, laid out as
+            <c>[y0, y1, y2, ..., yn]</c>.
+            </param>
+            <param name="z">
+            An array of Z values, laid out as
+            <c>[z0, z1, z2, ..., zn]</c>.
+            </param>
+            <returns>
+            A <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence"/> instance that's backed by the given arrays.
+            </returns>
+            <exception cref="T:System.ArgumentException">
+            Thrown when the input arrays do not contain data for the same number of coordinates.
+            </exception>
+        </member>
+        <member name="M:NetTopologySuite.Geometries.Implementation.RawCoordinateSequenceFactory.CreateXYZ(System.Memory{System.Double},System.Memory{System.Double})">
+            <summary>
+            Creates a new <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence"/> that uses the given array for reading
+            and writing X, Y, and Z data ignoring the <see cref="T:NetTopologySuite.Geometries.Ordinates"/> flags that were passed
+            into the constructor for this factory instance.
+            </summary>
+            <param name="xy">
+            An array of X and Y values, laid out as
+            <c>[x0, y0, x1, y1, x2, y2, ..., xn, yn]</c>.
+            </param>
+            <param name="z">
+            An array of Z values, laid out as
+            <c>[z0, z1, z2, ..., zn]</c>.
+            </param>
+            <returns>
+            A <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence"/> instance that's backed by the given array.
+            </returns>
+            <remarks>
+            The resulting instance is essentially a <see cref="T:NetTopologySuite.Geometries.Implementation.DotSpatialAffineCoordinateSequence"/>
+            with slightly more overhead, so the main reason to prefer this over that one would be if
+            you <b>really</b> need to avoid copying the data to fit it into that format.
+            </remarks>
+            <exception cref="T:System.ArgumentException">
+            Thrown when the length of <paramref name="xy"/> is not a multiple of 2, or when the
+            input arrays do not contain data for the same number of coordinates.
+            </exception>
+        </member>
+        <member name="M:NetTopologySuite.Geometries.Implementation.RawCoordinateSequenceFactory.CreateXYZ(System.Memory{System.Double})">
+            <summary>
+            Creates a new <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence"/> that uses the given array for reading
+            and writing X, Y, and Z data ignoring the <see cref="T:NetTopologySuite.Geometries.Ordinates"/> flags that were passed
+            into the constructor for this factory instance.
+            </summary>
+            <param name="xyz">
+            An array of X, Y, and Z values, laid out as
+            <c>[x0, y0, z0, x1, y1, z1, x2, y2, z2, ..., xn, yn, zn]</c>.
+            </param>
+            <returns>
+            A <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence"/> instance that's backed by the given array.
+            </returns>
+            <remarks>
+            The resulting instance is essentially a <see cref="T:NetTopologySuite.Geometries.Implementation.PackedDoubleCoordinateSequence"/>
+            with slightly more overhead, so the main reason to prefer this over that one would be if
+            you <b>really</b> need to avoid copying the data to fit it into that format.
+            </remarks>
+            <exception cref="T:System.ArgumentException">
+            Thrown when the length of <paramref name="xyz"/> is not a multiple of 3.
+            </exception>
+        </member>
+        <member name="M:NetTopologySuite.Geometries.Implementation.RawCoordinateSequenceFactory.CreateXYM(System.Memory{System.Double},System.Memory{System.Double},System.Memory{System.Double})">
+            <summary>
+            Creates a new <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence"/> that uses the given arrays for reading
+            and writing X, Y, and M data ignoring the <see cref="T:NetTopologySuite.Geometries.Ordinates"/> flags that were passed
+            into the constructor for this factory instance.
+            </summary>
+            <param name="x">
+            An array of X values, laid out as
+            <c>[x0, x1, x2, ..., xn]</c>.
+            </param>
+            <param name="y">
+            An array of Y values, laid out as
+            <c>[y0, y1, y2, ..., yn]</c>.
+            </param>
+            <param name="m">
+            An array of M values, laid out as
+            <c>[m0, m1, m2, ..., mn]</c>.
+            </param>
+            <returns>
+            A <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence"/> instance that's backed by the given arrays.
+            </returns>
+            <exception cref="T:System.ArgumentException">
+            Thrown when the input arrays do not contain data for the same number of coordinates.
+            </exception>
+        </member>
+        <member name="M:NetTopologySuite.Geometries.Implementation.RawCoordinateSequenceFactory.CreateXYM(System.Memory{System.Double},System.Memory{System.Double})">
+            <summary>
+            Creates a new <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence"/> that uses the given array for reading
+            and writing X, Y, and M data ignoring the <see cref="T:NetTopologySuite.Geometries.Ordinates"/> flags that were passed
+            into the constructor for this factory instance.
+            </summary>
+            <param name="xy">
+            An array of X and Y values, laid out as
+            <c>[x0, y0, x1, y1, x2, y2, ..., xn, yn]</c>.
+            </param>
+            <param name="m">
+            An array of M values, laid out as
+            <c>[m0, m1, m2, ..., mn]</c>.
+            </param>
+            <returns>
+            A <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence"/> instance that's backed by the given array.
+            </returns>
+            <remarks>
+            The resulting instance is essentially a <see cref="T:NetTopologySuite.Geometries.Implementation.DotSpatialAffineCoordinateSequence"/>
+            with slightly more overhead, so the main reason to prefer this over that one would be if
+            you <b>really</b> need to avoid copying the data to fit it into that format.
+            </remarks>
+            <exception cref="T:System.ArgumentException">
+            Thrown when the length of <paramref name="xy"/> is not a multiple of 2, or when the
+            input arrays do not contain data for the same number of coordinates.
+            </exception>
+        </member>
+        <member name="M:NetTopologySuite.Geometries.Implementation.RawCoordinateSequenceFactory.CreateXYM(System.Memory{System.Double})">
+            <summary>
+            Creates a new <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence"/> that uses the given array for reading
+            and writing X, Y, and M data ignoring the <see cref="T:NetTopologySuite.Geometries.Ordinates"/> flags that were passed
+            into the constructor for this factory instance.
+            </summary>
+            <param name="xym">
+            An array of X, Y, and M values, laid out as
+            <c>[x0, y0, m0, x1, y1, m1, x2, y2, m2, ..., xn, yn, mn]</c>.
+            </param>
+            <returns>
+            A <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence"/> instance that's backed by the given array.
+            </returns>
+            <remarks>
+            The resulting instance is essentially a <see cref="T:NetTopologySuite.Geometries.Implementation.PackedDoubleCoordinateSequence"/>
+            with slightly more overhead, so the main reason to prefer this over that one would be if
+            you <b>really</b> need to avoid copying the data to fit it into that format.
+            </remarks>
+            <exception cref="T:System.ArgumentException">
+            Thrown when the length of <paramref name="xym"/> is not a multiple of 3.
+            </exception>
+        </member>
+        <member name="M:NetTopologySuite.Geometries.Implementation.RawCoordinateSequenceFactory.CreateXYZM(System.Memory{System.Double},System.Memory{System.Double},System.Memory{System.Double},System.Memory{System.Double})">
+            <summary>
+            Creates a new <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence"/> that uses the given arrays for reading
+            and writing X, Y, Z, and M data ignoring the <see cref="T:NetTopologySuite.Geometries.Ordinates"/> flags that were passed
+            into the constructor for this factory instance.
+            </summary>
+            <param name="x">
+            An array of X values, laid out as
+            <c>[x0, x1, x2, ..., xn]</c>.
+            </param>
+            <param name="y">
+            An array of Y values, laid out as
+            <c>[y0, y1, y2, ..., yn]</c>.
+            </param>
+            <param name="z">
+            An array of Z values, laid out as
+            <c>[z0, z1, z2, ..., zn]</c>.
+            </param>
+            <param name="m">
+            An array of M values, laid out as
+            <c>[m0, m1, m2, ..., mn]</c>.
+            </param>
+            <returns>
+            A <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence"/> instance that's backed by the given arrays.
+            </returns>
+            <exception cref="T:System.ArgumentException">
+            Thrown when the input arrays do not contain data for the same number of coordinates.
+            </exception>
+        </member>
+        <member name="M:NetTopologySuite.Geometries.Implementation.RawCoordinateSequenceFactory.CreateXYZM(System.Memory{System.Double},System.Memory{System.Double},System.Memory{System.Double})">
+            <summary>
+            Creates a new <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence"/> that uses the given array for reading
+            and writing X, Y, Z, and M data ignoring the <see cref="T:NetTopologySuite.Geometries.Ordinates"/> flags that were passed
+            into the constructor for this factory instance.
+            </summary>
+            <param name="xy">
+            An array of X and Y values, laid out as
+            <c>[x0, y0, x1, y1, x2, y2, ..., xn, yn]</c>.
+            </param>
+            <param name="z">
+            An array of Z values, laid out as
+            <c>[z0, z1, z2, ..., zn]</c>.
+            </param>
+            <param name="m">
+            An array of M values, laid out as
+            <c>[m0, m1, m2, ..., mn]</c>.
+            </param>
+            <returns>
+            A <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence"/> instance that's backed by the given array.
+            </returns>
+            <remarks>
+            The resulting instance is essentially a <see cref="T:NetTopologySuite.Geometries.Implementation.DotSpatialAffineCoordinateSequence"/>
+            with slightly more overhead, so the main reason to prefer this over that one would be if
+            you <b>really</b> need to avoid copying the data to fit it into that format.
+            </remarks>
+            <exception cref="T:System.ArgumentException">
+            Thrown when the length of <paramref name="xy"/> is not a multiple of 2, or when the
+            input arrays do not contain data for the same number of coordinates.
+            </exception>
+        </member>
+        <member name="M:NetTopologySuite.Geometries.Implementation.RawCoordinateSequenceFactory.CreateXYZM(System.Memory{System.Double})">
+            <summary>
+            Creates a new <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence"/> that uses the given array for reading
+            and writing X, Y, Z, and M data ignoring the <see cref="T:NetTopologySuite.Geometries.Ordinates"/> flags that were passed
+            into the constructor for this factory instance.
+            </summary>
+            <param name="xyzm">
+            An array of X, Y, Z, and M values, laid out as
+            <c>[x0, y0, z0, m0, x1, y1, z1, m1, x2, y2, z2, m2, ..., xn, yn, zn, mn]</c>.
+            </param>
+            <returns>
+            A <see cref="T:NetTopologySuite.Geometries.Implementation.RawCoordinateSequence"/> instance that's backed by the given array.
+            </returns>
+            <remarks>
+            The resulting instance is essentially a <see cref="T:NetTopologySuite.Geometries.Implementation.PackedDoubleCoordinateSequence"/>
+            with slightly more overhead, so the main reason to prefer this over that one would be if
+            you <b>really</b> need to avoid copying the data to fit it into that format.
+            </remarks>
+            <exception cref="T:System.ArgumentException">
+            Thrown when the length of <paramref name="xyzm"/> is not a multiple of 4.
+            </exception>
+        </member>
+        <member name="M:NetTopologySuite.Geometries.Implementation.RawCoordinateSequenceFactory.Create(System.Int32,System.Int32,System.Int32)">
+            <inheritdoc />
+        </member>
         <member name="T:NetTopologySuite.Geometries.IntersectionMatrix">
             <summary>  
             Models a <b>Dimensionally Extended Nine-Intersection Model (DE-9IM)</b> matrix. 
@@ -10173,18 +10583,21 @@
             A <c>LinearRing</c> is a <see cref="T:NetTopologySuite.Geometries.LineString"/> which is both closed and simple.
             In other words,
             the first and last coordinate in the ring must be equal,
-            and the interior of the ring must not self-intersect.
+            and the ring must not self-intersect.
             Either orientation of the ring is allowed.
-            <para>
-            A ring must have either 0 or 4 or more points.
+            <para/>
+            A ring must have either 0 or 3 or more points.
             The first and last points must be equal (in 2D).
             If these conditions are not met, the constructors throw
-            an <see cref="T:System.ArgumentException"/></para>
+            an <see cref="T:System.ArgumentException"/><br/>
+            A ring with 3 points is invalid, because it is collapsed
+            and thus has a self-intersection. It is allowed to be constructed
+            so that it can be represented, and repaired if needed.
             </remarks>
         </member>
         <member name="F:NetTopologySuite.Geometries.LinearRing.MinimumValidSize">
             <summary>
-            The minimum number of vertices allowed in a valid non-empty ring (= 4).
+            The minimum number of vertices allowed in a valid non-empty ring.
             Empty rings with 0 vertices are also valid.
             </summary>
         </member>
@@ -22823,13 +23236,26 @@
             Converts a Well-Known Binary byte data to a <c>Geometry</c>.
             </summary>
             <remarks>
+            This class reads the format describe in {@link WKBWriter}.
+            It partially handles the<b>Extended WKB</b> format used by PostGIS,
+            by parsing and storing optional SRID values.
+            If a SRID is not specified in an element geometry, it is inherited
+            from the parent's SRID.
+            The default SRID value depends on <see cref="P:NetTopologySuite.NtsGeometryServices.DefaultSRID"/>.
+            <para/>
+            Although not defined in the WKB spec, empty points
+            are handled if they are represented as a Point with <c>NaN</c> X and Y ordinates.
+            <para/>
             The reader repairs structurally-invalid input
             (specifically, LineStrings and LinearRings which contain
             too few points have vertices added,
             and non-closed rings are closed).
             <para/>
-            Although not defined in the WKB spec, empty points
-            are handled if they are represented as a Point with <c>NaN</c> X and Y ordinates.
+            The reader handles most errors caused by malformed or malicious WKB data.
+            It checks for obviously excessive values of the fields
+            <c>numElems</c>, <c>numRings</c>, and <c>numCoords</c>.
+            It also checks that the reader does not read beyond the end of the data supplied.
+            A <see cref="T:NetTopologySuite.IO.ParseException"/> is thrown if this situation is detected.
             </remarks>
         </member>
         <member name="M:NetTopologySuite.IO.WKBReader.HexToBytes(System.String)">
@@ -22939,15 +23365,6 @@
             <param name="cs">The coordinate system</param>
             <returns>The corresponding <see cref="T:NetTopologySuite.Geometries.Ordinates"/></returns>
         </member>
-        <member name="M:NetTopologySuite.IO.WKBReader.ReadLinearRing(System.IO.BinaryReader,NetTopologySuite.IO.WKBReader.CoordinateSystem,System.Int32)">
-            <summary>
-            Reads a <see cref="T:NetTopologySuite.Geometries.LinearRing"/> geometry.
-            </summary>
-            <param name="reader">The reader</param>
-            <param name="cs">The coordinate system</param>
-            <param name="srid">The spatial reference id for the geometry.</param>
-            <returns>A <see cref="T:NetTopologySuite.Geometries.LinearRing"/> geometry</returns>
-        </member>
         <member name="M:NetTopologySuite.IO.WKBReader.ReadPoint(System.IO.BinaryReader,NetTopologySuite.IO.WKBReader.CoordinateSystem,System.Int32)">
             <summary>
             Reads a <see cref="T:NetTopologySuite.Geometries.Point"/> geometry.
@@ -22965,6 +23382,15 @@
             <param name="cs">The coordinate system</param>
             <param name="srid">The spatial reference id for the geometry.</param>
             <returns>A <see cref="T:NetTopologySuite.Geometries.LineString"/> geometry</returns>
+        </member>
+        <member name="M:NetTopologySuite.IO.WKBReader.ReadLinearRing(System.IO.BinaryReader,NetTopologySuite.IO.WKBReader.CoordinateSystem,System.Int32)">
+            <summary>
+            Reads a <see cref="T:NetTopologySuite.Geometries.LinearRing"/> geometry.
+            </summary>
+            <param name="reader">The reader</param>
+            <param name="cs">The coordinate system</param>
+            <param name="srid">The spatial reference id for the geometry.</param>
+            <returns>A <see cref="T:NetTopologySuite.Geometries.LinearRing"/> geometry</returns>
         </member>
         <member name="M:NetTopologySuite.IO.WKBReader.ReadPolygon(System.IO.BinaryReader,NetTopologySuite.IO.WKBReader.CoordinateSystem,System.Int32)">
             <summary>
@@ -23077,6 +23503,10 @@
             by setting the third bit of the <tt>wkbType</tt> word.
             EWKB format is upward-compatible with the original SFS WKB format.
             <para/>
+            SRID output is optimized, if specified.
+            The top-level geometry has the SRID included. Child geometries
+            have it included if their value differs from its parent.
+            <para/>
             This class supports reuse of a single instance to read multiple
             geometries. This class is not thread - safe; each thread should create its own
             instance.
@@ -23086,12 +23516,16 @@
             <summary>Converts a byte array to a hexadecimal string.</summary>
             <param name="bytes">A byte array</param>
         </member>
-        <member name="M:NetTopologySuite.IO.WKBWriter.WriteHeader(System.IO.BinaryWriter,NetTopologySuite.Geometries.Geometry)">
-             <summary>
-            
-             </summary>
-             <param name="writer"></param>
-             <param name="geom"></param>
+        <member name="M:NetTopologySuite.IO.WKBWriter.WriteHeader(System.IO.BinaryWriter,NetTopologySuite.Geometries.Geometry,System.Boolean)">
+            <summary>
+            Writes the WKB Header for the geometry
+            </summary>
+            <param name="writer">The writer</param>
+            <param name="geom">The geometry</param>
+            <param name="includeSRID">
+            A flag indicting if SRID value is of possible interest.
+            The value is <c>&amp;&amp;</c>-combineed with <c>HandleSRID</c>.
+            </param>
         </member>
         <member name="P:NetTopologySuite.IO.WKBWriter.EncodingType">
             <summary>
@@ -23106,6 +23540,16 @@
                 4 bytes for WKBType.
                 4 bytes for SRID value
             </summary>
+        </member>
+        <member name="M:NetTopologySuite.IO.WKBWriter.GetHeaderSize(System.Boolean)">
+            <summary>
+            Calculates the number of bytes required to store (E)WKB Header information.
+            </summary>
+            <param name="includeSRID">
+            A flag indicting if SRID value is of possible interest.
+            The value is <c>&amp;&amp;</c>-combineed with <c>HandleSRID</c>.
+            </param>
+            <returns>The size of the </returns>
         </member>
         <member name="M:NetTopologySuite.IO.WKBWriter.#ctor">
             <summary>
@@ -23158,17 +23602,28 @@
             <returns></returns>
         </member>
         <member name="M:NetTopologySuite.IO.WKBWriter.Write(NetTopologySuite.Geometries.Geometry,System.IO.BinaryWriter)">
-             <summary>
+            <summary>
             
-             </summary>
-             <param name="geometry"></param>
-             <param name="writer"></param>
+            </summary>
+            <param name="geometry"></param>
+            <param name="writer"></param>
+        </member>
+        <member name="M:NetTopologySuite.IO.WKBWriter.Write(NetTopologySuite.Geometries.Geometry,System.IO.BinaryWriter,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="geometry"></param>
+            <param name="writer"></param>
+            <param name="includeSRID">
+            A flag indicting if SRID value is of possible interest.
+            The value is <c>&amp;&amp;</c>-combineed with <c>HandleSRID</c>.
+            </param>
         </member>
         <member name="M:NetTopologySuite.IO.WKBWriter.WriteByteOrder(System.IO.BinaryWriter)">
             <summary>
-            Writes LittleIndian ByteOrder.
+            Writes the ByteOrder defined in <see cref="P:NetTopologySuite.IO.WKBWriter.EncodingType"/>.
             </summary>
-            <param name="writer"></param>
+            <param name="writer">The writer to use</param>
         </member>
         <member name="M:NetTopologySuite.IO.WKBWriter.Write(NetTopologySuite.Geometries.Coordinate,System.IO.BinaryWriter)">
             <summary>
@@ -23186,123 +23641,299 @@
             <param name="writer">The writer.</param>
         </member>
         <member name="M:NetTopologySuite.IO.WKBWriter.Write(NetTopologySuite.Geometries.Point,System.IO.BinaryWriter)">
-             <summary>
-            
-             </summary>
-             <param name="point"></param>
-             <param name="writer"></param>
+            <summary>
+            Write a point in its WKB format
+            </summary>
+            <param name="point">The point</param>
+            <param name="writer">The writer</param>
+        </member>
+        <member name="M:NetTopologySuite.IO.WKBWriter.Write(NetTopologySuite.Geometries.Point,System.IO.BinaryWriter,System.Boolean)">
+            <summary>
+            Write a point in its WKB format
+            </summary>
+            <param name="point">The point</param>
+            <param name="writer">The writer</param>
+            <param name="includeSRID">
+            A flag indicting if SRID value is of possible interest.
+            The value is <c>&amp;&amp;</c>-combineed with <c>HandleSRID</c>.
+            </param>
         </member>
         <member name="M:NetTopologySuite.IO.WKBWriter.Write(NetTopologySuite.Geometries.LineString,System.IO.BinaryWriter)">
-             <summary>
-            
-             </summary>
-             <param name="lineString"></param>
-             <param name="writer"></param>
+            <summary>
+            Write a LineString in its WKB format
+            </summary>
+            <param name="lineString">The LineString</param>
+            <param name="writer">The writer</param>
+        </member>
+        <member name="M:NetTopologySuite.IO.WKBWriter.Write(NetTopologySuite.Geometries.LineString,System.IO.BinaryWriter,System.Boolean)">
+            <summary>
+            Write a LineString in its WKB format
+            </summary>
+            <param name="lineString">The LineString</param>
+            <param name="writer">The writer</param>
+            <param name="includeSRID">
+            A flag indicting if SRID value is of possible interest.
+            The value is <c>&amp;&amp;</c>-combineed with <c>HandleSRID</c>.
+            </param>
         </member>
         <member name="M:NetTopologySuite.IO.WKBWriter.Write(NetTopologySuite.Geometries.LinearRing,System.IO.BinaryWriter)">
-             <summary>
-            
-             </summary>
-             <param name="ring"></param>
-             <param name="writer"></param>
+            <summary>
+            Write LinearRing information
+            </summary>
+            <param name="ring">The linear ring</param>
+            <param name="writer">The writer</param>
         </member>
         <member name="M:NetTopologySuite.IO.WKBWriter.Write(NetTopologySuite.Geometries.Polygon,System.IO.BinaryWriter)">
-             <summary>
-            
-             </summary>
-             <param name="polygon"></param>
-             <param name="writer"></param>
+            <summary>
+            Write a Polygon in its WKB format
+            </summary>
+            <param name="polygon">The Polygon</param>
+            <param name="writer">The writer</param>
+        </member>
+        <member name="M:NetTopologySuite.IO.WKBWriter.Write(NetTopologySuite.Geometries.Polygon,System.IO.BinaryWriter,System.Boolean)">
+            <summary>
+            Write a Polygon in its WKB format
+            </summary>
+            <param name="polygon">The Polygon</param>
+            <param name="writer">The writer</param>
+            <param name="includeSRID">
+            A flag indicting if SRID value is of possible interest.
+            The value is <c>&amp;&amp;</c>-combineed with <c>HandleSRID</c>.
+            </param>
         </member>
         <member name="M:NetTopologySuite.IO.WKBWriter.Write(NetTopologySuite.Geometries.MultiPoint,System.IO.BinaryWriter)">
-             <summary>
-            
-             </summary>
-             <param name="multiPoint"></param>
-             <param name="writer"></param>
+            <summary>
+            Write a MultiPoint in its WKB format
+            </summary>
+            <param name="multiPoint">The MultiPoint</param>
+            <param name="writer">The writer</param>
+        </member>
+        <member name="M:NetTopologySuite.IO.WKBWriter.Write(NetTopologySuite.Geometries.MultiPoint,System.IO.BinaryWriter,System.Boolean)">
+            <summary>
+            Write a MultiPoint in its WKB format
+            </summary>
+            <param name="multiPoint">The MultiPoint</param>
+            <param name="writer">The writer</param>
+            <param name="includeSRID">
+            A flag indicting if SRID value is of possible interest.
+            The value is <c>&amp;&amp;</c>-combineed with <c>HandleSRID</c>.
+            </param>
         </member>
         <member name="M:NetTopologySuite.IO.WKBWriter.Write(NetTopologySuite.Geometries.MultiLineString,System.IO.BinaryWriter)">
-             <summary>
-            
-             </summary>
-             <param name="multiLineString"></param>
-             <param name="writer"></param>
+            <summary>
+            Write a MultiLineString in its WKB format
+            </summary>
+            <param name="multiLineString">The MultiLineString</param>
+            <param name="writer">The writer</param>
+        </member>
+        <member name="M:NetTopologySuite.IO.WKBWriter.Write(NetTopologySuite.Geometries.MultiLineString,System.IO.BinaryWriter,System.Boolean)">
+            <summary>
+            Write a MultiLineString in its WKB format
+            </summary>
+            <param name="multiLineString">The MultiLineString</param>
+            <param name="writer">The writer</param>
+            <param name="includeSRID">
+            A flag indicting if SRID value is of possible interest.
+            The value is <c>&amp;&amp;</c>-combineed with <c>HandleSRID</c>.
+            </param>
         </member>
         <member name="M:NetTopologySuite.IO.WKBWriter.Write(NetTopologySuite.Geometries.MultiPolygon,System.IO.BinaryWriter)">
-             <summary>
-            
-             </summary>
-             <param name="multiPolygon"></param>
-             <param name="writer"></param>
+            <summary>
+            Write a MultiPolygon in its WKB format
+            </summary>
+            <param name="multiPolygon">The MultiPolygon</param>
+            <param name="writer">The writer</param>
+        </member>
+        <member name="M:NetTopologySuite.IO.WKBWriter.Write(NetTopologySuite.Geometries.MultiPolygon,System.IO.BinaryWriter,System.Boolean)">
+            <summary>
+            Write a MultiPolygon in its WKB format
+            </summary>
+            <param name="multiPolygon">The MultiPolygon</param>
+            <param name="writer">The writer</param>
+            <param name="includeSRID">
+            A flag indicting if SRID value is of possible interest.
+            The value is <c>&amp;&amp;</c>-combineed with <c>HandleSRID</c>.
+            </param>
         </member>
         <member name="M:NetTopologySuite.IO.WKBWriter.Write(NetTopologySuite.Geometries.GeometryCollection,System.IO.BinaryWriter)">
-             <summary>
-            
-             </summary>
-             <param name="geomCollection"></param>
-             <param name="writer"></param>
+            <summary>
+            Write a GeometryCollection in its WKB format
+            </summary>
+            <param name="geomCollection">The GeometryCollection</param>
+            <param name="writer">The writer</param>
+        </member>
+        <member name="M:NetTopologySuite.IO.WKBWriter.Write(NetTopologySuite.Geometries.GeometryCollection,System.IO.BinaryWriter,System.Boolean)">
+            <summary>
+            Write a GeometryCollection in its WKB format
+            </summary>
+            <param name="geomCollection">The GeometryCollection</param>
+            <param name="writer">The writer</param>
+            <param name="includeSRID">
+            A flag indicting if SRID value is of possible interest.
+            The value is <c>&amp;&amp;</c>-combineed with <c>HandleSRID</c>.
+            </param>
         </member>
         <member name="M:NetTopologySuite.IO.WKBWriter.GetBytes(NetTopologySuite.Geometries.Geometry)">
             <summary>
-            Sets corrent length for Byte Stream.
+            Gets a buffer for the <see cref="T:System.IO.MemoryStream"/> to write <paramref name="geometry"/> to.
             </summary>
-            <param name="geometry"></param>
-            <returns></returns>
+            <param name="geometry">The geometry to write</param>
+            <returns>A buffer</returns>
+        </member>
+        <member name="M:NetTopologySuite.IO.WKBWriter.GetBuffer(NetTopologySuite.Geometries.Geometry,System.Boolean)">
+            <summary>
+            Gets a buffer for the <see cref="T:System.IO.MemoryStream"/> to write <paramref name="geometry"/> to.
+            </summary>
+            <param name="geometry">The geometry to write</param>
+            <param name="includeSRID">
+            A flag indicting if SRID value is of possible interest.
+            The value is <c>&amp;&amp;</c>-combineed with <c>HandleSRID</c>.
+            </param>
+            <returns>A buffer</returns>
         </member>
         <member name="M:NetTopologySuite.IO.WKBWriter.SetByteStream(NetTopologySuite.Geometries.Geometry)">
             <summary>
-            Sets required length for Byte Stream.
+            Computes the length of a buffer to write <paramref name="geometry"/> in its WKB format.
             </summary>
-            <param name="geometry"></param>
-            <returns></returns>
+            <param name="geometry">The geometry</param>
+            <returns>The number of bytes required to store <paramref name="geometry"/> in its WKB format.</returns>
+        </member>
+        <member name="M:NetTopologySuite.IO.WKBWriter.GetRequiredBufferSize(NetTopologySuite.Geometries.Geometry,System.Boolean)">
+            <summary>
+            Computes the length of a buffer to write <paramref name="geometry"/> in its WKB format.
+            </summary>
+            <param name="geometry">The geometry</param>
+            <param name="includeSRID">
+            A flag indicting if SRID value is of possible interest.
+            The value is <c>&amp;&amp;</c>-combineed with <c>HandleSRID</c>.
+            </param>
+            <returns>The number of bytes required to store <paramref name="geometry"/> in its WKB format.</returns>
         </member>
         <member name="M:NetTopologySuite.IO.WKBWriter.SetByteStream(NetTopologySuite.Geometries.GeometryCollection)">
-             <summary>
-            
-             </summary>
-             <param name="geometry"></param>
-             <returns></returns>
+            <summary>
+            Computes the length of a buffer to write the <see cref="T:NetTopologySuite.Geometries.GeometryCollection"/> <paramref name="geometry"/> in its WKB format.
+            </summary>
+            <param name="geometry">The geometry</param>
+            <returns>The number of bytes required to store <paramref name="geometry"/> in its WKB format.</returns>
+        </member>
+        <member name="M:NetTopologySuite.IO.WKBWriter.GetRequiredBufferSize(NetTopologySuite.Geometries.GeometryCollection,System.Boolean)">
+            <summary>
+            Computes the length of a buffer to write the <see cref="T:NetTopologySuite.Geometries.GeometryCollection"/> <paramref name="geometry"/> in its WKB format.
+            </summary>
+            <param name="geometry">The geometry</param>
+            <param name="includeSRID">
+            A flag indicting if SRID value is of possible interest.
+            The value is <c>&amp;&amp;</c>-combineed with <c>HandleSRID</c>.
+            </param>
+            <returns>The number of bytes required to store <paramref name="geometry"/> in its WKB format.</returns>
         </member>
         <member name="M:NetTopologySuite.IO.WKBWriter.SetByteStream(NetTopologySuite.Geometries.MultiPolygon)">
-             <summary>
-            
-             </summary>
-             <param name="geometry"></param>
-             <returns></returns>
+            <summary>
+            Computes the length of a buffer to write the <see cref="T:NetTopologySuite.Geometries.MultiPolygon"/> <paramref name="geometry"/> in its WKB format.
+            </summary>
+            <param name="geometry">The geometry</param>
+            <returns>The number of bytes required to store <paramref name="geometry"/> in its WKB format.</returns>
+        </member>
+        <member name="M:NetTopologySuite.IO.WKBWriter.GetRequiredBufferSize(NetTopologySuite.Geometries.MultiPolygon,System.Boolean)">
+            <summary>
+            Computes the length of a buffer to write the <see cref="T:NetTopologySuite.Geometries.MultiPolygon"/> <paramref name="geometry"/> in its WKB format.
+            </summary>
+            <param name="geometry">The geometry</param>
+            <param name="includeSRID">
+            A flag indicting if SRID value is of possible interest.
+            The value is <c>&amp;&amp;</c>-combineed with <c>HandleSRID</c>.
+            </param>
+            <returns>The number of bytes required to store <paramref name="geometry"/> in its WKB format.</returns>
         </member>
         <member name="M:NetTopologySuite.IO.WKBWriter.SetByteStream(NetTopologySuite.Geometries.MultiLineString)">
-             <summary>
-            
-             </summary>
-             <param name="geometry"></param>
-             <returns></returns>
+            <summary>
+            Computes the length of a buffer to write the <see cref="T:NetTopologySuite.Geometries.MultiLineString"/> <paramref name="geometry"/> in its WKB format.
+            </summary>
+            <param name="geometry">The geometry</param>
+            <returns>The number of bytes required to store <paramref name="geometry"/> in its WKB format.</returns>
+        </member>
+        <member name="M:NetTopologySuite.IO.WKBWriter.GetRequiredBufferSize(NetTopologySuite.Geometries.MultiLineString,System.Boolean)">
+            <summary>
+            Computes the length of a buffer to write the <see cref="T:NetTopologySuite.Geometries.MultiLineString"/> <paramref name="geometry"/> in its WKB format.
+            </summary>
+            <param name="geometry">The geometry</param>
+            <param name="includeSRID">
+            A flag indicting if SRID value is of possible interest.
+            The value is <c>&amp;&amp;</c>-combineed with <c>HandleSRID</c>.
+            </param>
+            <returns>The number of bytes required to store <paramref name="geometry"/> in its WKB format.</returns>
         </member>
         <member name="M:NetTopologySuite.IO.WKBWriter.SetByteStream(NetTopologySuite.Geometries.MultiPoint)">
-             <summary>
-            
-             </summary>
-             <param name="geometry"></param>
-             <returns></returns>
+            <summary>
+            Computes the length of a buffer to write the <see cref="T:NetTopologySuite.Geometries.MultiPoint"/> <paramref name="geometry"/> in its WKB format.
+            </summary>
+            <param name="geometry">The geometry</param>
+            <returns>The number of bytes required to store <paramref name="geometry"/> in its WKB format.</returns>
+        </member>
+        <member name="M:NetTopologySuite.IO.WKBWriter.GetRequiredBufferSize(NetTopologySuite.Geometries.MultiPoint,System.Boolean)">
+            <summary>
+            Computes the length of a buffer to write the <see cref="T:NetTopologySuite.Geometries.MultiPoint"/> <paramref name="geometry"/> in its WKB format.
+            </summary>
+            <param name="geometry">The geometry</param>
+            <param name="includeSRID">
+            A flag indicting if SRID value is of possible interest.
+            The value is <c>&amp;&amp;</c>-combineed with <c>HandleSRID</c>.
+            </param>
+            <returns>The number of bytes required to store <paramref name="geometry"/> in its WKB format.</returns>
         </member>
         <member name="M:NetTopologySuite.IO.WKBWriter.SetByteStream(NetTopologySuite.Geometries.Polygon)">
-             <summary>
-            
-             </summary>
-             <param name="geometry"></param>
-             <returns></returns>
+            <summary>
+            Computes the length of a buffer to write the <see cref="T:NetTopologySuite.Geometries.Polygon"/> <paramref name="geometry"/> in its WKB format.
+            </summary>
+            <param name="geometry">The geometry</param>
+            <returns>The number of bytes required to store <paramref name="geometry"/> in its WKB format.</returns>
+        </member>
+        <member name="M:NetTopologySuite.IO.WKBWriter.GetRequiredBufferSize(NetTopologySuite.Geometries.Polygon,System.Boolean)">
+            <summary>
+            Computes the length of a buffer to write the <see cref="T:NetTopologySuite.Geometries.Polygon"/> <paramref name="geometry"/> in its WKB format.
+            </summary>
+            <param name="geometry">The geometry</param>
+            <param name="includeSRID">
+            A flag indicting if SRID value is of possible interest.
+            The value is <c>&amp;&amp;</c>-combineed with <c>HandleSRID</c>.
+            </param>
+            <returns>The number of bytes required to store <paramref name="geometry"/> in its WKB format.</returns>
         </member>
         <member name="M:NetTopologySuite.IO.WKBWriter.SetByteStream(NetTopologySuite.Geometries.LineString)">
-             <summary>
-            
-             </summary>
-             <param name="geometry"></param>
-             <returns></returns>
+            <summary>
+            Computes the length of a buffer to write the <see cref="T:NetTopologySuite.Geometries.LineString"/> <paramref name="geometry"/> in its WKB format.
+            </summary>
+            <param name="geometry">The geometry</param>
+            <returns>The number of bytes required to store <paramref name="geometry"/> in its WKB format.</returns>
+        </member>
+        <member name="M:NetTopologySuite.IO.WKBWriter.GetRequiredBufferSize(NetTopologySuite.Geometries.LineString,System.Boolean)">
+            <summary>
+            Computes the length of a buffer to write the <see cref="T:NetTopologySuite.Geometries.LineString"/> <paramref name="geometry"/> in its WKB format.
+            </summary>
+            <param name="geometry">The geometry</param>
+            <param name="includeSRID">
+            A flag indicting if SRID value is of possible interest.
+            The value is <c>&amp;&amp;</c>-combineed with <c>HandleSRID</c>.
+            </param>
+            <returns>The number of bytes required to store <paramref name="geometry"/> in its WKB format.</returns>
         </member>
         <member name="M:NetTopologySuite.IO.WKBWriter.SetByteStream(NetTopologySuite.Geometries.Point)">
-             <summary>
-            
-             </summary>
-             <param name="geometry"></param>
-             <returns></returns>
+            <summary>
+            Computes the length of a buffer to write the <see cref="T:NetTopologySuite.Geometries.Point"/> <paramref name="geometry"/> in its WKB format.
+            </summary>
+            <param name="geometry">The geometry</param>
+            <returns>The number of bytes required to store <paramref name="geometry"/> in its WKB format.</returns>
+        </member>
+        <member name="M:NetTopologySuite.IO.WKBWriter.GetRequiredBufferSize(NetTopologySuite.Geometries.Point,System.Boolean)">
+            <summary>
+            Computes the length of a buffer to write the <see cref="T:NetTopologySuite.Geometries.Point"/> <paramref name="geometry"/> in its WKB format.
+            </summary>
+            <param name="geometry">The geometry</param>
+            <param name="includeSRID">
+            A flag indicting if SRID value is of possible interest.
+            The value is <c>&amp;&amp;</c>-combineed with <c>HandleSRID</c>.
+            </param>
+            <returns>The number of bytes required to store <paramref name="geometry"/> in its WKB format.</returns>
         </member>
         <member name="F:NetTopologySuite.IO.WKBWriter._strict">
             <summary>
@@ -29437,6 +30068,22 @@
             <param name="bnRule">The Boundary Node Rule to use.</param>
             <returns>The computed boundary.</returns>
         </member>
+        <member name="M:NetTopologySuite.Operation.BoundaryOp.HasBoundary(NetTopologySuite.Geometries.Geometry,NetTopologySuite.Algorithm.IBoundaryNodeRule)">
+            <summary>
+            Tests if a geometry has a boundary (it is non-empty).<br/>
+            The semantics are:
+            <list type="bullet">
+            <item><description>Empty geometries do not have boundaries.</description></item>
+            <item><description>Points do not have boundaries.</description></item>
+            <item><description>For linear geometries the existence of the boundary 
+            is determined by the <see cref="T:NetTopologySuite.Algorithm.IBoundaryNodeRule"/>.</description></item>
+            <item><description>Non-empty polygons always have a boundary.</description></item>
+            </list>
+            </summary>
+            <param name="geom">The geometry providing the boundary</param>
+            <param name="boundaryNodeRule">The Boundary Node Rule to use</param>
+            <returns><c>true</c> if the boundary exists</returns>
+        </member>
         <member name="M:NetTopologySuite.Operation.BoundaryOp.#ctor(NetTopologySuite.Geometries.Geometry)">
             <summary>
             Initializes a new instance of the <see cref="T:NetTopologySuite.Operation.BoundaryOp"/> class for the given geometry.
@@ -33437,6 +34084,11 @@
             no other coincident edge, or if all coincident edges have the same direction).
             This ensures that the overlay output line direction will be as consistent
             as possible with input lines.
+            <para/>
+            The merger also preserves the order of the edges in the input.
+            This means that for polygon-line overlay
+            the result lines will be in the same order as in the input
+            (possibly with multiple result lines for a single input line).
             </summary>
             <author>Martin Davis</author>
         </member>
@@ -33815,6 +34467,10 @@
             by the start edge direction. This implies
             that if all edges are reversed, the created line
             will be reversed to match.
+            This ensures the orientation of linework is faithful to the input
+            in the case of polygon-line overlay.
+            However, this does not provide a consistent orientation 
+            in the case of line-line intersection(where A and B might have different orientations).
             (Other more complex strategies would be possible.
             E.g. using the direction of the majority of segments,
             or preferring the direction of the A edges.)
@@ -35025,10 +35681,25 @@
         </member>
         <member name="M:NetTopologySuite.Operation.OverlayNG.OverlayNGRobust.Union(NetTopologySuite.Geometries.Geometry)">
             <summary>
-            Computes unary union using robust computation.
+            Computes the unary union of a geometry using robust computation.
             </summary>
             <param name="geom">The geometry to union</param>
             <returns>The union result</returns>
+        </member>
+        <member name="M:NetTopologySuite.Operation.OverlayNG.OverlayNGRobust.Union(System.Collections.Generic.IEnumerable{NetTopologySuite.Geometries.Geometry})">
+            <summary>
+            Computes the unary union of a collection of geometries using robust computation.
+            </summary>
+            <param name="geoms">An enumeration of geometries to union</param>
+            <returns>The union result</returns>
+        </member>
+        <member name="M:NetTopologySuite.Operation.OverlayNG.OverlayNGRobust.Union(System.Collections.Generic.IEnumerable{NetTopologySuite.Geometries.Geometry},NetTopologySuite.Geometries.GeometryFactory)">
+            <summary>
+            Computes the unary union of a collection of geometries using robust computation.
+            </summary>
+            <param name="geoms">An enumeration of geometries to union</param>
+            <param name="geomFact">The geometry factory to use</param>
+            <returns>The union of the geometries</returns>
         </member>
         <member name="M:NetTopologySuite.Operation.OverlayNG.OverlayNGRobust.Overlay(NetTopologySuite.Geometries.Geometry,NetTopologySuite.Geometries.Geometry,NetTopologySuite.Operation.Overlay.SpatialFunction)">
             <summary>
@@ -35651,22 +36322,43 @@
         <member name="T:NetTopologySuite.Operation.OverlayNG.UnaryUnionNG">
             <summary>
             Unions a collection of geometries in an
-            efficient way, using {@link OverlayNG}
+            efficient way, using <see cref="T:NetTopologySuite.Operation.OverlayNG.OverlayNG"/>
             to ensure robust computation.
+            <para/>
+            This class is most useful for performing UnaryUnion using
+            a fixed-precision model.<br/>
+            For unary union using floating precision,
+            <see cref="M:NetTopologySuite.Operation.OverlayNG.OverlayNGRobust.Union(NetTopologySuite.Geometries.Geometry)"/> should be used.
             </summary>
             <author>Martin Davis</author>
         </member>
         <member name="M:NetTopologySuite.Operation.OverlayNG.UnaryUnionNG.Union(NetTopologySuite.Geometries.Geometry,NetTopologySuite.Geometries.PrecisionModel)">
             <summary>
-            Unions a collection of geometries
+            Unions a geometry (which is often a collection)
             using a given precision model.
-            <para/>
-            This class is most useful for performing UnaryUnion using
-            a fixed-precision model.
-            For unary union using floating precision,
-            <see cref="M:NetTopologySuite.Operation.OverlayNG.OverlayNGRobust.Union(NetTopologySuite.Geometries.Geometry)"/> should be used.
             </summary>
             <param name="geom">The geometry to union</param>
+            <param name="pm">The precision model to use</param>
+            <returns>The union of the geometry</returns>
+            <seealso cref="T:NetTopologySuite.Operation.OverlayNG.OverlayNGRobust"/>
+        </member>
+        <member name="M:NetTopologySuite.Operation.OverlayNG.UnaryUnionNG.Union(System.Collections.Generic.IEnumerable{NetTopologySuite.Geometries.Geometry},NetTopologySuite.Geometries.PrecisionModel)">
+            <summary>
+            Unions a geometry (which is often a collection)
+            using a given precision model.
+            </summary>
+            <param name="geoms">The geometries to union</param>
+            <param name="pm">The precision model to use</param>
+            <returns>The union of the geometries</returns>
+            <seealso cref="T:NetTopologySuite.Operation.OverlayNG.OverlayNGRobust"/>
+        </member>
+        <member name="M:NetTopologySuite.Operation.OverlayNG.UnaryUnionNG.Union(System.Collections.Generic.IEnumerable{NetTopologySuite.Geometries.Geometry},NetTopologySuite.Geometries.GeometryFactory,NetTopologySuite.Geometries.PrecisionModel)">
+            <summary>
+            Unions a geometry (which is often a collection)
+            using a given precision model.
+            </summary>
+            <param name="geoms">The geometries to union</param>
+            <param name="geomFact">The geometry factory to use</param>
             <param name="pm">The precision model to use</param>
             <returns>The union of the geometries</returns>
             <seealso cref="T:NetTopologySuite.Operation.OverlayNG.OverlayNGRobust"/>
@@ -36683,12 +37375,26 @@
             </summary>
             <param name="argIndex"></param>
         </member>
-        <member name="M:NetTopologySuite.Operation.Relate.RelateComputer.ComputeDisjointIM(NetTopologySuite.Geometries.IntersectionMatrix)">
+        <member name="M:NetTopologySuite.Operation.Relate.RelateComputer.ComputeDisjointIM(NetTopologySuite.Geometries.IntersectionMatrix,NetTopologySuite.Algorithm.IBoundaryNodeRule)">
             <summary>
             If the Geometries are disjoint, we need to enter their dimension and
             boundary dimension in the Ext rows in the IM
             </summary>
-            <param name="im"></param>
+            <param name="im">An intersection matrix</param>
+            <param name="boundaryNodeRule">The Boundary Node Rule to use</param>
+        </member>
+        <member name="M:NetTopologySuite.Operation.Relate.RelateComputer.GetBoundaryDim(NetTopologySuite.Geometries.Geometry,NetTopologySuite.Algorithm.IBoundaryNodeRule)">
+            <summary>
+            Compute the IM entry for the intersection of the boundary
+            of a geometry with the Exterior.
+            This is the nominal dimension of the boundary
+            unless the boundary is empty, in which case it is <see cref="F:NetTopologySuite.Geometries.Dimension.False"/>.
+            For linear geometries the Boundary Node Rule determines
+            whether the boundary is empty.
+            </summary>
+            <param name="geom">The geometry providing the boundary</param>
+            <param name="boundaryNodeRule">The Boundary Node Rule to use</param>
+            <returns>The IM dimension entry</returns>
         </member>
         <member name="M:NetTopologySuite.Operation.Relate.RelateComputer.LabelNodeEdges">
              <summary>
@@ -37568,7 +38274,7 @@
         </member>
         <member name="T:NetTopologySuite.Operation.Valid.IsValidOp">
             <summary>
-            Implements the algorithsm required to compute the <see cref="P:NetTopologySuite.Geometries.Geometry.IsValid" />
+            Implements the algorithms required to compute the <see cref="P:NetTopologySuite.Geometries.Geometry.IsValid" />
             method for <see cref="T:NetTopologySuite.Geometries.Geometry" />s.
             See the documentation for the various geometry types for a specification of validity.
             </summary>
@@ -37591,9 +38297,6 @@
             <param name="searchRing"></param>
             <param name="graph"></param>
             <returns>The point found, or <c>null</c> if none found.</returns>
-        </member>
-        <member name="F:NetTopologySuite.Operation.Valid.IsValidOp._isSelfTouchingRingFormingHoleValid">
-            If the following condition is TRUE JTS will validate inverted shells and exverted holes (the ESRI SDE model).
         </member>
         <member name="M:NetTopologySuite.Operation.Valid.IsValidOp.#ctor(NetTopologySuite.Geometries.Geometry)">
              <summary>
@@ -37691,41 +38394,11 @@
              </summary>
              <param name="gc"></param>
         </member>
-        <member name="M:NetTopologySuite.Operation.Valid.IsValidOp.CheckInvalidCoordinates(NetTopologySuite.Geometries.Coordinate[])">
+        <member name="M:NetTopologySuite.Operation.Valid.IsValidOp.CheckInvalidCoordinates(NetTopologySuite.Geometries.CoordinateSequence)">
              <summary>
             
              </summary>
              <param name="coords"></param>
-        </member>
-        <member name="M:NetTopologySuite.Operation.Valid.IsValidOp.CheckInvalidCoordinates(NetTopologySuite.Geometries.Polygon)">
-             <summary>
-            
-             </summary>
-             <param name="poly"></param>
-        </member>
-        <member name="M:NetTopologySuite.Operation.Valid.IsValidOp.CheckClosedRings(NetTopologySuite.Geometries.Polygon)">
-             <summary>
-            
-             </summary>
-             <param name="poly"></param>
-        </member>
-        <member name="M:NetTopologySuite.Operation.Valid.IsValidOp.CheckClosedRing(NetTopologySuite.Geometries.LinearRing)">
-             <summary>
-            
-             </summary>
-             <param name="ring"></param>
-        </member>
-        <member name="M:NetTopologySuite.Operation.Valid.IsValidOp.CheckTooFewPoints(NetTopologySuite.GeometriesGraph.GeometryGraph)">
-             <summary>
-            
-             </summary>
-             <param name="graph"></param>
-        </member>
-        <member name="M:NetTopologySuite.Operation.Valid.IsValidOp.CheckConsistentArea(NetTopologySuite.GeometriesGraph.GeometryGraph)">
-             <summary>
-            
-             </summary>
-             <param name="graph"></param>
         </member>
         <member name="M:NetTopologySuite.Operation.Valid.IsValidOp.CheckNoSelfIntersectingRings(NetTopologySuite.GeometriesGraph.GeometryGraph)">
             <summary>
@@ -37733,7 +38406,6 @@
             This is required by OGC topology rules (but not by other models
             such as ESRI SDE, which allow inverted shells and exverted holes).
             </summary>
-            <param name="graph"></param>
         </member>
         <member name="M:NetTopologySuite.Operation.Valid.IsValidOp.CheckNoSelfIntersectingRing(NetTopologySuite.GeometriesGraph.EdgeIntersectionList)">
             <summary>
@@ -37806,6 +38478,44 @@
             
              </summary>
              <param name="graph"></param>
+        </member>
+        <member name="P:NetTopologySuite.Operation.Valid.IsValidOp.InvalidCoordinateFilter.SequenceIndex">
+            <summary>
+            Gets or sets the sequence index that is being investigated
+            </summary>
+        </member>
+        <member name="P:NetTopologySuite.Operation.Valid.IsValidOp.InvalidCoordinateFilter.Offset">
+            <summary>
+            Gets or sets the offset of the coordinate
+            </summary>
+        </member>
+        <member name="P:NetTopologySuite.Operation.Valid.IsValidOp.InvalidCoordinateFilter.Done">
+            <inheritdoc cref="P:NetTopologySuite.Geometries.IEntireCoordinateSequenceFilter.Done"/>
+        </member>
+        <member name="P:NetTopologySuite.Operation.Valid.IsValidOp.InvalidCoordinateFilter.GeometryChanged">
+            <inheritdoc cref="P:NetTopologySuite.Geometries.IEntireCoordinateSequenceFilter.GeometryChanged"/>
+            <returns>Always <c>false</c></returns>
+        </member>
+        <member name="P:NetTopologySuite.Operation.Valid.IsValidOp.InvalidCoordinateFilter.InvalidCoordinateIndex">
+            <summary>
+            Gets a value indicating the index of the coordinate that is invalid
+            </summary>
+        </member>
+        <member name="P:NetTopologySuite.Operation.Valid.IsValidOp.InvalidCoordinateFilter.InvalidCoordinateIndexInSequence">
+            <summary>
+            Gets a value indicating the index of the coordinate that is invalid
+            </summary>
+        </member>
+        <member name="P:NetTopologySuite.Operation.Valid.IsValidOp.InvalidCoordinateFilter.InvalidCoordinate">
+            <summary>
+            Gets a value indicating the invalid coordinate value
+            </summary>
+        </member>
+        <member name="P:NetTopologySuite.Operation.Valid.IsValidOp.InvalidCoordinateFilter.HasInvalidCoordinate">
+            <summary>
+            Gets a value indicating if the geometry that this filter was applied to
+            has an invalid coordinate.
+            </summary>
         </member>
         <member name="T:NetTopologySuite.Operation.Valid.RepeatedPointTester">
             <summary>
@@ -39719,7 +40429,9 @@
             topology.
             Note this only works for area geometries, since buffer always returns
             areas.  This also may return empty geometries, if the input
-            has no actual area.
+            has no actual area.<br/>
+            If the input is empty or is not polygonal,
+            this ensures that POLYGON EMPTY is returned.
             </summary>
             <param name="rawAreaGeom">An area point possibly containing self-intersections.</param>
             <returns>A valid area point.</returns>

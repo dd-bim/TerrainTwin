@@ -14,6 +14,7 @@ import com.Microservices.IFCTerrainAPI.domain.model.UploadInfos;
 import com.Microservices.IFCTerrainAPI.service.ExecService;
 import com.Microservices.IFCTerrainAPI.service.ProcessFiles;
 import com.Microservices.IFCTerrainAPI.service.UploadService;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +72,7 @@ public class InterfaceController {
       InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException,
       IOException, InterruptedException {
     String results = "";
-    ObjectMapper mapper = new ObjectMapper();
+    ObjectMapper mapper = new ObjectMapper().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
     InputConfigs config = mapper.readValue(configs, InputConfigs.class);
 
     File file = minio.multipartToFile(multipartFile);

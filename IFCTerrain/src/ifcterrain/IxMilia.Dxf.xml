@@ -92,6 +92,16 @@
             DxfDimensionBase class
             </summary>
         </member>
+        <member name="T:IxMilia.Dxf.Entities.DxfAlignedDimension">
+            <summary>
+            DxfAlignedDimension class
+            </summary>
+        </member>
+        <member name="T:IxMilia.Dxf.Entities.DxfRotatedDimension">
+            <summary>
+            DxfRotatedDimension class
+            </summary>
+        </member>
         <member name="T:IxMilia.Dxf.Entities.DxfPolylineType">
             <summary>
             Values specific to the CLO software.
@@ -235,6 +245,11 @@
             <exception cref="T:System.InvalidOperationException"/>
             <param name="vertices">The vertices to add.</param>
         </member>
+        <member name="M:IxMilia.Dxf.Entities.DxfLwPolyline.AsSimpleEntities">
+            <summary>
+            Converts DxfLwPolyline into a collection of DxfArc and DxfLine entities
+            </summary>
+        </member>
         <member name="T:IxMilia.Dxf.Entities.DxfMLine">
             <summary>
             DxfMLine class
@@ -274,6 +289,11 @@
             <exception cref="T:System.InvalidOperationException"/>
             <param name="vertices">The vertices to add.</param>
             <param name="seqend">The end sequence entity.</param>
+        </member>
+        <member name="M:IxMilia.Dxf.Entities.DxfPolyline.AsSimpleEntities">
+            <summary>
+            Converts DxfPolyline into a collection of DxfArc and DxfLine entities
+            </summary>
         </member>
         <member name="P:IxMilia.Dxf.Entities.DxfPolyline.CLO_PolylineType">
             <summary>
@@ -322,16 +342,6 @@
             Dxf3DSolid class
             </summary>
         </member>
-        <member name="T:IxMilia.Dxf.Entities.DxfAlignedDimension">
-            <summary>
-            DxfAlignedDimension class
-            </summary>
-        </member>
-        <member name="T:IxMilia.Dxf.Entities.DxfAngularThreePointDimension">
-            <summary>
-            DxfAngularThreePointDimension class
-            </summary>
-        </member>
         <member name="T:IxMilia.Dxf.Entities.DxfArcAlignedText">
             <summary>
             DxfArcAlignedText class
@@ -347,9 +357,9 @@
             DxfCircle class
             </summary>
         </member>
-        <member name="T:IxMilia.Dxf.Entities.DxfDgnUnderlay">
+        <member name="T:IxMilia.Dxf.Entities.DxfRadialDimension">
             <summary>
-            DxfDgnUnderlay class
+            DxfRadialDimension class
             </summary>
         </member>
         <member name="T:IxMilia.Dxf.Entities.DxfDiameterDimension">
@@ -357,9 +367,14 @@
             DxfDiameterDimension class
             </summary>
         </member>
-        <member name="T:IxMilia.Dxf.Entities.DxfDwfUnderlay">
+        <member name="T:IxMilia.Dxf.Entities.DxfAngularThreePointDimension">
             <summary>
-            DxfDwfUnderlay class
+            DxfAngularThreePointDimension class
+            </summary>
+        </member>
+        <member name="T:IxMilia.Dxf.Entities.DxfOrdinateDimension">
+            <summary>
+            DxfOrdinateDimension class
             </summary>
         </member>
         <member name="T:IxMilia.Dxf.Entities.DxfEllipse">
@@ -392,21 +407,6 @@
             DxfModelPoint class
             </summary>
         </member>
-        <member name="T:IxMilia.Dxf.Entities.DxfOrdinateDimension">
-            <summary>
-            DxfOrdinateDimension class
-            </summary>
-        </member>
-        <member name="T:IxMilia.Dxf.Entities.DxfPdfUnderlay">
-            <summary>
-            DxfPdfUnderlay class
-            </summary>
-        </member>
-        <member name="T:IxMilia.Dxf.Entities.DxfRadialDimension">
-            <summary>
-            DxfRadialDimension class
-            </summary>
-        </member>
         <member name="T:IxMilia.Dxf.Entities.DxfRay">
             <summary>
             DxfRay class
@@ -415,11 +415,6 @@
         <member name="T:IxMilia.Dxf.Entities.DxfRegion">
             <summary>
             DxfRegion class
-            </summary>
-        </member>
-        <member name="T:IxMilia.Dxf.Entities.DxfRotatedDimension">
-            <summary>
-            DxfRotatedDimension class
             </summary>
         </member>
         <member name="T:IxMilia.Dxf.Entities.DxfRText">
@@ -455,6 +450,21 @@
         <member name="T:IxMilia.Dxf.Entities.DxfTrace">
             <summary>
             DxfTrace class
+            </summary>
+        </member>
+        <member name="T:IxMilia.Dxf.Entities.DxfDgnUnderlay">
+            <summary>
+            DxfDgnUnderlay class
+            </summary>
+        </member>
+        <member name="T:IxMilia.Dxf.Entities.DxfDwfUnderlay">
+            <summary>
+            DxfDwfUnderlay class
+            </summary>
+        </member>
+        <member name="T:IxMilia.Dxf.Entities.DxfPdfUnderlay">
+            <summary>
+            DxfPdfUnderlay class
             </summary>
         </member>
         <member name="T:IxMilia.Dxf.Entities.DxfXLine">
@@ -557,6 +567,11 @@
             DxfSpatialFilter class
             </summary>
         </member>
+        <member name="T:IxMilia.Dxf.Objects.DxfSpatialIndex">
+            <summary>
+            DxfSpatialIndex class
+            </summary>
+        </member>
         <member name="T:IxMilia.Dxf.Objects.DxfSunStudy">
             <summary>
             DxfSunStudy class
@@ -580,6 +595,16 @@
         <member name="T:IxMilia.Dxf.Objects.DxfXRecordObject">
             <summary>
             DxfXRecordObject class
+            </summary>
+        </member>
+        <member name="T:IxMilia.Dxf.Objects.DxfPlaceHolder">
+            <summary>
+            DxfPlaceHolder class
+            </summary>
+        </member>
+        <member name="T:IxMilia.Dxf.Objects.DxfNavisWorksModelDefinition">
+            <summary>
+            DxfNavisWorksModelDefinition class
             </summary>
         </member>
         <member name="T:IxMilia.Dxf.Objects.DxfDictionaryVariable">
@@ -642,24 +667,14 @@
             DxfMLeaderStyle class
             </summary>
         </member>
-        <member name="T:IxMilia.Dxf.Objects.DxfNavisWorksModelDefinition">
-            <summary>
-            DxfNavisWorksModelDefinition class
-            </summary>
-        </member>
         <member name="T:IxMilia.Dxf.Objects.DxfObjectPointer">
             <summary>
             DxfObjectPointer class
             </summary>
         </member>
-        <member name="T:IxMilia.Dxf.Objects.DxfPlaceHolder">
+        <member name="T:IxMilia.Dxf.Objects.DxfRenderEnvironment">
             <summary>
-            DxfPlaceHolder class
-            </summary>
-        </member>
-        <member name="T:IxMilia.Dxf.Objects.DxfRapidRenderSettings">
-            <summary>
-            DxfRapidRenderSettings class
+            DxfRenderEnvironment class
             </summary>
         </member>
         <member name="T:IxMilia.Dxf.Objects.DxfRapidRTRenderEnvironment">
@@ -672,19 +687,14 @@
             Rotation angle in degrees.
             </summary>
         </member>
-        <member name="T:IxMilia.Dxf.Objects.DxfRenderEnvironment">
+        <member name="T:IxMilia.Dxf.Objects.DxfRapidRenderSettings">
             <summary>
-            DxfRenderEnvironment class
+            DxfRapidRenderSettings class
             </summary>
         </member>
         <member name="T:IxMilia.Dxf.Objects.DxfSectionManager">
             <summary>
             DxfSectionManager class
-            </summary>
-        </member>
-        <member name="T:IxMilia.Dxf.Objects.DxfSpatialIndex">
-            <summary>
-            DxfSpatialIndex class
             </summary>
         </member>
         <member name="T:IxMilia.Dxf.Objects.DxfUnderlayDefinition">
@@ -2202,17 +2212,57 @@
             Close (closes the surface or solid between the first and the last cross sections).  Minimum AutoCAD version: R2007.
             </summary>
         </member>
-        <member name="F:IxMilia.Dxf.DxfUnitZeroSuppression.SuppressLeadingZerosInDecimalDimensions">
+        <member name="F:IxMilia.Dxf.DxfUnitZeroSuppression.SuppressLeadingZeros">
             <summary>
             Added in R2017.
             </summary>
         </member>
-        <member name="F:IxMilia.Dxf.DxfUnitZeroSuppression.SuppressTrailingZerosInDecimalDimensions">
+        <member name="F:IxMilia.Dxf.DxfUnitZeroSuppression.SuppressTrailingZeros">
             <summary>
             Added in R2017.
             </summary>
         </member>
-        <member name="F:IxMilia.Dxf.DxfUnitZeroSuppression.SuppressBothLeadingAndTrailingZerosInDecimalDimensions">
+        <member name="F:IxMilia.Dxf.DxfUnitZeroSuppression.SuppressLeadingAndTrailingZeros">
+            <summary>
+            Added in R2017.
+            </summary>
+        </member>
+        <member name="F:IxMilia.Dxf.DxfToleranceZeroSuppression.SuppressLeadingZeros">
+            <summary>
+            Added in R2017.
+            </summary>
+        </member>
+        <member name="F:IxMilia.Dxf.DxfToleranceZeroSuppression.SuppressTrailingZeros">
+            <summary>
+            Added in R2017.
+            </summary>
+        </member>
+        <member name="F:IxMilia.Dxf.DxfToleranceZeroSuppression.SuppressLeadingAndTrailingZeros">
+            <summary>
+            Added in R2017.
+            </summary>
+        </member>
+        <member name="F:IxMilia.Dxf.DxfAlternateToleranceZeroSuppression.SuppressLeadingZeros">
+            <summary>
+            Added in R2017.
+            </summary>
+        </member>
+        <member name="F:IxMilia.Dxf.DxfAlternateToleranceZeroSuppression.SuppressTrailingZeros">
+            <summary>
+            Added in R2017.
+            </summary>
+        </member>
+        <member name="F:IxMilia.Dxf.DxfAlternateUnitZeroSuppression.SuppressLeadingZerosInDecimalDimensions">
+            <summary>
+            Added in R2017.
+            </summary>
+        </member>
+        <member name="F:IxMilia.Dxf.DxfAlternateUnitZeroSuppression.SuppressTrailingZerosInDecimalDimensions">
+            <summary>
+            Added in R2017.
+            </summary>
+        </member>
+        <member name="F:IxMilia.Dxf.DxfAlternateUnitZeroSuppression.SuppressBothLeadingAndTrailingZerosInDecimalDimensions">
             <summary>
             Added in R2017.
             </summary>

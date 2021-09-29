@@ -19,20 +19,15 @@ public class InputConfigs {
   @JsonIgnore
   private String logFilePath;
   private String verbosityLevel;
-  private boolean calculateTin;
-  private boolean recalculateTin;
   private String siteName;
   private String projectName;
   private String editorsFamilyName;
   private String editorsGivenName;
   private String editorsOrganisationName;
-  private boolean exportMetadataFile;
   private boolean outIfcPropertySet;
   private boolean exportMetadataDin91391;
   private boolean exportMetadataDin18740;
-  private boolean is3D;
-  private double minDist;
-  private String surfaceType;
+  private String outSurfaceType;
   private boolean geoElement;
   private int logeoref;
   private boolean customOrigin;
@@ -48,25 +43,20 @@ public class InputConfigs {
   private String projectionName;
   private String projectionZone;
   private String layer;
-  private boolean isTin;
   private int horizon;
-  private int gridSize;
   private boolean bBox;
-  private double bbNorth;
-  private double bbEast;
-  private double bbSouth;
-  private double bbWest;
+  private double bbP1X;
+  private double bbP1Y;
+  private double bbP2X;
+  private double bbP2Y;
   private boolean onlyHorizon;
   private String horizonFilter;
-  private boolean onlyTypes;
-  private boolean ignPos;
-  private boolean ignHeight;
   private String breakline_layer;
   private boolean breakline;
   private String host;
   private int port;
   private String user;
-  private String password;
+  private String pwd;
   private String database;
   private String schema;
   private String tin_table;
@@ -76,13 +66,28 @@ public class InputConfigs {
   private String breakline_table;
   private String breakline_column;
   private String breakline_tin_id;
-
+  private boolean readPoints;
+  private boolean invertedCRS;
+  private boolean filterPoints;
+  private String queryString;
+  private String breaklineQueryString;
+  private String geometryType;
 
   public InputConfigs() {
   }
 
-
-  public InputConfigs(String fileName, String fileType, String destFileName, String outIFCType, String outFileType, String verbosityLevel, boolean calculateTin, boolean recalculateTin, String siteName, String projectName, String editorsFamilyName, String editorsGivenName, String editorsOrganisationName, boolean exportMetadataFile, boolean outIfcPropertySet, boolean exportMetadataDin91391, boolean exportMetadataDin18740, boolean is3D, double minDist, String surfaceType, boolean geoElement, int logeoref, boolean customOrigin, double xOrigin, double yOrigin, double zOrigin, double trueNorth, double scale, String crsName, String crsDescription, String geodeticDatum, String verticalDatum, String projectionName, String projectionZone, String layer, boolean isTin, int horizon, int gridSize, boolean bBox, double bbNorth, double bbEast, double bbSouth, double bbWest, boolean onlyHorizon, String horizonFilter, boolean onlyTypes, boolean ignPos, boolean ignHeight, String breakline_layer, boolean breakline, String host, int port, String user, String password, String database, String schema, String tin_table, String tin_column, String tinid_column, String tin_id, String breakline_table, String breakline_column, String breakline_tin_id) {
+  public InputConfigs(String fileName, String fileType, String destFileName, String outIFCType, String outFileType,
+      String verbosityLevel, String siteName, String projectName, String editorsFamilyName, String editorsGivenName,
+      String editorsOrganisationName, boolean outIfcPropertySet, boolean exportMetadataDin91391,
+      boolean exportMetadataDin18740, String outSurfaceType, boolean geoElement, int logeoref,
+      boolean customOrigin, double xOrigin, double yOrigin, double zOrigin, double trueNorth, double scale,
+      String crsName, String crsDescription, String geodeticDatum, String verticalDatum, String projectionName,
+      String projectionZone, String layer, int horizon, boolean bBox, double bbP1X, double bbP1Y, double bbP2X,
+      double bbP2Y, boolean onlyHorizon, String horizonFilter, String breakline_layer, boolean breakline, String host,
+      int port, String user, String pwd, String database, String schema, String tin_table, String tin_column,
+      String tinid_column, String tin_id, String breakline_table, String breakline_column, String breakline_tin_id,
+      boolean readPoints, boolean invertedCRS, boolean filterPoints, String queryString, String breaklineQueryString,
+      String geometryType) {
     this.filePath = "files/" + fileName;
     this.fileName = fileName;
     this.fileType = fileType;
@@ -91,20 +96,15 @@ public class InputConfigs {
     this.outFileType = outFileType;
     this.logFilePath = "files";
     this.verbosityLevel = verbosityLevel;
-    this.calculateTin = calculateTin;
-    this.recalculateTin = recalculateTin;
     this.siteName = siteName;
     this.projectName = projectName;
     this.editorsFamilyName = editorsFamilyName;
     this.editorsGivenName = editorsGivenName;
     this.editorsOrganisationName = editorsOrganisationName;
-    this.exportMetadataFile = exportMetadataFile;
     this.outIfcPropertySet = outIfcPropertySet;
     this.exportMetadataDin91391 = exportMetadataDin91391;
     this.exportMetadataDin18740 = exportMetadataDin18740;
-    this.is3D = is3D;
-    this.minDist = minDist;
-    this.surfaceType = surfaceType;
+    this.outSurfaceType = outSurfaceType;
     this.geoElement = geoElement;
     this.logeoref = logeoref;
     this.customOrigin = customOrigin;
@@ -120,25 +120,20 @@ public class InputConfigs {
     this.projectionName = projectionName;
     this.projectionZone = projectionZone;
     this.layer = layer;
-    this.isTin = isTin;
     this.horizon = horizon;
-    this.gridSize = gridSize;
     this.bBox = bBox;
-    this.bbNorth = bbNorth;
-    this.bbEast = bbEast;
-    this.bbSouth = bbSouth;
-    this.bbWest = bbWest;
+    this.bbP1X = bbP1X;
+    this.bbP1Y = bbP1Y;
+    this.bbP2X = bbP2X;
+    this.bbP2Y = bbP2Y;
     this.onlyHorizon = onlyHorizon;
     this.horizonFilter = horizonFilter;
-    this.onlyTypes = onlyTypes;
-    this.ignPos = ignPos;
-    this.ignHeight = ignHeight;
     this.breakline_layer = breakline_layer;
     this.breakline = breakline;
     this.host = host;
     this.port = port;
     this.user = user;
-    this.password = password;
+    this.pwd = pwd;
     this.database = database;
     this.schema = schema;
     this.tin_table = tin_table;
@@ -148,8 +143,13 @@ public class InputConfigs {
     this.breakline_table = breakline_table;
     this.breakline_column = breakline_column;
     this.breakline_tin_id = breakline_tin_id;
+    this.readPoints = readPoints;
+    this.invertedCRS = invertedCRS;
+    this.filterPoints = filterPoints;
+    this.queryString = queryString;
+    this.breaklineQueryString = breaklineQueryString;
+    this.geometryType = geometryType;
   }
-
 
   public String getFilePath() {
     return this.filePath;
@@ -215,38 +215,6 @@ public class InputConfigs {
     this.verbosityLevel = verbosityLevel;
   }
 
-  public boolean isCalculateTin() {
-    return this.calculateTin;
-  }
-
-  public boolean getCalculateTin() {
-    return this.calculateTin;
-  }
-
-  public void setCalculateTin(boolean calculateTin) {
-    this.calculateTin = calculateTin;
-  }
-
-  public boolean isRecalculateTin() {
-    return this.recalculateTin;
-  }
-
-  public boolean getRecalculateTin() {
-    return this.recalculateTin;
-  }
-
-  public void setRecalculateTin(boolean recalculateTin) {
-    this.recalculateTin = recalculateTin;
-  }
-
-  public String getSiteName() {
-    return this.siteName;
-  }
-
-  public void setSiteName(String siteName) {
-    this.siteName = siteName;
-  }
-
   public String getProjectName() {
     return this.projectName;
   }
@@ -277,18 +245,6 @@ public class InputConfigs {
 
   public void setEditorsOrganisationName(String editorsOrganisationName) {
     this.editorsOrganisationName = editorsOrganisationName;
-  }
-
-  public boolean isExportMetadataFile() {
-    return this.exportMetadataFile;
-  }
-
-  public boolean getExportMetadataFile() {
-    return this.exportMetadataFile;
-  }
-
-  public void setExportMetadataFile(boolean exportMetadataFile) {
-    this.exportMetadataFile = exportMetadataFile;
   }
 
   public boolean isOutIfcPropertySet() {
@@ -327,32 +283,12 @@ public class InputConfigs {
     this.exportMetadataDin18740 = exportMetadataDin18740;
   }
 
-  public boolean isIs3D() {
-    return this.is3D;
+  public String getOutSurfaceType() {
+    return this.outSurfaceType;
   }
 
-  public boolean getIs3D() {
-    return this.is3D;
-  }
-
-  public void setIs3D(boolean is3D) {
-    this.is3D = is3D;
-  }
-
-  public double getMinDist() {
-    return this.minDist;
-  }
-
-  public void setMinDist(double minDist) {
-    this.minDist = minDist;
-  }
-
-  public String getSurfaceType() {
-    return this.surfaceType;
-  }
-
-  public void setSurfaceType(String surfaceType) {
-    this.surfaceType = surfaceType;
+  public void setOutSurfaceType(String outSurfaceType) {
+    this.outSurfaceType = outSurfaceType;
   }
 
   public boolean isGeoElement() {
@@ -483,32 +419,12 @@ public class InputConfigs {
     this.layer = layer;
   }
 
-  public boolean isIsTin() {
-    return this.isTin;
-  }
-
-  public boolean getIsTin() {
-    return this.isTin;
-  }
-
-  public void setIsTin(boolean isTin) {
-    this.isTin = isTin;
-  }
-
   public int getHorizon() {
     return this.horizon;
   }
 
   public void setHorizon(int horizon) {
     this.horizon = horizon;
-  }
-
-  public int getGridSize() {
-    return this.gridSize;
-  }
-
-  public void setGridSize(int gridSize) {
-    this.gridSize = gridSize;
   }
 
   public boolean isBBox() {
@@ -523,36 +439,36 @@ public class InputConfigs {
     this.bBox = bBox;
   }
 
-  public double getBbNorth() {
-    return this.bbNorth;
+  public double getBbP1X() {
+    return this.bbP1X;
   }
 
-  public void setBbNorth(double bbNorth) {
-    this.bbNorth = bbNorth;
+  public void setBbP1X(double bbP1X) {
+    this.bbP1X = bbP1X;
   }
 
-  public double getBbEast() {
-    return this.bbEast;
+  public double getBbP1Y() {
+    return this.bbP1Y;
   }
 
-  public void setBbEast(double bbEast) {
-    this.bbEast = bbEast;
+  public void setBbP1Y(double bbP1Y) {
+    this.bbP1Y = bbP1Y;
   }
 
-  public double getBbSouth() {
-    return this.bbSouth;
+  public double getBbP2X() {
+    return this.bbP2X;
   }
 
-  public void setBbSouth(double bbSouth) {
-    this.bbSouth = bbSouth;
+  public void setBbP2X(double bbP2X) {
+    this.bbP2X = bbP2X;
   }
 
-  public double getBbWest() {
-    return this.bbWest;
+  public double getBbP2Y() {
+    return this.bbP2Y;
   }
 
-  public void setBbWest(double bbWest) {
-    this.bbWest = bbWest;
+  public void setBbP2Y(double bbP2Y) {
+    this.bbP2Y = bbP2Y;
   }
 
   public boolean isOnlyHorizon() {
@@ -573,42 +489,6 @@ public class InputConfigs {
 
   public void setHorizonFilter(String horizonFilter) {
     this.horizonFilter = horizonFilter;
-  }
-
-  public boolean isOnlyTypes() {
-    return this.onlyTypes;
-  }
-
-  public boolean getOnlyTypes() {
-    return this.onlyTypes;
-  }
-
-  public void setOnlyTypes(boolean onlyTypes) {
-    this.onlyTypes = onlyTypes;
-  }
-
-  public boolean isIgnPos() {
-    return this.ignPos;
-  }
-
-  public boolean getIgnPos() {
-    return this.ignPos;
-  }
-
-  public void setIgnPos(boolean ignPos) {
-    this.ignPos = ignPos;
-  }
-
-  public boolean isIgnHeight() {
-    return this.ignHeight;
-  }
-
-  public boolean getIgnHeight() {
-    return this.ignHeight;
-  }
-
-  public void setIgnHeight(boolean ignHeight) {
-    this.ignHeight = ignHeight;
   }
 
   public String getBreakline_layer() {
@@ -655,12 +535,12 @@ public class InputConfigs {
     this.user = user;
   }
 
-  public String getPassword() {
-    return this.password;
+  public String getPwd() {
+    return this.pwd;
   }
 
-  public void setPassword(String password) {
-    this.password = password;
+  public void setPwd(String pwd) {
+    this.pwd = pwd;
   }
 
   public String getDatabase() {
@@ -735,5 +615,72 @@ public class InputConfigs {
     this.breakline_tin_id = breakline_tin_id;
   }
 
-}
+  public boolean isReadPoints() {
+    return this.readPoints;
+  }
 
+  public boolean getReadPoints() {
+    return this.readPoints;
+  }
+
+  public void setReadPoints(boolean readPoints) {
+    this.readPoints = readPoints;
+  }
+
+  public boolean isInvertedCRS() {
+    return this.invertedCRS;
+  }
+
+  public boolean getInvertedCRS() {
+    return this.invertedCRS;
+  }
+
+  public void setInvertedCRS(boolean invertedCRS) {
+    this.invertedCRS = invertedCRS;
+  }
+
+  public boolean isFilterPoints() {
+    return this.filterPoints;
+  }
+
+  public boolean getFilterPoints() {
+    return this.filterPoints;
+  }
+
+  public void setFilterPoints(boolean filterPoints) {
+    this.filterPoints = filterPoints;
+  }
+
+  public String getQueryString() {
+    return this.queryString;
+  }
+
+  public void setQueryString(String queryString) {
+    this.queryString = queryString;
+  }
+
+  public String getBreaklineQueryString() {
+    return this.breaklineQueryString;
+  }
+
+  public void setBreaklineQueryString(String breaklineQueryString) {
+    this.breaklineQueryString = breaklineQueryString;
+  }
+
+  public String getGeometryType() {
+    return this.geometryType;
+  }
+
+  public void setGeometryType(String geometryType) {
+    this.geometryType = geometryType;
+  }
+
+  public String getSiteName() {
+    return this.siteName;
+  }
+
+  public void setSiteName(String siteName) {
+    this.siteName = siteName;
+  }
+
+}
