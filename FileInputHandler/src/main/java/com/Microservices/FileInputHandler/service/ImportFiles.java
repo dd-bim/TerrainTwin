@@ -141,7 +141,7 @@ public class ImportFiles {
                     // process file if it is of type ifc
                     else if (extension.equals("ifc")) {
 
-                        results += importIfc.importIfcFile(bucket, filename);
+                        results += importIfc.importIfcFile(bucket, repo, filename);
                         // Verbindung zum BIMServer und Import
 
                     }

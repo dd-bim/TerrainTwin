@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.UUID;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -22,6 +24,7 @@ import org.bimserver.client.BimServerClient;
 import org.bimserver.interfaces.objects.SDeserializerPluginConfiguration;
 import org.bimserver.interfaces.objects.SLongCheckinActionState;
 import org.bimserver.interfaces.objects.SProject;
+import org.bimserver.interfaces.objects.SRevision;
 import org.bimserver.shared.exceptions.PublicInterfaceNotFoundException;
 import org.bimserver.shared.exceptions.ServerException;
 import org.bimserver.shared.exceptions.UserException;
@@ -47,9 +50,12 @@ public class ImportIfc {
     @Autowired
     BIMserverConnection bimserver;
 
+    @Autowired
+    ImportIfcInfos ifcInfos;
+
     Logger log = LoggerFactory.getLogger(ImportIfc.class);
 
-    public String importIfcFile(String bucket, String filename) throws IOException {
+    public String importIfcFile(String bucket, String repo, String filename) throws IOException {
 
         String result = "";
         String pName = filename.replace(".ifc", "");
@@ -102,11 +108,12 @@ public class ImportIfc {
             e1.printStackTrace();
             result += "3: " + e1.getMessage();
         }
+        long poid = newProject.getOid();
 
         SDeserializerPluginConfiguration deserializer = null;
         try {
             deserializer = bimClient.getServiceInterface().getSuggestedDeserializerForExtension("ifc",
-                    newProject.getOid());
+                    poid);
         } catch (ServerException | UserException | PublicInterfaceNotFoundException e1) {
             e1.printStackTrace();
             result += "4: " + e1.getMessage();
@@ -117,7 +124,7 @@ public class ImportIfc {
 
         SLongCheckinActionState state;
         try {
-            state = bimClient.getServiceInterface().checkinSync(newProject.getOid(), "", deserializer.getOid(),
+            state = bimClient.getServiceInterface().checkinSync(poid, "", deserializer.getOid(),
                     file.getTotalSpace(), file.getName(), data, false);
 
             result += "\n Title: " + state.getTitle() + "\n Oid: " + state.getOid() + "\n Roid: " + state.getRoid()
@@ -130,6 +137,21 @@ public class ImportIfc {
             e.printStackTrace();
             result += "6: " + e.getMessage();
         }
+
+        List<SRevision> revs = null;
+        try {
+          revs = bimClient.getServiceInterface().getAllRevisionsOfProject(poid);
+        } catch (ServerException | UserException | PublicInterfaceNotFoundException e) {
+          e.printStackTrace();
+        }
+    
+        Long roid = revs.get(0).getOid();
+        // UUID uuid = revs.get(0).getUuid(); // ist immer Null
+        UUID uuid = newProject.getUuid();
+        log.info("poid: " + poid + "\n" + "roid: " + roid + "\n" + "uuid: " + uuid);
+
+        result += ifcInfos.importIfcInfos(poid, roid, uuid, filename, bucket, repo);
+
 
         return result;
     }

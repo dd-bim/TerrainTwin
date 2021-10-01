@@ -155,7 +155,3 @@ public class InterfaceController {
         .contentType(MediaType.APPLICATION_OCTET_STREAM).body(resource);
   }
 }
-
-// <form id="myObject" action="whateverYouNeedHere.htm" method="post">
-// <input type="hidden" id="items[0].name" name="items[0].name" value="foo"/>
-// <input type="hidden" id="items[0].value" name="items[0].value" value="bar"/>
