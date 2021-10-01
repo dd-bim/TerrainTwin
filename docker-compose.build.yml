@@ -122,6 +122,7 @@ services:
         volumes:
             - ./volumes/logs:/var/log
             - ./volumes/configs/repo-config.ttl:/var/config/repo-config.ttl
+            - ./volumes/files:/app/files
 
     geometry-handler:
         profiles: 

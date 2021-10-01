@@ -176,6 +176,7 @@ services:
         #     start_period: 10s
         volumes:
             - ./volumes/bimserver:/usr/local/tomcat/webapps
+            # - ./volumes/bimserver/database:/usr/local/tomcat/webapps/bimserver/ROOT/WEB-INF/database
 
 volumes:
     dbdata:
