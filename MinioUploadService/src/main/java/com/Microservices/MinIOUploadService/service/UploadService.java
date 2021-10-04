@@ -46,9 +46,6 @@ public class UploadService {
         String results = "";
         String bucket = infos.getBucket();
         String path = infos.getPath().replaceAll("\\\\", "/");
-        System.out.println(path);
-        if (path.startsWith("/"))
-            path = path.replaceFirst("/", "");
         String fn[] = path.split("/");
         String filename = infos.getTimestamp() + "_" + fn[fn.length - 1];
 

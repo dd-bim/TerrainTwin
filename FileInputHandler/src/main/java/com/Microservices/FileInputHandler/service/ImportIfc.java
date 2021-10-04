@@ -55,6 +55,7 @@ public class ImportIfc {
 
     Logger log = LoggerFactory.getLogger(ImportIfc.class);
 
+    // import ifc files to BIMserver and metadata to GraphDB
     public String importIfcFile(String bucket, String repo, String filename) throws IOException {
 
         String result = "";
@@ -72,14 +73,17 @@ public class ImportIfc {
                 | InvalidResponseException | NoSuchAlgorithmException | io.minio.errors.ServerException
                 | XmlParserException | IllegalArgumentException | IOException e1) {
             e1.printStackTrace();
-            result += "1: " + e1.getMessage();
+            result += e1.getMessage();
         }
 
+        // use file stream
         OutputStream outputStream = null;
         try {
+            // copy stream to temporary file
             outputStream = new FileOutputStream(file);
             IOUtils.copy(stream, outputStream);
 
+            // find out ifc version from tag FILE_SCHEMA in the file
             BufferedReader reader2 = new BufferedReader(new FileReader(file));
             while (reader2.readLine() != null  && version == null) {
                 String line = reader2.readLine();
@@ -94,31 +98,36 @@ public class ImportIfc {
             reader2.close();
 
         } catch (IOException e) {
-            log.info("5: " + e.getMessage());
+            log.info(e.getMessage());
         } finally{
             stream.close();
             outputStream.close();
         }
         
+        // connect to BIMserver
         BimServerClient bimClient = bimserver.getConnection();
+
+        // create new project with name of the file
         SProject newProject = null;
         try {
             newProject = bimClient.getServiceInterface().addProject(pName, version);
         } catch (ServerException | UserException | PublicInterfaceNotFoundException e1) {
             e1.printStackTrace();
-            result += "3: " + e1.getMessage();
+            result += e1.getMessage();
         }
         long poid = newProject.getOid();
 
+        // find the correct deserializer for uploading the file
         SDeserializerPluginConfiguration deserializer = null;
         try {
             deserializer = bimClient.getServiceInterface().getSuggestedDeserializerForExtension("ifc",
                     poid);
         } catch (ServerException | UserException | PublicInterfaceNotFoundException e1) {
             e1.printStackTrace();
-            result += "4: " + e1.getMessage();
+            result += e1.getMessage();
         }
 
+        // try to upload the file to the new project
         DataSource source = new FileDataSource(file);
         DataHandler data = new DataHandler(source);
 
@@ -138,6 +147,7 @@ public class ImportIfc {
             result += "6: " + e.getMessage();
         }
 
+        // get the revision id (roid) of the uploaded file
         List<SRevision> revs = null;
         try {
           revs = bimClient.getServiceInterface().getAllRevisionsOfProject(poid);
@@ -150,6 +160,7 @@ public class ImportIfc {
         UUID uuid = newProject.getUuid();
         log.info("poid: " + poid + "\n" + "roid: " + roid + "\n" + "uuid: " + uuid);
 
+        // import poid, roid, uuid as metadate vor linking into the GraphDB repository
         result += ifcInfos.importIfcInfos(poid, roid, uuid, filename, bucket, repo);
 
 

@@ -142,7 +142,6 @@ public class ImportFiles {
                     else if (extension.equals("ifc")) {
 
                         results += importIfc.importIfcFile(bucket, repo, filename);
-                        // Verbindung zum BIMServer und Import
 
                     }
 
