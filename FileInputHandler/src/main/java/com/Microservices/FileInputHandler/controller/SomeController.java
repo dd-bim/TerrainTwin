@@ -1,7 +1,9 @@
 package com.Microservices.FileInputHandler.controller;
 
 import com.Microservices.FileInputHandler.connection.GraphDBConnection;
+import com.Microservices.FileInputHandler.connection.GraphDBRestConnection;
 import com.Microservices.FileInputHandler.service.GetData;
+import com.google.gson.Gson;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,9 @@ public class SomeController {
 
   @Autowired
   GetData data;
+
+  @Autowired
+  GraphDBRestConnection restConn;
 
   @Autowired
   GraphDBConnection dbconnection;
@@ -54,6 +59,17 @@ public class SomeController {
       result = "Problem: " + e.getMessage();
     }
     return result;
+  }
+
+  @GetMapping(path = "/repositories")
+  // @Operation(summary = "Create a new GraphDB repository")
+  @ApiResponse(responseCode = "200", description = "Successful operation")
+  public String getRepos() {
+    String result = "";
+    
+    result = restConn.getRepositories();
+    String json = new Gson().toJson(result);
+    return json;
   }
 
 }

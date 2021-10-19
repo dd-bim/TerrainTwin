@@ -21,8 +21,8 @@ public class FileInputHandlerConnection {
 
             URL url = new URL("http://file-input-handler:7201/inputhandler/import/topology/repository/" + repo);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setConnectTimeout(5000);// 5 secs
-            connection.setReadTimeout(5000);// 5 secs
+            // connection.setConnectTimeout(5000);// 5 secs
+            // connection.setReadTimeout(5000);// 5 secs
 
             connection.setRequestMethod("POST");
             connection.setDoOutput(true);

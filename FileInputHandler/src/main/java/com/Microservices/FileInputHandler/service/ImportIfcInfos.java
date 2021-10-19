@@ -52,8 +52,8 @@ public class ImportIfcInfos {
                 builder.add(object, RDF.TYPE, "tto:BuildingElement")
                         .add(doc, RDF.TYPE, "tto:Document")
                         .add(object, "tto:hasSource", doc)
-                        .add(object, "tto:projectId", poid)
-                        .add(object, "tto:revisionId", roid);
+                        .add(object, "tto:ifcProjectId", poid)
+                        .add(object, "tto:ifcRevisionId", roid);
 
                 Model m = builder.build();
 

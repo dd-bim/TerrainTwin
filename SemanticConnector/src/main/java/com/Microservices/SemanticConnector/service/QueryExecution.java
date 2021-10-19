@@ -3,6 +3,7 @@ package com.Microservices.SemanticConnector.service;
 import java.util.ArrayList;
 
 import com.Microservices.SemanticConnector.connection.GraphDBConnection;
+import com.google.gson.Gson;
 
 import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.query.Binding;
@@ -25,7 +26,7 @@ public class QueryExecution {
     Logger log = LoggerFactory.getLogger(QueryExecution.class);
     
     // execute a query on a GraphDB repository
-    public ArrayList<String> execQuery(String repo, String query) {
+    public String execQuery(String repo, String query) {
         ArrayList<String> list = new ArrayList<String>();
 
         // connect to a repository
@@ -65,7 +66,8 @@ public class QueryExecution {
         }
 
         // return the result list
-        return list;
+        String json = new Gson().toJson(list);
+        return json;
     }
 
 

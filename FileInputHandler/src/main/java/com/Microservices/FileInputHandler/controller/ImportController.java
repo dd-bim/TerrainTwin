@@ -2,10 +2,12 @@ package com.Microservices.FileInputHandler.controller;
 
 import com.Microservices.FileInputHandler.connection.GraphDBConnection;
 import com.Microservices.FileInputHandler.domain.model.PostgresInfos;
+import com.Microservices.FileInputHandler.domain.model.Triple;
 import com.Microservices.FileInputHandler.service.DeleteTriples;
 import com.Microservices.FileInputHandler.service.ImportFiles;
 import com.Microservices.FileInputHandler.service.ImportPostgresGeometryInfos;
 import com.Microservices.FileInputHandler.service.ImportTopology;
+import com.Microservices.FileInputHandler.service.ImportTriple;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +46,9 @@ public class ImportController {
   @Autowired 
   GraphDBConnection dbconnection;
 
+  @Autowired
+  ImportTriple impTriple;
+
   Logger log = LoggerFactory.getLogger(ImportController.class);
 
   // import files from bucket
@@ -78,4 +83,13 @@ public class ImportController {
     return result;
   }
 
+    // import infos from postgres database geometry
+    @PostMapping(path = "/triple/repository/{repo}")
+    @Operation(summary = "Import a triple")
+    @ApiResponse(responseCode = "200", description = "Successful operation")
+    public String importTriple(@Parameter(description = "The name of the GraphDB repository.") @PathVariable String repo, @Parameter(description = "Subject, predicate and object of a triple") @RequestBody Triple triple) throws Exception {
+  
+      String results = impTriple.importTriple(repo, triple);
+      return results;
+    }
 }
