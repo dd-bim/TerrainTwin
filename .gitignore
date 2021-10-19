@@ -26,5 +26,6 @@ graphdb/
 minio/
 postgres/ 
 bimserver/
+database/
 
 Notizen.md
