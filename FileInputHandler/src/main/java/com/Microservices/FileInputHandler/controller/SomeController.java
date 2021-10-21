@@ -1,5 +1,7 @@
 package com.Microservices.FileInputHandler.controller;
 
+import java.util.ArrayList;
+
 import com.Microservices.FileInputHandler.connection.GraphDBConnection;
 import com.Microservices.FileInputHandler.connection.GraphDBRestConnection;
 import com.Microservices.FileInputHandler.service.GetData;
@@ -65,7 +67,7 @@ public class SomeController {
   // @Operation(summary = "Create a new GraphDB repository")
   @ApiResponse(responseCode = "200", description = "Successful operation")
   public String getRepos() {
-    String result = "";
+    ArrayList<String> result = new ArrayList<String>();
     
     result = restConn.getRepositories();
     String json = new Gson().toJson(result);

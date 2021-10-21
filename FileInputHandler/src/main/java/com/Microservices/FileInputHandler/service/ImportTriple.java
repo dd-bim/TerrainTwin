@@ -33,9 +33,14 @@ public class ImportTriple {
             RepositoryConnection db = dbconnection.connection(repo);
             
             ModelBuilder builder = new ModelBuilder();
+
+            String[] obj = triple.getObject().split("/");
+            String object = obj[obj.length - 1];
+            String namespace = triple.getObject().replace(object, "");
         
             // write triple
-            builder.add(triple.getSubject(), triple.getPredicate(), triple.getObject());
+            builder.setNamespace("", namespace);
+            builder.add(triple.getSubject(), triple.getPredicate(), ":" + object);
 
             Model m = builder.build();
 

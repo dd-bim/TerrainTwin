@@ -1,4 +1,4 @@
-package com.Microservices.FileInputHandler.connection;
+package com.Microservices.SemanticConnector.connection;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

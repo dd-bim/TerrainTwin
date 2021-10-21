@@ -26,4 +26,13 @@ public class FlexibleQuery {
                 "?r xtd:RelatingCollection <" + group + "> ." +
             "}" ;
         }
+
+    //find all predicates with domain relation
+    public String findPredicatesFromRelation(String relation) {
+        return Prefix.RDFS.toString() +
+            Prefix.TTO.toString() + 
+            "select ?s where {" + 
+                "?s rdfs:domain <" + relation + "> ." +
+            "}" ;
+        }
 }
