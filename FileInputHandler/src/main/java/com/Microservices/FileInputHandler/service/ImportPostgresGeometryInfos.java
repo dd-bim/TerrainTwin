@@ -58,9 +58,17 @@ public class ImportPostgresGeometryInfos {
                         .add(doc, RDF.TYPE, "tto:Document").add(terrainobj, "geo:hasGeometry", object)
                         .add(terrainobj, "tto:hasSource", doc).add(object, "tto:originId", infos.getOriginId())
                         .add(infos.getUrl(), RDF.TYPE, "tto:GeoLink")
-                        .add(object, "tto:url", "export:" + infos.getUrl().replace(domain + "/geometry/export/", ""))
+                        .add(object, "tto:url", infos.getUrl())
                         .add(object, "geo:dimension", infos.getDimension())
                         .add(object, "geo:coordinateDimension", infos.getCoordDimension());
+                
+                if (infos.getDimension() == 4) {
+                    builder.add(object, RDF.TYPE, "tto:Coverage");
+                } else if (infos.getDimension() == 3) {
+                    builder.add(object, RDF.TYPE, "tto:Realm");
+                } else {
+                    builder.add(object, RDF.TYPE, "tto:Realm");
+                }
 
                 Model m = builder.build();
                 log.info(m.toString());

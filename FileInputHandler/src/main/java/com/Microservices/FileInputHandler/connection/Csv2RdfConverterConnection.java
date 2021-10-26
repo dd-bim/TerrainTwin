@@ -5,10 +5,14 @@ import java.net.URL;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class Csv2RdfConverterConnection {
+
+    @Value("${domain.url}")
+    private String domain;
     
     Logger log = LoggerFactory.getLogger(Csv2RdfConverterConnection.class);
 
@@ -17,7 +21,7 @@ public class Csv2RdfConverterConnection {
 
         try {
 
-            URL url = new URL("http://csv2rdf-converter-service:7202/csv2rdf/convert/bucket/" + bucket + "/file/" + filename);
+            URL url = new URL("http://csv2rdf-converter-service:7202/csv2rdf/convert/bucket/" + bucket + "/file/" + filename + "?prefix=sd&namespace=" + domain + "/Sachdaten/&superclass=Sachdaten");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             // connection.setConnectTimeout(5000);
             // connection.setReadTimeout(5000);
