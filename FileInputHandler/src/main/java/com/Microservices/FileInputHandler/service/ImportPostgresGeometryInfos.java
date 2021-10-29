@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import com.Microservices.FileInputHandler.connection.GraphDBConnection;
 import com.Microservices.FileInputHandler.domain.model.PostgresInfos;
+import com.Microservices.FileInputHandler.domain.model.Queries;
 
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.util.ModelBuilder;
@@ -25,10 +26,16 @@ public class ImportPostgresGeometryInfos {
     @Autowired
     GraphDBConnection dbconnection;
 
-    Logger log = LoggerFactory.getLogger(ImportPostgresGeometryInfos.class);
+    @Autowired
+    QueryExecution exec;
+
+    @Autowired
+    Queries query;
 
     @Value("${domain.url}")
     private String domain;
+
+    Logger log = LoggerFactory.getLogger(ImportPostgresGeometryInfos.class);
 
     // import postgres infos from geometries
     public String importPostgresInfos(PostgresInfos infos) {
@@ -62,10 +69,25 @@ public class ImportPostgresGeometryInfos {
                         .add(object, "geo:dimension", infos.getDimension())
                         .add(object, "geo:coordinateDimension", infos.getCoordDimension());
                 
+                // if geometry bounds another geometry, insert triple for that
+                if (infos.getBounds() != null) {
+                    
+                    String feature = exec.executeQuery(infos.getGraphdbRepo(), query.findFeature(infos.getBounds().toString()));
+
+                    // add "bounds" triple
+                    builder.add(terrainobj, "tto:bounds", "pro:" + feature);
+                    
+                }
+                
+                // if TIN add type Coverage
                 if (infos.getDimension() == 4) {
                     builder.add(object, RDF.TYPE, "tto:Coverage");
+                
+                // if polygon add type Realm
                 } else if (infos.getDimension() == 3) {
                     builder.add(object, RDF.TYPE, "tto:Realm");
+
+                // else actually add type Realm
                 } else {
                     builder.add(object, RDF.TYPE, "tto:Realm");
                 }

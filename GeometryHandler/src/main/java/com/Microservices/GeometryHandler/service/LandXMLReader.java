@@ -10,9 +10,11 @@ import javax.xml.stream.XMLStreamReader;
 import com.Microservices.GeometryHandler.connection.FileInputHandlerConnection;
 import com.Microservices.GeometryHandler.domain.model.PostgresInfos;
 import com.Microservices.GeometryHandler.repositories.BreaklinesRepository;
+import com.Microservices.GeometryHandler.repositories.Polygon3DRepository;
 import com.Microservices.GeometryHandler.repositories.SpecialPointsRepository;
 import com.Microservices.GeometryHandler.repositories.TINRepository;
 import com.Microservices.GeometryHandler.schemas.Breaklines;
+import com.Microservices.GeometryHandler.schemas.Polygon3D;
 import com.Microservices.GeometryHandler.schemas.SpecialPoints;
 import com.Microservices.GeometryHandler.schemas.TIN;
 
@@ -33,6 +35,9 @@ public class LandXMLReader {
 
     @Autowired
     SpecialPointsRepository spRepository;
+
+    @Autowired
+    Polygon3DRepository poly3dRepository;
 
     @Autowired
     FileInputHandlerConnection graphdb;
@@ -61,6 +66,13 @@ public class LandXMLReader {
         String postgresUrl = urlPrefix + "dtm_tin" + "/items/" + tin.getId();
         PostgresInfos p = new PostgresInfos(-1, tin.getId(), postgresUrl, 4, 3, filename, path, graphdbRepo);
         graphdb.graphdbImport(p);
+
+        String boundary = tinRepository.getExteriorRing(tin.getId());
+        Polygon3D poly = new Polygon3D(-1, boundary);
+        poly3dRepository.save(poly);
+        String postgresUrlBoundary = urlPrefix + "polygon_3d" + "/items/" + poly.getId();
+        PostgresInfos pBoundary = new PostgresInfos(-1, poly.getId(), postgresUrlBoundary,3, 3, filename, path, graphdbRepo, tin.getId());
+        graphdb.graphdbImport(pBoundary);
 
         for (int i = 0; i < breaklines.size(); i++) {
             Breaklines bl = new Breaklines(tin.getId(), "SRID=" + srid + ";" + getBreaklines(i));

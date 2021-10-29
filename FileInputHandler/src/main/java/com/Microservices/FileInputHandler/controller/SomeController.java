@@ -4,7 +4,8 @@ import java.util.ArrayList;
 
 import com.Microservices.FileInputHandler.connection.GraphDBConnection;
 import com.Microservices.FileInputHandler.connection.GraphDBRestConnection;
-import com.Microservices.FileInputHandler.service.GetData;
+import com.Microservices.FileInputHandler.domain.model.Queries;
+import com.Microservices.FileInputHandler.service.QueryExecution;
 import com.google.gson.Gson;
 
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,7 +30,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class SomeController {
 
   @Autowired
-  GetData data;
+  Queries query;
+  
+  @Autowired
+  QueryExecution exec;
 
   @Autowired
   GraphDBRestConnection restConn;
@@ -44,7 +49,7 @@ public class SomeController {
   @ApiResponse(responseCode = "200", description = "Successful operation")
   public String getNamespaces(@Parameter(description = "The name of the GraphDB repository.") @PathVariable String repo) throws Exception {
 
-    String result = data.getNamespace(repo);
+    String result = exec.getNamespace(repo);
     return result;
   }
 
@@ -72,6 +77,17 @@ public class SomeController {
     result = restConn.getRepositories();
     String json = new Gson().toJson(result);
     return json;
+  }
+
+  @GetMapping(path = "/geometry/dimension/repo/{repo}")
+  @Operation(summary = "Get the dimension of a geometry object")
+  @ApiResponse(responseCode = "200", description = "Successful operation")
+  public char getGeoDim(@Parameter(description = "The name of the GraphDB repository.") @PathVariable String repo, @Parameter(description = "The geometry object IRI.") @RequestParam String geometry) {
+    String result;
+    
+    result = exec.executeQuery(repo, query.getDimension(geometry));
+    char dim = result.charAt(1);
+    return dim;
   }
 
 }

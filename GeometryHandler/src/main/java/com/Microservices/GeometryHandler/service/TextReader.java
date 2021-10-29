@@ -238,6 +238,13 @@ log.info(idRow + ", " + wktRow + ", " + epsgRow);
                     PostgresInfos p = new PostgresInfos(-1, tin.getId(), postgresUrl, 4, 3, filename, path, graphdbRepo);
                     gdbConn = graphdb.graphdbImport(p);
 
+                    String boundary = tinRepo.getExteriorRing(tin.getId());
+                    Polygon3D poly = new Polygon3D(-1, boundary);
+                    polygon3DRepo.save(poly);
+                    String postgresUrlBoundary = urlPrefix + "polygon_3d" + "/items/" + poly.getId();
+                    PostgresInfos pBoundary = new PostgresInfos(-1, poly.getId(), postgresUrlBoundary,3, 3, filename, path, graphdbRepo, tin.getId());
+                    graphdb.graphdbImport(pBoundary);
+
                     // solid
                 } else if (nextLine[wktRow].toUpperCase().contains("POLYHEDRALSURFACE")) {
                     Solid solid;

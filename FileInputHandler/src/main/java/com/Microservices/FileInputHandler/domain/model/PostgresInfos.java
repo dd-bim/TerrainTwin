@@ -17,6 +17,11 @@ public class PostgresInfos {
     private String filename;
     private String path;
     private String graphdbRepo;
+    private UUID bounds;
+
+    public PostgresInfos() {
+        
+    }
 
     public PostgresInfos(int originId, UUID id, String url, int dimension, int coordDimension, String filename,
             String path, String graphdbRepo) {
@@ -28,5 +33,19 @@ public class PostgresInfos {
         this.filename = filename;
         this.path = path;
         this.graphdbRepo = graphdbRepo;
+        this.bounds = null;
+    }
+
+    public PostgresInfos(int originId, UUID id, String url, int dimension, int coordDimension, String filename,
+            String path, String graphdbRepo, UUID bounds) {
+        this.originId = originId;
+        this.id = id;
+        this.url = url;
+        this.dimension = dimension;
+        this.coordDimension = coordDimension;
+        this.filename = filename;
+        this.path = path;
+        this.graphdbRepo = graphdbRepo;
+        this.bounds = bounds;
     }
 }
