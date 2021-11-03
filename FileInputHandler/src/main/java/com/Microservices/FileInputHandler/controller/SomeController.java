@@ -82,12 +82,11 @@ public class SomeController {
   @GetMapping(path = "/geometry/dimension/repo/{repo}")
   @Operation(summary = "Get the dimension of a geometry object")
   @ApiResponse(responseCode = "200", description = "Successful operation")
-  public char getGeoDim(@Parameter(description = "The name of the GraphDB repository.") @PathVariable String repo, @Parameter(description = "The geometry object IRI.") @RequestParam String geometry) {
+  public String getGeoDim(@Parameter(description = "The name of the GraphDB repository.") @PathVariable String repo, @Parameter(description = "The geometry object IRI.") @RequestParam String geometry) {
     String result;
     
     result = exec.executeQuery(repo, query.getDimension(geometry));
-    char dim = result.charAt(1);
-    return dim;
+    return result;
   }
 
 }

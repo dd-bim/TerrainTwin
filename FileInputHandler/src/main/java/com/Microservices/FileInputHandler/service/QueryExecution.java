@@ -50,10 +50,7 @@ public class QueryExecution {
                 // Each BindingSet contains one or more Bindings
                 for (Binding binding : bindingSet) {
                     // Each Binding contains the variable name and the value for this result row
-                    feature = binding.getValue().toString();
-                    // String[] link = binding.getValue().toString().split("/");
-                    // feature = link[link.length - 1];
-
+                    feature = binding.getValue().stringValue();
                 }
             }
 

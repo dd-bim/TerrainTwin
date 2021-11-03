@@ -33,7 +33,7 @@ public class PostgresInfos {
         this.filename = filename;
         this.path = path;
         this.graphdbRepo = graphdbRepo;
-        this.bounds = null;
+        this.bounds = UUID.fromString("00000000-0000-0000-0000-000000000000");
     }
 
     public PostgresInfos(int originId, UUID id, String url, int dimension, int coordDimension, String filename,

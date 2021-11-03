@@ -54,56 +54,40 @@ public class ImportTopology {
         String results = "";
 
         Gson gson = new Gson();
-        Type type = new TypeToken<ArrayList<Triple>>(){}.getType();
+        Type type = new TypeToken<ArrayList<Triple>>() {
+        }.getType();
         List<Triple> triples = gson.fromJson(topo, type);
-        
+
         System.out.println("Anzahl Triples: " + triples.size());
-        
+
         // get connection to graphdb repository
         try {
             RepositoryConnection db = dbconnection.connection(repo);
 
             String namespace = domain + "/postgres/";
-            String projNamespace = domain + "/project/";
+            String pro = domain + "/project/";
             String prefix = "postgres:";
 
             ModelBuilder builder = new ModelBuilder();
-            builder.setNamespace("postgres", namespace).setNamespace("geo", "http://www.opengis.net/ont/geosparql#").setNamespace("pro", projNamespace);
-            
-            // write triples 
-            triples.forEach( (t) -> {
+            builder.setNamespace("postgres", namespace).setNamespace("geo", "http://www.opengis.net/ont/geosparql#")
+                    .setNamespace("pro", pro).setNamespace("tto", domain + "/terraintwin/ontology/");
+
+            // write triples
+            triples.forEach((t) -> {
                 builder.add(prefix + t.getSubject(), "geo:" + t.getPredicate(), prefix + t.getObject());
-
-                // add tto relations, if geometry dimension match
-                // if ((t.getPredicate()) != "sfTouches") {
-                //     int dim1 = Integer.parseInt(data.getDimension(repo, t.getSubject()));
-
-                //     // dimension of subject is TIN
-                //     if (dim1 == 4) {
-                //         int dim2 = Integer.parseInt(data.getDimension(repo, t.getObject()));
-                //         if (dim2 == 3) {
-
-                //             // create relation instance
-                //             String inst = "pro:" + UUID.randomUUID().toString();
-
-                //             // get features of geometry for linking
-                //             String subjFeature = findings.findFeature(db, t.getSubject());
-                //             String objFeature = findings.findFeature(db, t.getObject());
-
-                //             builder.add(inst , RDF.TYPE, "tto:RelRealmOnCoverage")
-                //             .add(inst, "tto:describedSurface", prefix + subjFeature)
-                //             .add(inst, "tto:describingStructure", prefix + objFeature);
-                //         }
-                //     }
-                // }
+         
+                // add tto relation between surfaces
                 if ((t.getPredicate()) != "sfTouches") {
-                    // int dim1 = Integer.parseInt(exec.executeQuery(repo, query.getDimension(namespace + t.getSubject())));
-                    // int dim2 = Integer.parseInt(exec.executeQuery(repo, query.getDimension(namespace + t.getObject())));
-                    int dim1 = exec.executeQuery(repo, query.getDimension(namespace + t.getSubject())).charAt(1);
-                    int dim2 = exec.executeQuery(repo, query.getDimension(namespace + t.getObject())).charAt(1);
-                    log.info("dim1: " + dim1 + " \n dim2: " + dim2);
+                    int dim1 = -1;
+                    int dim2 = -1;
+                    String res1 = exec.executeQuery(repo, query.getDimension(namespace + t.getSubject()));
+                    if (!res1.isEmpty()) dim1 = Integer.parseInt(res1);
+                    String res2 = exec.executeQuery(repo, query.getDimension(namespace + t.getObject()));
+                    if (!res2.isEmpty()) dim2 = Integer.parseInt(res2);
+                    
+                    log.info("dim1: " + dim1 + " dim2: " + dim2);
 
-                    if (dim1 == dim2  && dim1 == 3) {
+                    if (dim1 == dim2 && dim1 == 2) {
                         // get features of geometry for linking
                         String subjFeature = exec.executeQuery(repo, query.findFeature(namespace + t.getSubject()));
                         String objFeature = exec.executeQuery(repo, query.findFeature(namespace + t.getObject()));
@@ -118,14 +102,14 @@ public class ImportTopology {
                         // create relation instance
                         String inst = "pro:" + UUID.randomUUID().toString();
 
-                        if (boundedFeatureS != null && boundedFeatureO == null) {
-                            builder.add(inst , RDF.TYPE, "tto:RelRealmOnCoverage")
-                            .add(inst, "tto:describedSurface", prefix + subjFeature)
-                            .add(inst, "tto:describingStructure", prefix + objFeature);
-                        } else if (boundedFeatureO != null && boundedFeatureS == null) {
-                            builder.add(inst , RDF.TYPE, "tto:RelRealmOnCoverage")
-                            .add(inst, "tto:describedSurface", prefix + objFeature)
-                            .add(inst, "tto:describingStructure", prefix + subjFeature);
+                        if (!boundedFeatureS.isEmpty() && boundedFeatureO.isEmpty()) {
+                            builder.add(inst, RDF.TYPE, "tto:RelTopograficElOnCoverage")
+                                    .add(inst, "tto:describedSurface", "pro:" + subjFeature.replace(pro, ""))
+                                    .add(inst, "tto:describingStructure", "pro:" + objFeature.replace(pro, ""));
+                        } else if (!boundedFeatureO.isEmpty() && boundedFeatureS.isEmpty()) {
+                            builder.add(inst, RDF.TYPE, "tto:RelTopograficElOnCoverage")
+                                    .add(inst, "tto:describedSurface", "pro:" + objFeature.replace(pro, ""))
+                                    .add(inst, "tto:describingStructure", "pro:" + subjFeature.replace(pro, ""));
                         }
                     }
                 }
@@ -144,12 +128,11 @@ public class ImportTopology {
             db.add(tmp, namespace, RDFFormat.TURTLE);
             results += "Topology import complete. \n";
 
-    }catch(
-
-    Exception e)
-    {
-        results += "Could not connect to GraphDB. Possibly the database is not available. Triples are not imported in GraphDB. \n Message: "
-                + e.getMessage();
-    }return results;
+        } catch (Exception e) {
+            log.info("Message: " + e.getMessage());
+            results += "Could not connect to GraphDB. Possibly the database is not available. Triples are not imported in GraphDB. \n Message: "
+                    + e.getMessage();
+        }
+        return results;
     }
 }
