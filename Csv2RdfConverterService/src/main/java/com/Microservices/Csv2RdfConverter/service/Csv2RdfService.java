@@ -30,6 +30,7 @@ import org.eclipse.rdf4j.rio.Rio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -50,6 +51,9 @@ public class Csv2RdfService {
 
     @Autowired
     MinIOConnection connection;
+
+    @Value("${domain.url}")
+    private String domain;
 
     Logger log = LoggerFactory.getLogger(Csv2RdfService.class);
     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -73,6 +77,8 @@ public class Csv2RdfService {
             NoSuchAlgorithmException, ServerException, XmlParserException, IllegalArgumentException {
         MinioClient client = connection.connection();
         File filename = infos.getFile();
+        String source = domain + "/minio/" + bucket + "/";
+        String sourceObj = bucket + ":" + filename.getName();
 
         // check, if parameters are set
         if (infos.getNamespace() != null) {
@@ -102,7 +108,7 @@ public class Csv2RdfService {
 
             // create model for rdf triples
             ModelBuilder builder = new ModelBuilder();
-            builder.setNamespace(ns, namespace).setNamespace(RDFS.NS).setNamespace(OWL.NS);
+            builder.setNamespace(ns, namespace).setNamespace(RDFS.NS).setNamespace(OWL.NS).setNamespace("tto", domain + "/terraintwin/ontology/").setNamespace(bucket, source);
             builder.add(headclass, RDF.TYPE, RDFS.CLASS);
 
             // create triples from csv array
@@ -116,7 +122,8 @@ public class Csv2RdfService {
             // create resources with literals as DatatypeProperties
             for (int i = 1; i < csvInhalt.size(); i++) {
                 String resource = ns1 + UUID.randomUUID().toString();
-                builder.add(resource, RDF.TYPE, headclass);
+                builder.add(resource, RDF.TYPE, headclass)
+                .add(resource, "tto:hasSource", sourceObj);
                 String[] dataset = csvInhalt.get(i);
                 for (int j = 0; j < dataset.length; j++) {
                     builder.add(resource, ns1 + header[j].replaceAll("\s", "_").replaceAll("\\W", ""), dataset[j]);

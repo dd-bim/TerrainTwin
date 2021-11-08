@@ -1,0 +1,11 @@
+server:
+    port: 7211
+
+logging:
+    file:
+        name: /var/log/semantic-connector-web.log
+
+management:
+    endpoint:
+        logfile:
+            external-file: /var/log/semantic-connector-web.log

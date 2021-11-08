@@ -161,7 +161,7 @@ public class ImportIfc {
         log.info("poid: " + poid + "\n" + "roid: " + roid + "\n" + "uuid: " + uuid);
 
         // import poid, roid, uuid as metadate vor linking into the GraphDB repository
-        result += ifcInfos.importIfcInfos(poid, roid, uuid, filename, bucket, repo);
+        result += "\n" + ifcInfos.importIfcInfos(poid, roid, uuid, filename, bucket, repo) + "\n";
 
 
         return result;

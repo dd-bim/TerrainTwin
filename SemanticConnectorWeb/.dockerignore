@@ -1,0 +1,6 @@
+*
+!src
+!public
+!.env
+!nginx.conf
+!package*.json

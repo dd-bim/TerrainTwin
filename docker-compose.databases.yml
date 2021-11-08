@@ -150,7 +150,8 @@ services:
 
     bimserver:
         container_name: bimserver
-        image: schi11er/tt_bimserver:latest
+        # image: schi11er/tt_bimserver:latest
+        image: urbanetic/bimserver:latest
         restart: unless-stopped
         ports:
             - 9005:8080
@@ -165,6 +166,43 @@ services:
         volumes:
             - ./volumes/bimserver:/usr/local/tomcat/webapps
             # - ./volumes/bimserver/database:/usr/local/tomcat/webapps/bimserver/ROOT/WEB-INF/database
+
+    # proxy-manager:
+    #   container_name: proxy-manager
+    #   image: 'jc21/nginx-proxy-manager:latest'
+    #   restart: unless-stopped
+    #   ports:
+    #     - '80:80'
+    #     - '81:81'
+    #     - '443:443'
+    #   depends_on:
+    #     - db-proxy
+    #   networks:
+    #     - terraintwin_microservices
+    #   environment:
+    #     DB_MYSQL_HOST: "db-proxy"
+    #     DB_MYSQL_PORT: 3306
+    #     DB_MYSQL_USER: "npm"
+    #     DB_MYSQL_PASSWORD: "npm"
+    #     DB_MYSQL_NAME: "npm"
+    #   volumes:
+    #     - ./volumes/data:/data
+    #     - ./volumes/letsencrypt:/etc/letsencrypt
+
+    # db-proxy:
+    #   container_name: db_proxy
+    #   image: 'jc21/mariadb-aria:latest'
+    #   restart: unless-stopped
+    #   networks:
+    #    - terraintwin_microservices
+    #   environment:
+    #     MYSQL_ROOT_PASSWORD: 'npm'
+    #     MYSQL_DATABASE: 'npm'
+    #     MYSQL_USER: 'npm'
+    #     MYSQL_PASSWORD: 'npm'
+    #   volumes:
+    #     - ./volumes/data/mysql:/var/lib/mysql
+
 
 volumes:
     dbdata:
