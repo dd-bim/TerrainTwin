@@ -1,0 +1,19 @@
+server:
+    port: 7212
+
+springdoc:
+    api-docs:
+        path: /ifccontourcreator/v3/api-docs
+    swagger-ui: 
+        path: /ifccontourcreator/swagger-ui.html
+        operationsSorter: method
+        disable-swagger-default-url: true
+
+logging:
+    file:
+        name: /var/log/ifccontour-creator.log
+
+management:
+    endpoint:
+        logfile:
+            external-file: /var/log/ifccontour-creator.log
