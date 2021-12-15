@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 import com.Microservices.IFCContoursAPI.service.ExecService;
 import com.Microservices.IFCContoursAPI.service.ProcessFiles;
@@ -20,12 +22,21 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import io.minio.errors.ErrorResponseException;
+import io.minio.errors.InsufficientDataException;
+import io.minio.errors.InternalException;
+import io.minio.errors.InvalidResponseException;
+import io.minio.errors.ServerException;
+import io.minio.errors.XmlParserException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
@@ -42,10 +53,10 @@ public class RestIfcTerrainController {
 
   public static final String CPATH = "files/";
 
-  // send file and configs to IFCTerrainCommand
-  @PostMapping(path = "/ifccontour-api/create", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-  @Operation(summary = "Create contour from IFC")
-  public ResponseEntity<?> createContoursApi(@RequestParam("file") MultipartFile multipartFile)
+  // send file to IfcGeometryExtractor and give WKT file back
+  @PostMapping(path = "/createFromFile", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+  @Operation(summary = "Create contour from uploaded IFC file")
+  public ResponseEntity<?> createContourFromFile(@RequestParam("file") MultipartFile multipartFile)
       throws IllegalStateException, IOException, InterruptedException {
     String results = null;
 
@@ -58,10 +69,10 @@ public class RestIfcTerrainController {
     // call IfcContourExtractor with file as input
     results = execService.callConverter(CPATH + filename);
 
-    if (results.contains("Successful conversion.")) {
+    if (results.contains("Successful creation.")) {
 
       String outputName = filename.split("\\.")[0] + "_ifc_WKT_contour.txt";
-      
+
       // if conversion is successful download ifc file
       File file = new File(CPATH + outputName);
       Path path = Paths.get(CPATH + outputName);
@@ -74,7 +85,7 @@ public class RestIfcTerrainController {
       return ResponseEntity.ok().headers(headers).contentLength(file.length())
           .contentType(MediaType.APPLICATION_OCTET_STREAM).body(resource);
     } else {
-      // if conversion fails open log file and print logs
+      // if creation fails open log file and print logs
       File dir = new File(CPATH);
       String[] logfile = dir.list((d, s) -> {
         return s.toLowerCase().endsWith(".log");
@@ -91,4 +102,54 @@ public class RestIfcTerrainController {
     }
 
   }
+
+  // send IFC file downloaded from MinIO to IfcGeometryExtractor and get resulting
+  // WKT string back
+  @GetMapping("/createFromStorage/minio/{bucket}/file/{filename}")
+  @Operation(summary = "get IFC file from minio, create contour and output it as WKT")
+  public String createContourFromStorage(
+      @Parameter(description = "The name of the source and target MinIO bucket.") @PathVariable String bucket,
+      @Parameter(description = "The name of the source file in MinIO bucket.") @PathVariable String filename)
+      throws IOException, InterruptedException, InvalidKeyException, ErrorResponseException, InsufficientDataException,
+      InternalException, InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException,
+      IllegalArgumentException {
+    String result = "";
+
+    // copy file from minio into container
+    files.getSourceFile(bucket, filename);
+
+    // call IfcContourExtractor with file as input
+    String res = execService.callConverter(CPATH + filename);
+
+    // if creation succeeds, give WKT back
+    if (res.contains("Successful creation.")) {
+      String outputName = filename.split("\\.")[0] + "_ifc_WKT_contour.txt";
+
+      // boolean upload = files.uploadFile(bucket, outputName);
+      // if(upload) result = outputName;
+      files.uploadFile(bucket, outputName);
+      result = outputName;
+
+    } else {
+      // if creation fails open log file and print logs
+      File dir = new File(CPATH);
+      String[] logfile = dir.list((d, s) -> {
+        return s.toLowerCase().endsWith(".log");
+      });
+
+      BufferedReader reader = new BufferedReader(new FileReader(CPATH + logfile[0]));
+      String line;
+      while ((line = reader.readLine()) != null) {
+        result += line + "\n";
+      }
+
+      reader.close();
+    }
+
+    // clean folder from old files
+    files.removeFiles();
+
+    return result;
+  }
+
 }

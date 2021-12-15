@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import com.Microservices.FileInputHandler.connection.Csv2RdfConverterConnection;
 import com.Microservices.FileInputHandler.connection.GeometryHandlerConnection;
 import com.Microservices.FileInputHandler.connection.GraphDBConnection;
+import com.Microservices.FileInputHandler.connection.IfcContourCreatorConnection;
 import com.Microservices.FileInputHandler.connection.MinIOConnection;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -64,6 +65,9 @@ public class ImportFiles {
 
     @Autowired
     ImportIfc importIfc;
+
+    @Autowired
+    IfcContourCreatorConnection contourCreator;
 
     Logger log = LoggerFactory.getLogger(ImportFiles.class);
 
@@ -142,6 +146,47 @@ public class ImportFiles {
                     else if (extension.equals("ifc")) {
 
                         results += importIfc.importIfcFile(bucket, repo, filename);
+
+                        String contourFile = contourCreator.creator(bucket, filename);
+                        InputStream stream = client
+                                .getObject(GetObjectArgs.builder().bucket(bucket).object(contourFile).build());
+
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+                        String line = "";
+                        
+
+                        File file = new File(contourFile);
+                        FileWriter writer = new FileWriter(file);
+                        int c = 1;
+
+                        // if contour file has no EPSG code, ETRS89 UTM 32 code 25832 is set
+                        ArrayList<String> content = new ArrayList<String>();
+                        while ((line = reader.readLine()) != null) {
+                            if (line.startsWith("SRID")) {
+                                content.add(c + ";" + line + "\n");
+                            } else {
+                                content.add(c + ";" + line + ";25832\n");
+                            }
+                            c++;
+                        }
+                        
+                        if (content.get(0).startsWith("SRID")) {
+                            writer.write("id; wkt\n");
+                        } else {
+                            writer.write("id; wkt; epsg\n");
+                        }
+                        content.forEach((l) -> {
+                            try {
+                                writer.write(l);
+                            } catch (IOException e) {
+                            }
+                        });
+                        
+                        writer.close();
+                        client.uploadObject(
+                                UploadObjectArgs.builder().bucket(bucket).object(contourFile).filename(contourFile).build());
+
+                        results += geoconn.geometryImport(bucket, repo, contourFile);
 
                     }
 

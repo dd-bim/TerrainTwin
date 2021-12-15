@@ -93,6 +93,8 @@ services:
             - graphdb.url=${GRAPHDB_URL}
             - graphdb.username=${GRAPHDB_USERNAME}
             - graphdb.password=${GRAPHDB_PASSWORD}
+            - bimserver.usermail=${BIMSERVER_USERMAIL}
+            - bimserver.password=${BIMSERVER_PASSWORD}
         volumes:
             - ./volumes/logs:/var/log
             - ./volumes/configs/repo-config.ttl:/var/config/repo-config.ttl
@@ -284,6 +286,77 @@ services:
             - domain.url=${DOMAIN_URL}
         volumes:
             - ./volumes/logs:/var/log
+
+    semantic-connector:
+        container_name: semantic-connector
+        image: schi11er/tt_semantic-connector:latest
+        restart: unless-stopped
+        ports:
+            - 7207:7207
+        networks:
+            - terraintwin_microservices
+        depends_on:
+            - configserver
+            - eurekaserver
+        healthcheck:
+            test: wget --spider http://localhost:7207/actuator/health || exit 1
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 20s
+        environment:
+            - domain.url=${DOMAIN_URL}
+            - graphdb.url=${GRAPHDB_URL}
+            - graphdb.username=${GRAPHDB_USERNAME}
+            - graphdb.password=${GRAPHDB_PASSWORD}
+        volumes:
+            - ./volumes/logs:/var/log
+
+    semantic-connector-web:
+        container_name: semantic-connector-web
+        image: schi11er/tt_semantic-connector-web:latest
+        restart: unless-stopped
+        ports:
+            - 7211:3000
+        networks:
+            - terraintwin_microservices
+        depends_on:
+            - eurekaserver
+            - configserver
+        healthcheck:
+            test: wget --spider http://localhost:7211/actuator/health || exit 1
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 20s
+        volumes:
+            - ./volumes/logs:/var/log
+
+    bimserver-query-service:
+        container_name: bimserver-query-service
+        image: schi11er/tt_bimserver-query-service:latest
+        restart: unless-stopped
+        ports:
+            - 7208:7208
+        networks:
+            - terraintwin_microservices
+        depends_on:
+            - configserver
+            - eurekaserver
+        healthcheck:
+            test: wget --spider http://localhost:7208/actuator/health || exit 1
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 20s
+        environment:
+            - domain.url=${DOMAIN_URL}
+            - bimserver.usermail=${BIMSERVER_USERMAIL}
+            - bimserver.password=${BIMSERVER_PASSWORD}
+        volumes:
+            - ./volumes/logs:/var/log
+            - ./volumes/files:/app/files
+
 
 networks:
     terraintwin_microservices:

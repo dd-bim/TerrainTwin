@@ -150,8 +150,7 @@ services:
 
     bimserver:
         container_name: bimserver
-        # image: schi11er/tt_bimserver:latest
-        image: urbanetic/bimserver:latest
+        image: schi11er/tt_bimserver:latest
         restart: unless-stopped
         ports:
             - 9005:8080

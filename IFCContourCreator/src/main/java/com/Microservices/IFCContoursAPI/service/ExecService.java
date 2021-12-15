@@ -41,14 +41,14 @@ public class ExecService {
 
             int exitVal = process.waitFor();
             if (exitVal == 0 && err==false) {
-                result = "Successful conversion. \n";
+                result = "Successful creation. \n";
             } else {
-                result = "Conversion failed \n";
+                result = "Creation failed \n";
 
             }
 
         } catch (IOException e) {
-            result = "Conversion failed \n" + e.getMessage();
+            result = "Creation failed \n" + e.getMessage();
         }
 
         return result;
