@@ -27,5 +27,10 @@ minio/
 postgres/ 
 bimserver/
 database/
+bimserver/
+dbdata/
+dblogs/ 
+files/ 
+mail/
 
 Notizen.md

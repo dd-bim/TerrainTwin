@@ -49,8 +49,8 @@ services:
             - ./volumes/logs:/var/log
 
     minio-upload-service:
-        profiles: 
-            - terraintwin
+        # profiles: 
+        #     - terraintwin
         container_name: minio-upload-service
         # hostname: ${DOMAIN_NAME}
         build:
@@ -84,10 +84,10 @@ services:
 
             
     file-input-handler:
-        profiles: 
-            - topoimport
-            - terraintwin
-            - import
+        # profiles: 
+        #     - topoimport
+        #     - terraintwin
+        #     - import
         container_name: file-input-handler
         # hostname: ${DOMAIN_NAME}
         build:
@@ -124,9 +124,9 @@ services:
             - ./volumes/configs/repo-config.ttl:/var/config/repo-config.ttl
 
     geometry-handler:
-        profiles: 
-            - import
-            - terraintwin
+        # profiles: 
+        #     - import
+        #     - terraintwin
         container_name: geometry-handler
         # hostname: ${DOMAIN_NAME}
         build:
@@ -162,8 +162,8 @@ services:
         # command: /bin/bash -c "psql -v ON_ERROR_STOP=1 -v dbname=example -v dbuser=example -e" < ./schema.sql
 
     csv2rdf-converter-service:
-        profiles: 
-            - terraintwin
+        # profiles: 
+        #     - terraintwin
         container_name: csv2rdf-converter-service
         # hostname: ${DOMAIN_NAME}
         build:
@@ -193,8 +193,8 @@ services:
             - ./volumes/logs:/var/log
             
     gateway-service:
-        profiles: 
-            - terraintwin
+        # profiles: 
+        #     - terraintwin
         container_name: gateway-service
         # hostname: ${DOMAIN_NAME}
         build:
@@ -271,9 +271,9 @@ services:
             - ./volumes/logs:/var/log
 
     topology-service:
-        profiles: 
-            - topoimport
-            - terraintwin
+        # profiles: 
+        #     - topoimport
+        #     - terraintwin
         container_name: topology-service
         # hostname: ${DOMAIN_NAME}
         build:

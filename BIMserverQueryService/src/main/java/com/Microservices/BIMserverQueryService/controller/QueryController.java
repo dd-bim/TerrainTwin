@@ -154,9 +154,7 @@ public class QueryController {
   public String getWalls() {
 
     BimServerClient client = bimserver.getConnection();
-    // String query = "{\"type\": \"IfcWall\",\"includeAllSubtypes\":
-    // true,\"includes\":
-    // [\"ifc2x3tc1-stdlib:ContainedInStructure\",\"ifc2x3tc1-stdlib:OwnerHistory\",\"ifc2x3tc1-stdlib:Representation\",\"ifc2x3tc1-stdlib:ObjectPlacement\"]}";
+    // String query = "{\"type\": { \"name\": \"IfcWall\"},\"includes\": [\"ifc2x3tc1-stdlib:ContainedInStructure\",\"ifc2x3tc1-stdlib:OwnerHistory\",\"ifc2x3tc1-stdlib:Representation\",\"ifc2x3tc1-stdlib:ObjectPlacement\"]}";
     String query = "{\"type\": \"IfcWall\"}";
     Set<Long> roids = new HashSet<Long>();
     roids.add((long) 65539);

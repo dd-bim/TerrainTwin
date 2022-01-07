@@ -29,10 +29,22 @@ spring:
                   uri: lb://ifcterrain-service
                   predicates:
                       - Path=/terraintoifc/**
-                # - id: dashboard-service
-                #   uri: lb://dashboard-service
-                #   predicates:
-                #       - Path=/postgresinfos/**
+                - id: ifccontourcreator-service
+                  uri: lb://ifccontour-creator
+                  predicates:
+                      - Path=/ifccontourcreator/**
+                - id: semanticconnector-service
+                  uri: lb://semantic-connector
+                  predicates:
+                      - Path=/semanticconnector/**
+                - id: querybimserver-service
+                  uri: lb://bimserver-query-service
+                  predicates:
+                      - Path=/querybimserver/**
+                - id: scheduler-service
+                  uri: lb://scheduler-service
+                  predicates:
+                      - Path=/scheduler/**
                 - id: openapi
                   uri: http://localhost:${server.port}
                   predicates:
