@@ -78,14 +78,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="IfcGeometryExtractor.exe" size="43944">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="IfcGeometryExtractor.exe" size="44456">
       <assemblyIdentity name="IfcGeometryExtractor" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>ps0m9qqWpeRG5EW1WwfAQ0htW+Jh9g0WSAdUocWiOhA=</dsig:DigestValue>
+        <dsig:DigestValue>AeB55Toh13Nu3TPW+yHvzh41Sm8lPv9Uk5jQBOkaJ3s=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

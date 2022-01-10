@@ -1,8 +1,8 @@
 Microservice Architecture:
 
+    ☐ Dokumentation erweitern 
     ✔ Docker + Dockercon Zusammenfassung @done (15.6.2021, 11:58:34)
     ✔ Testdaten in System bekommen @done (15.6.2021, 12:04:23)
-    ☐ Paper Idee
 
     ☐ DGM Ausgabe über WCS/WFS
     ✔ ID's einheitlich gestalten @done (4.8.2021, 08:50:11)
@@ -10,11 +10,10 @@ Microservice Architecture:
     ✔ Automation der Überführung nach PostGIS und GraphDB @done (6.8.2021, 11:27:44)
     ✔ Linkmodell für Daten eines TerrainTwinObject @done (4.8.2021, 08:50:25)
     ✔ (Topology abstract Intersects Klasse) @done (4.8.2021, 08:51:00)
-    ☐ Linkmodell zwischen den Persistenzdiensten
-    ☐ Ontologie TerrainTwin
+    ✔ Linkmodell zwischen den Persistenzdiensten @done (7.1.2022, 14:33:17)
+    ✔ Ontologie TerrainTwin @done (7.1.2022, 14:33:18)
     ✔ Namespace einheitlich in .env für RDF Resources definieren @done (19.7.2021, 13:36:41)
     ✔ GitLab Projekte vereinigen @done (18.6.2021, 13:06:23)
-    ☐ Dokumentation erweitern 
     ✔ Docker-Stack (Postgres DB, GraphDB, MinIO Object Storage) einbinden @done (14.6.2021, 08:40:26)
     ✔ Datacat in Microservice-Architektur einbinden @done (14.9.2021, 09:39:39)
     ✔ Sachdaten und Geometrie in einer CSV/TXT @done (18.6.2021, 13:07:17)
@@ -26,7 +25,7 @@ Microservice Architecture:
     ☐ Datenausgabe als GeoJSON, GeoPKG
     ✔ IFCTerrain + MinIO Standalone @done (14.9.2021, 09:39:57)
     ✔ Swagger überall umgestalten @done (17.8.2021, 11:37:07)
-    ☐ BIMServer dockern und einbinden
+    ✔ BIMServer dockern und einbinden @done (7.1.2022, 14:33:07)
     
 
     Geometry Handler:
@@ -49,7 +48,7 @@ Microservice Architecture:
         ✔ Elemente Updaten @done (15.7.2021, 10:08:48)
         ✔ Elemente Löschen @done (13.7.2021, 13:59:22)
         ✔ Prüfung auf CSV/RDF -> http-Request an CSV2RDF Converter -> dann Import der Ergebnis TTL @done (4.8.2021, 08:51:40)
-        ☐ IFC Import
+        ✔ IFC Import @done (7.1.2022, 14:34:18)
         ☐ CRS speichern?
         ☐ Ontologieordner in MinIO automatisch anlegen, Ontologien hochladen und bei Erstellen eines Repo importieren
 
@@ -58,7 +57,7 @@ Microservice Architecture:
             ✔ Topologie explizit in GraphDB @done (1.7.2021, 15:15:23)
             ☐ Mögliche Abfragen zeigen
             ☐ Umgang mit Solid?
-        ☐ Umring von DGM als 3D-Polygon / 2D-Polygon
+        ✔ Umring von DGM als 3D-Polygon / 2D-Polygon @done (7.1.2022, 14:34:36)
         ☐ GDAL Docker 
         ☐ Massenberechnungen, Differenz zw. 2 DGM
 

@@ -15,14 +15,19 @@ public class ExecService {
     Logger log = LoggerFactory.getLogger(Service.class);
 
     // execute IFCTerrainCommand.exe in docker file with config file
-    public String callConverter(String file) throws IOException, InterruptedException {
+    public String callConverter(String file, Integer epsg) throws IOException, InterruptedException {
 
         String result = "";
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.redirectErrorStream(true);
 
         // prepare command
-        processBuilder.command("sh", "-c", "mono IfcGeometryExtractor.exe " + file);
+        if (epsg != null) {
+            processBuilder.command("sh", "-c", "mono IfcGeometryExtractor.exe " + file + " -epsg " + epsg);
+        } else {
+            processBuilder.command("sh", "-c", "mono IfcGeometryExtractor.exe " + file);
+        }
+        
 
         try {
 

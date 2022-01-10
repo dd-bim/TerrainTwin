@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Optional;
 
 import com.Microservices.IFCContoursAPI.service.ExecService;
 import com.Microservices.IFCContoursAPI.service.ProcessFiles;
@@ -54,10 +55,23 @@ public class RestIfcTerrainController {
   public static final String CPATH = "files/";
 
   // send file to IfcGeometryExtractor and give WKT file back
-  @PostMapping(path = "/createFromFile", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-  @Operation(summary = "Create contour from uploaded IFC file")
-  public ResponseEntity<?> createContourFromFile(@RequestParam("file") MultipartFile multipartFile)
+  @PostMapping(path = {"/createFromFile"}, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+  @Operation(summary = "Create contour from uploaded IFC file as WKT")
+  public ResponseEntity<?> createContourFromFileBase(@RequestParam("file") MultipartFile multipartFile)
       throws IllegalStateException, IOException, InterruptedException {
+        return createContourFromFile(multipartFile, null);
+  }
+
+    // send file and epsg code to IfcGeometryExtractor and give WKT file back
+    @PostMapping(path = {"/createFromFile/{epsg}"}, consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    @Operation(summary = "Create contour from uploaded IFC file as EWKT")
+    public ResponseEntity<?> createContourFromFileEpsg(@RequestParam("file") MultipartFile multipartFile, 
+    @Parameter(description = "EPSG code") @PathVariable(value = "epsg") Optional<Integer> epsgCode)
+        throws IllegalStateException, IOException, InterruptedException {
+          return createContourFromFile(multipartFile, epsgCode.get());
+    }
+
+  public ResponseEntity<?> createContourFromFile(MultipartFile multipartFile, Integer epsg) throws IllegalStateException, IOException, InterruptedException {
     String results = null;
 
     // clean folder from old files
@@ -67,15 +81,29 @@ public class RestIfcTerrainController {
     String filename = files.multipartToFile(multipartFile);
 
     // call IfcContourExtractor with file as input
-    results = execService.callConverter(CPATH + filename);
+    results = execService.callConverter(CPATH + filename, epsg);
 
     if (results.contains("Successful creation.")) {
 
-      String outputName = filename.split("\\.")[0] + "_ifc_WKT_contour.txt";
+      File file = null;
+      Path path = null;
+      String outputName = null;
+
+      try{
+      outputName = filename.split("\\.")[0] + "_ifc_WKT_contour_Slabs.txt";
 
       // if conversion is successful download ifc file
-      File file = new File(CPATH + outputName);
-      Path path = Paths.get(CPATH + outputName);
+      file = new File(CPATH + outputName);
+      path = Paths.get(CPATH + outputName);
+      } catch (Exception e) {
+        outputName = filename.split("\\.")[0] + "_ifc_WKT_contour_Walls.txt";
+
+        // if conversion is successful download ifc file
+        file = new File(CPATH + outputName);
+        path = Paths.get(CPATH + outputName);
+      }
+
+
       ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
 
       ContentDisposition contentDisposition = ContentDisposition.builder("inline").filename(outputName).build();
@@ -105,11 +133,12 @@ public class RestIfcTerrainController {
 
   // send IFC file downloaded from MinIO to IfcGeometryExtractor and get resulting
   // WKT string back
-  @GetMapping("/createFromStorage/minio/{bucket}/file/{filename}")
+  @GetMapping(path = {"/createFromStorage/minio/{bucket}/file/{filename}", "/createFromStorage/minio/{bucket}/file/{filename}/{epsg}"})
   @Operation(summary = "get IFC file from minio, create contour and output it as WKT")
   public String createContourFromStorage(
       @Parameter(description = "The name of the source and target MinIO bucket.") @PathVariable String bucket,
-      @Parameter(description = "The name of the source file in MinIO bucket.") @PathVariable String filename)
+      @Parameter(description = "The name of the source file in MinIO bucket.") @PathVariable String filename, 
+      @Parameter(description = "EPSG code") @PathVariable(value = "epsg", required = false) Integer epsg)
       throws IOException, InterruptedException, InvalidKeyException, ErrorResponseException, InsufficientDataException,
       InternalException, InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException,
       IllegalArgumentException {
@@ -119,7 +148,7 @@ public class RestIfcTerrainController {
     files.getSourceFile(bucket, filename);
 
     // call IfcContourExtractor with file as input
-    String res = execService.callConverter(CPATH + filename);
+    String res = execService.callConverter(CPATH + filename, epsg);
 
     // if creation succeeds, give WKT back
     if (res.contains("Successful creation.")) {
