@@ -14,9 +14,6 @@ public class MetaInfos {
     @SerializedName("User")
     @Expose
     private String user;
-    @SerializedName("SRID")
-    @Expose
-    private Integer srid;
 
     /**
      * No args constructor for use in serialization
@@ -29,13 +26,11 @@ public class MetaInfos {
      * 
      * @param groundChange
      * @param user
-     * @param srid
      */
-    public MetaInfos(Double groundChange, String user, Integer srid) {
+    public MetaInfos(Double groundChange, String user) {
         super();
         this.groundChange = groundChange;
         this.user = user;
-        this.srid = srid;
     }
 
     public Double getGroundChange() {
@@ -52,14 +47,6 @@ public class MetaInfos {
 
     public void setUser(String user) {
         this.user = user;
-    }
-
-    public Integer getSrid() {
-        return srid;
-    }
-
-    public void setSrid(Integer srid) {
-        this.srid = srid;
     }
 
 }

@@ -81,9 +81,9 @@ services:
             - ./volumes/geoserver:/opt/geoserver/data_dir
 
 
-    datacat_db:
+    db:
         image: neo4j:4.1
-        container_name: datacat_db
+        container_name: db
         restart: unless-stopped
         ports:
             - 7474:7474
@@ -96,9 +96,9 @@ services:
         healthcheck:
             test: perl -MIO::Socket::INET -e 'exit(! defined( IO::Socket::INET->new("localhost:7687")))'
 
-    datacat_api:
+    api:
         image: bentrm/datacat:${DATACAT_VERSION}
-        container_name: datacat_api
+        container_name: api
         restart: unless-stopped
         environment:
             - logging.level.de.bentrm=INFO
@@ -119,27 +119,27 @@ services:
             - spring.mail.properties.mail.smtp.writetimeout=5000
             - spring.mail.properties.mail.smtp.starttls.enable=true
         depends_on:
-            - datacat_db
+            - db
         command: [
-            "wait-for-it", "datacat_db:7687", "--timeout=300", "--",
+            "wait-for-it", "db:7687", "--timeout=300", "--",
             "wait-for-it", "${MAIL_HOST}:${MAIL_PORT}", "--timeout=30", "--",
             "java", "--enable-preview", "org.springframework.boot.loader.JarLauncher" ]
 
-    datacat_web:
-        container_name: datacat_web
+    web:
+        container_name: web
         build:
             context: "./services/proxy/"
             args:
                 VERSION: ${DATACAT_EDITOR_VERSION}
         restart: unless-stopped
         depends_on:
-            - datacat_api
+            - api
         ports:
             - ${DATACAT_PORT:-3000}:80
 
-    datacat_mail:
+    mail:
         image: bentrm/mailslurper:1.14.1
-        container_name: datacat_mailserver
+        container_name: mail
         ports:
             - "2500:2500"
             - "9080:9080"

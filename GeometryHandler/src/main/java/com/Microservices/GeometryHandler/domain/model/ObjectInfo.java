@@ -16,6 +16,9 @@ public class ObjectInfo {
     @SerializedName("FeatureId")
     @Expose
     private UUID featureId;
+    @SerializedName("SRID")
+    @Expose
+    private Integer srid;
 
     /**
      * No args constructor for use in serialization
@@ -28,11 +31,13 @@ public class ObjectInfo {
      * 
      * @param collectionId
      * @param featureId
+     * @param srid
      */
-    public ObjectInfo(String collectionId, UUID featureId) {
+    public ObjectInfo(String collectionId, UUID featureId, Integer srid) {
         super();
         this.collectionId = collectionId;
         this.featureId = featureId;
+        this.srid = srid;
     }
 
     public String getCollectionId() {
@@ -49,6 +54,14 @@ public class ObjectInfo {
 
     public void setFeatureId(UUID featureId) {
         this.featureId = featureId;
+    }
+
+    public Integer getSrid() {
+        return srid;
+    }
+
+    public void setSrid(Integer srid) {
+        this.srid = srid;
     }
 
 }

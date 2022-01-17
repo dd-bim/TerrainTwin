@@ -15,6 +15,9 @@ public class UpdateJSON {
     @SerializedName("MetaInfos")
     @Expose
     private MetaInfos metaInfos;
+    @SerializedName("Breaklines")
+    @Expose
+    private List<List<List<Double>>> breaklines = null;
     @SerializedName("AddedPoints")
     @Expose
     private List<List<Double>> addedPoints = null;
@@ -31,15 +34,17 @@ public class UpdateJSON {
 
     /**
      * 
+     * @param breaklines
      * @param addedPoints
      * @param removedPoints
      * @param metaInfos
      * @param objectInfo
      */
-    public UpdateJSON(ObjectInfo objectInfo, MetaInfos metaInfos, List<List<Double>> addedPoints, List<List<Double>> removedPoints) {
+    public UpdateJSON(ObjectInfo objectInfo, MetaInfos metaInfos, List<List<List<Double>>> breaklines, List<List<Double>> addedPoints, List<List<Double>> removedPoints) {
         super();
         this.objectInfo = objectInfo;
         this.metaInfos = metaInfos;
+        this.breaklines = breaklines;
         this.addedPoints = addedPoints;
         this.removedPoints = removedPoints;
     }
@@ -58,6 +63,14 @@ public class UpdateJSON {
 
     public void setMetaInfos(MetaInfos metaInfos) {
         this.metaInfos = metaInfos;
+    }
+
+    public List<List<List<Double>>> getBreaklines() {
+        return breaklines;
+    }
+
+    public void setBreaklines(List<List<List<Double>>> breaklines) {
+        this.breaklines = breaklines;
     }
 
     public List<List<Double>> getAddedPoints() {

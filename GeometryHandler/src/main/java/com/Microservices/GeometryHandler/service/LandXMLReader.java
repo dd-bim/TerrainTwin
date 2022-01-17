@@ -71,7 +71,7 @@ public class LandXMLReader {
         Polygon3D poly = new Polygon3D(-1, boundary);
         poly3dRepository.save(poly);
         String postgresUrlBoundary = urlPrefix + "polygon_3d" + "/items/" + poly.getId();
-        PostgresInfos pBoundary = new PostgresInfos(-1, poly.getId(), postgresUrlBoundary,2, 3, filename, path, graphdbRepo, tin.getId());
+        PostgresInfos pBoundary = new PostgresInfos(-1, poly.getId(), postgresUrlBoundary,2, 3, filename, path, graphdbRepo, "bounds", tin.getId());
         graphdb.graphdbImport(pBoundary);
 
         for (int i = 0; i < breaklines.size(); i++) {
