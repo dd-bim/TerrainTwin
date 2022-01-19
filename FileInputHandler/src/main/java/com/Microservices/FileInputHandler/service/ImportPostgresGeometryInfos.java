@@ -73,7 +73,7 @@ public class ImportPostgresGeometryInfos {
                         .add(object, "tto:url", postgresUrl )
                         .add(object, "geo:dimension", infos.getDimension())
                         .add(object, "geo:coordinateDimension", infos.getCoordDimension())
-                        .add(object, "tto:version", infos.getVersion());
+                        .add(object, "tto:geoVersion", infos.getVersion());
 
                 if (infos.getPath() != null) {
       
