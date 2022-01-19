@@ -50,34 +50,62 @@ public class ImportPostgresGeometryInfos {
 
                 String namespace = domain + "/postgres/";
                 String projNs = domain + "/project/";
-                String[] mNS = infos.getPath().split("/");
-                String minioNs = mNS[mNS.length - 1];
-
+                String export = domain + "/geometry/export/";
+                String object = "postgres:" + infos.getId();
+                String terrainobj = "pro:" + UUID.randomUUID().toString();
+                UUID input = UUID.fromString("00000000-0000-0000-0000-000000000000");
+                boolean newInput = true;
+                try {
+                    input = infos.getInput();
+                    log.info("InputId: " + input.toString());
+                } catch (Exception e) {
+                    newInput = false;
+                }
+     
                 // create rdf model from data
                 ModelBuilder builder = new ModelBuilder();
                 builder.setNamespace("postgres", namespace).setNamespace("tto", domain + "/terraintwin/ontology/")
-                        .setNamespace("geo", "http://www.opengis.net/ont/geosparql#").setNamespace("pro", projNs)
-                        .setNamespace(minioNs, infos.getPath() + "/")
-                        .setNamespace("export", domain + "/geometry/export/");
-                String object = "postgres:" + infos.getId();
-                String terrainobj = "pro:" + UUID.randomUUID().toString();
-                String doc = minioNs + ":" + infos.getFilename();
+                        .setNamespace("geo", "http://www.opengis.net/ont/geosparql#").setNamespace("pro", projNs).setNamespace("export", export);
+
+                        String postgresUrl = "export:" + infos.getUrl().replace(export, "");
                 builder.add(object, RDF.TYPE, "geo:Geometry").add(terrainobj, RDF.TYPE, "geo:Feature")
-                        .add(doc, RDF.TYPE, "tto:Document").add(terrainobj, "geo:hasGeometry", object)
-                        .add(terrainobj, "tto:hasSource", doc).add(object, "tto:originId", infos.getOriginId())
-                        .add(infos.getUrl(), RDF.TYPE, "tto:GeoLink")
-                        .add(object, "tto:url", "export:" + infos.getUrl().replace(domain + "/geometry/export/", ""))
+                        .add(terrainobj, "geo:hasGeometry", object).add(infos.getUrl(), RDF.TYPE, "tto:GeoLink")
+                        .add(object, "tto:url", postgresUrl )
                         .add(object, "geo:dimension", infos.getDimension())
-                        .add(object, "geo:coordinateDimension", infos.getCoordDimension());
+                        .add(object, "geo:coordinateDimension", infos.getCoordDimension())
+                        .add(object, "tto:version", infos.getVersion());
 
-                // if geometry bounds another geometry, insert triple between their features
-                UUID nil = UUID.fromString("00000000-0000-0000-0000-000000000000");
-                if (!infos.getBounds().equals(nil)) {
-                    String feature = exec.executeQuery(infos.getGraphdbRepo(),
-                            query.findFeature(namespace + infos.getBounds().toString()));
+                if (infos.getPath() != null) {
+      
+                    String[] mNS = infos.getPath().split("/");
+                    String minioNs = mNS[mNS.length - 1];
+                    String doc = minioNs + ":" + infos.getFilename();
 
-                    // add "bounds" triple
-                    builder.add(terrainobj, "tto:bounds", "pro:" + feature.replace(projNs, ""));
+                    builder.setNamespace(minioNs, infos.getPath() + "/");
+
+                    builder.add(doc, RDF.TYPE, "tto:Document")
+                            .add(terrainobj, "tto:hasSource", doc);
+                    if (infos.getOriginId() != -1)
+                        builder.add(object, "tto:originId", infos.getOriginId());
+                } else if (newInput) {
+   
+                    String processStep = "pro:" + UUID.randomUUID().toString();
+                    builder.add(processStep, RDF.TYPE, "tto:TINUpdate")
+                            .add(processStep, "tto:original", "postgres:" + infos.getOriginal().toString())
+                            .add(processStep, "tto:input", "postgres:" + infos.getInput())
+                            .add(processStep, "tto:output", object).add(processStep, "tto:editor", infos.getEditor());
+
+                } 
+
+                // if geometry links another geometry, insert triple between their features
+                if (infos.getLinkType() != null) {
+                    // String feature = exec.executeQuery(infos.getGraphdbRepo(),
+                    //         query.findFeature(namespace + infos.getLinkedGeometry().toString()));
+
+                    // // add link triple
+                    // builder.add(terrainobj, "tto:" + infos.getLinkType(), "pro:" + feature.replace(projNs, ""));
+                    String linkedGeom = "postgres:" + infos.getLinkedGeometry();
+                    builder.add(object, "tto:" + infos.getLinkType(), linkedGeom);
 
                 }
 
@@ -85,11 +113,11 @@ public class ImportPostgresGeometryInfos {
                 if (infos.getDimension().equals(4)) {
                     builder.add(terrainobj, RDF.TYPE, "tto:Coverage");
 
-                // if polygon add type TopograficElement
+                    // if polygon add type TopograficElement
                 } else if (infos.getDimension().equals(2)) {
                     builder.add(terrainobj, RDF.TYPE, "tto:TopograficElement");
 
-                // else actually add type TopograficElement
+                    // else actually add type TopograficElement
                 } else {
                     builder.add(terrainobj, RDF.TYPE, "tto:TopograficElement");
                 }

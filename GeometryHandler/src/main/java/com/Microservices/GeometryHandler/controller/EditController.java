@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
+import com.Microservices.GeometryHandler.connection.FileInputHandlerConnection;
+import com.Microservices.GeometryHandler.domain.model.PostgresInfos;
 import com.Microservices.GeometryHandler.domain.model.UpdateJSON;
 import com.Microservices.GeometryHandler.repositories.BreaklinesRepository;
 import com.Microservices.GeometryHandler.repositories.TINRepository;
@@ -27,6 +29,7 @@ import org.locationtech.jts.triangulate.quadedge.Vertex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,6 +56,12 @@ public class EditController {
   @Autowired
   ExportController export;
 
+  @Autowired
+  FileInputHandlerConnection graphdb;
+
+  @Value("${domain.url}")
+  private String domain;
+
   Logger log = LoggerFactory.getLogger(EditController.class);
 
   // recalculate TIN with added, removed points and breaklines
@@ -61,6 +70,7 @@ public class EditController {
   @ApiResponse(responseCode = "200", description = "Successful operation")
   public String updateTin(@Parameter(description = "The JSON vor update.") @RequestBody String input) {
 
+    String urlPrefix = domain + "/geometry/export/collections/";
     String result = "";
 
     // deserialize json string to POJO
@@ -95,6 +105,7 @@ public class EditController {
         // put points from original TIN into unique list
         String[] lines = oTin.getGeometry().split(";");
         strPoints = lines[1].replaceAll("[a-zA-Z()]", "");
+        formerFeatureID = oTin.getId();
       }
 
       String[] points = strPoints.split(",");
@@ -266,10 +277,9 @@ public class EditController {
       result += updatedTin.getId().toString() + "\n";
 
       // send update information to GraphDB
-      // String postgresUrl = urlPrefix + "dtm_tin" + "/items/" + tin.getId();
-      // PostgresInfos p = new PostgresInfos(-1, tin.getId(), postgresUrl, 4, 3,
-      // filename, path, graphdbRepo);
-      // graphdb.graphdbImport(p);
+      String postgresUrl = urlPrefix + "dtm_tin" + "/items/" + updatedTin.getId();
+      PostgresInfos p = new PostgresInfos(updatedTin.getId(), formerFeatureID, formerFeatureID,"v1", json[a].getMetaInfos().getUser(), postgresUrl, 4, 3, "tinrepo");
+      graphdb.graphdbImport(p);
 
       if (breaklines) {
         for (int i = 0; i < lineStringList.length; i++) {
@@ -278,10 +288,9 @@ public class EditController {
           blRepository.save(bl);
           log.info("'ID: " + bl.getId() + ", WKT: " + bl.getGeometry() + ", tin_id: " + bl.getTin_id() + "'");
 
-          // String postgresUrlBl = urlPrefix + "dtm_breaklines" + "/items/" + bl.getId();
-          // PostgresInfos pBl = new PostgresInfos(-1, bl.getId(), postgresUrlBl, 1, 3,
-          // filename, path, graphdbRepo);
-          // graphdb.graphdbImport(pBl);
+          String postgresUrlBl = urlPrefix + "dtm_breaklines" + "/items/" + bl.getId();
+          PostgresInfos pBl = new PostgresInfos(bl.getId(), postgresUrlBl, 1, 3,"tinrepo", "breaklineOf", updatedTin.getId());
+          graphdb.graphdbImport(pBl);
         }
       }
 

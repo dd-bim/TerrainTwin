@@ -82,7 +82,7 @@ public class LandXMLReader {
             
 
             String postgresUrlBl = urlPrefix + "dtm_breaklines" + "/items/" + bl.getId();
-            PostgresInfos pBl = new PostgresInfos(-1, bl.getId(), postgresUrlBl, 1, 3, filename, path, graphdbRepo);
+            PostgresInfos pBl = new PostgresInfos(-1, bl.getId(), postgresUrlBl, 1, 3, filename, path, graphdbRepo, "breaklineOf", tin.getId());
             graphdb.graphdbImport(pBl);
         }
 
