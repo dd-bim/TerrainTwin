@@ -9,8 +9,10 @@ import com.Microservices.GeometryHandler.connection.FileInputHandlerConnection;
 import com.Microservices.GeometryHandler.domain.model.PostgresInfos;
 import com.Microservices.GeometryHandler.domain.model.UpdateJSON;
 import com.Microservices.GeometryHandler.repositories.BreaklinesRepository;
+import com.Microservices.GeometryHandler.repositories.Polygon3DRepository;
 import com.Microservices.GeometryHandler.repositories.TINRepository;
 import com.Microservices.GeometryHandler.schemas.Breaklines;
+import com.Microservices.GeometryHandler.schemas.Polygon3D;
 import com.Microservices.GeometryHandler.schemas.TIN;
 import com.google.gson.Gson;
 import org.locationtech.jts.geom.Coordinate;
@@ -54,6 +56,9 @@ public class EditController {
   BreaklinesRepository blRepository;
 
   @Autowired
+  Polygon3DRepository poly3dRepository;
+
+  @Autowired
   ExportController export;
 
   @Autowired
@@ -63,6 +68,8 @@ public class EditController {
   private String domain;
 
   Logger log = LoggerFactory.getLogger(EditController.class);
+
+  //  !!!!!!!!!!!!! graphdbRepo and versions are hardcoded
 
   // recalculate TIN with added, removed points and breaklines
   @PostMapping("/updateTIN")
@@ -280,6 +287,13 @@ public class EditController {
       String postgresUrl = urlPrefix + "dtm_tin" + "/items/" + updatedTin.getId();
       PostgresInfos p = new PostgresInfos(updatedTin.getId(), formerFeatureID, formerFeatureID,"v1", json[a].getMetaInfos().getUser(), postgresUrl, 4, 3, "tinrepo");
       graphdb.graphdbImport(p);
+
+      String boundary = tinRepository.getExteriorRing(updatedTin.getId());
+      Polygon3D poly = new Polygon3D(-1, boundary);
+      poly3dRepository.save(poly);
+      String postgresUrlBoundary = urlPrefix + "polygon_3d" + "/items/" + poly.getId();
+      PostgresInfos pBoundary = new PostgresInfos(poly.getId(), postgresUrlBoundary,2, 3, "tinrepo", "bounds", updatedTin.getId());
+      graphdb.graphdbImport(pBoundary);
 
       if (breaklines) {
         for (int i = 0; i < lineStringList.length; i++) {
