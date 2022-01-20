@@ -15,6 +15,8 @@ import com.Microservices.GeometryHandler.schemas.Breaklines;
 import com.Microservices.GeometryHandler.schemas.Polygon3D;
 import com.Microservices.GeometryHandler.schemas.TIN;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
@@ -33,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -69,16 +72,17 @@ public class EditController {
 
   Logger log = LoggerFactory.getLogger(EditController.class);
 
-  //  !!!!!!!!!!!!! graphdbRepo and versions are hardcoded
-
   // recalculate TIN with added, removed points and breaklines
-  @PostMapping("/updateTIN")
+  @PostMapping("/updateTIN/repo/{repo}")
   @Operation(summary = "Create an updated TIN with update information as JSON")
   @ApiResponse(responseCode = "200", description = "Successful operation")
-  public String updateTin(@Parameter(description = "The JSON vor update.") @RequestBody String input) {
+  public String updateTin(
+      @Parameter(description = "The name of the target repository for the import of extra information into GraphDB.") @PathVariable String repo,
+      @Parameter(description = "The JSON vor update.") @RequestBody String input) {
 
     String urlPrefix = domain + "/geometry/export/collections/";
     String result = "";
+    // String repo = "bin";
 
     // deserialize json string to POJO
     Gson gson = new Gson();
@@ -91,6 +95,7 @@ public class EditController {
 
     String newTIN = null;
     UUID formerFeatureID = null;
+    UUID newFeatureID = null;
 
     // start loop over TIN updates in JSON
     for (int a = 0; a < json.length; a++) {
@@ -103,6 +108,7 @@ public class EditController {
         // if featureId is same as in former loop, use already updated TIN
         String[] lines = newTIN.split(";");
         strPoints = lines[1].replaceAll("[a-zA-Z()]", "");
+        formerFeatureID = newFeatureID;
       } else {
         // get original TIN by collectionId and featureId
         TIN oTin = TIN.class.cast(
@@ -229,7 +235,6 @@ public class EditController {
           ArrayList<Coordinate> finalList = new ArrayList<Coordinate>();
 
           for (Coordinate c : coordList) {
-            // if (Double.isNaN(c.z)) {
             if (breaklines && newPts.contains(c)) {
               if (nanPoints.contains(c)) {
                 finalList.add(new Coordinate(c.x, c.y, newZ.get(nanPoints.indexOf(c))));
@@ -271,28 +276,53 @@ public class EditController {
         }
       }
       log.info(tin);
-      newTIN = tin;
-      formerFeatureID = json[a].getObjectInfo().getFeatureId();
 
       WKTWriter wkt = new WKTWriter(3);
       wkt.setPrecisionModel(precisionModel);
-      
+
       // push updated TIN into postgres database
       TIN updatedTin = new TIN(tin);
       tinRepository.save(updatedTin);
       log.info("'ID: " + updatedTin.getId() + ", WKT: " + updatedTin.getGeometry() + "'");
       result += updatedTin.getId().toString() + "\n";
 
+      // get version and optional original tin from input tin
+      String res = graphdb.graphdbGetTINInfos(formerFeatureID.toString(), repo);
+      JsonObject resJson = gson.fromJson(res, JsonObject.class);
+
+      char[] v = resJson.get("version").toString().replaceAll("\"", "").toCharArray();
+
+      for (int i = 0; i < v.length; i++) {
+        if (Character.isDigit(v[i])) {
+          int d = Character.getNumericValue(v[i]) + 1;
+          v[i] = Character.forDigit(d, 10);
+          break;
+        }
+      }
+      String newVersion = new String(v);
+
+      // if the original is empty, input is also the original tin
+      UUID original;
+      try {
+        String[] s = resJson.get("original").toString().replaceAll("\"", "").split("\\/");
+        original = UUID.fromString(s[s.length - 1]);
+      } catch (Exception e) {
+        log.error("No original found");
+        original = formerFeatureID;
+      }
+
       // send update information to GraphDB
       String postgresUrl = urlPrefix + "dtm_tin" + "/items/" + updatedTin.getId();
-      PostgresInfos p = new PostgresInfos(updatedTin.getId(), formerFeatureID, formerFeatureID,"v1", json[a].getMetaInfos().getUser(), postgresUrl, 4, 3, "tinrepo");
+      PostgresInfos p = new PostgresInfos(updatedTin.getId(), formerFeatureID, original, newVersion,
+          json[a].getMetaInfos().getUser(), postgresUrl, 4, 3, repo);
       graphdb.graphdbImport(p);
 
       String boundary = tinRepository.getExteriorRing(updatedTin.getId());
       Polygon3D poly = new Polygon3D(-1, boundary);
       poly3dRepository.save(poly);
       String postgresUrlBoundary = urlPrefix + "polygon_3d" + "/items/" + poly.getId();
-      PostgresInfos pBoundary = new PostgresInfos(poly.getId(), postgresUrlBoundary,2, 3, "tinrepo", "bounds", updatedTin.getId());
+      PostgresInfos pBoundary = new PostgresInfos(poly.getId(), postgresUrlBoundary, 2, 3, repo, "bounds",
+          updatedTin.getId());
       graphdb.graphdbImport(pBoundary);
 
       if (breaklines) {
@@ -303,11 +333,15 @@ public class EditController {
           log.info("'ID: " + bl.getId() + ", WKT: " + bl.getGeometry() + ", tin_id: " + bl.getTin_id() + "'");
 
           String postgresUrlBl = urlPrefix + "dtm_breaklines" + "/items/" + bl.getId();
-          PostgresInfos pBl = new PostgresInfos(bl.getId(), postgresUrlBl, 1, 3,"tinrepo", "breaklineOf", updatedTin.getId());
+          PostgresInfos pBl = new PostgresInfos(bl.getId(), postgresUrlBl, 1, 3, repo, "breaklineOf",
+              updatedTin.getId());
           graphdb.graphdbImport(pBl);
         }
       }
 
+      newTIN = tin;
+      newFeatureID = updatedTin.getId();
+      formerFeatureID = json[a].getObjectInfo().getFeatureId();
     }
     return result;
   }

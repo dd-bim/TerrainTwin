@@ -13,15 +13,15 @@ public class Queries {
     public String findFeature(String geometry) {
         return Prefix.GEO.toString() +
                 "select ?s where {" +
-                "?s geo:hasGeometry <" + geometry + "> . }";
+                "?s geo:hasGeometry postgres:" + geometry + " . }";
     }
 
-    // find all classes in a group
+    // find dimension of a geometry
     public String getDimension(String geometry) {
-        return Prefix.GEO.toString() +
+        return "PREFIX postgres: <" + domain + "/postgres/>" +
+                Prefix.GEO.toString() +
                 "select ?dim where {" +
-                "<" + geometry + "> geo:dimension ?dim ." +
-                "}";
+                "postgres:" + geometry + " geo:dimension ?dim . }";
     }
 
     // find feature, which is bounded by this feature
@@ -58,5 +58,17 @@ public class Queries {
                 "?s tto:original ?orig ." +
             "filter(postgres:" + geometry + " in (?in) ||  postgres:" + geometry + " in (?out) || postgres:" + geometry + " in (?orig)) }";
         }
+
+    
+    public String getInfosForTINUpdate(String geometry) {
+        return "PREFIX postgres: <" + domain + "/postgres/>" +
+                Prefix.TTO.toString() +
+                "select ?version ?original where {" + 
+                    "postgres:" + geometry + " tto:geoVersion ?version ." +
+                    "optional { " +
+                        "?t tto:output postgres:" + geometry + " . " +
+                        "?t tto:original ?original . " +
+                    "}}"; 
+    }
 
 }
