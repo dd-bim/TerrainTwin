@@ -54,19 +54,20 @@ public class RequestController {
     return result;
   }
 
+  // get a list of all repositories
   @GetMapping(path = "/repositories")
-  // @Operation(summary = "Create a new GraphDB repository")
+  @Operation(summary = "Get all existing repositories from GraphDB")
   @ApiResponse(responseCode = "200", description = "Successful operation")
   public String getRepos() {
     ArrayList<String> result = new ArrayList<String>();
-
     result = restConn.getRepositories();
     String json = new Gson().toJson(result);
     return json;
   }
 
+  // get the dimension (point = 0, line = 1, polygon = 2, solid = 3, tin = 4)
   @GetMapping(path = "/geometry/dimension/repo/{repo}")
-  @Operation(summary = "Get the dimension of a geometry object")
+  @Operation(summary = "Get the dimension of a geometry object", description = "Possible results: <br>0 = Point, <br>1 = Line, <br>2 = Polygon, <br>3 = Solid, <br>4 = TIN")
   @ApiResponse(responseCode = "200", description = "Successful operation")
   public String getGeoDim(@Parameter(description = "The name of the GraphDB repository.") @PathVariable String repo,
       @Parameter(description = "The geometry object id.") @RequestParam String geometry) {
@@ -76,7 +77,8 @@ public class RequestController {
     return result;
   }
 
-  @GetMapping(path = "/geometry/tininfos/repo/{repo}")
+  // get most information about a geometry at once
+  @GetMapping(path = "/geometry/tinInfos/repo/{repo}")
   @Operation(summary = "Get infos of a geometry object")
   @ApiResponse(responseCode = "200", description = "Successful operation")
   public String getInfos1(@Parameter(description = "The name of the GraphDB repository.") @PathVariable String repo,
@@ -86,6 +88,8 @@ public class RequestController {
     ArrayList<List<String>> list = exec.executeQuery1(repo, query.getGeomInfos(geometry));
 
     JsonObject json = new JsonObject();
+
+    // add the geometry id for information
     json.addProperty("id", geometry);
 
     for (List<String> triple : list) {
@@ -93,20 +97,26 @@ public class RequestController {
 
       switch (key) {
 
+        // ignore class definitions from ontology, expressed by type
         case "type":
           break;
 
+        // set the url to the geometry in Postgres
         case "url":
           json.addProperty("postgresUrl", triple.get(1));
           break;
 
+        // add all other properties as key value pairs
         default:
           String value = getObject(triple.get(1));
           json.addProperty(key, value);
           break;
-
       }
     }
+
+    // try to get source file name
+    String source = exec.executeQuery(repo, query.getSourceFile(geometry));
+    json.addProperty("source", getObject(source));
 
     // get breaklines contained by tin geometry
     ArrayList<List<String>> breaklineList = exec.executeQuery1(repo, query.getBreaklinesFromGeom(geometry));
@@ -127,20 +137,25 @@ public class RequestController {
     ArrayList<String> outputArr = new ArrayList<String>();
     ArrayList<String> originalArr = new ArrayList<String>();
 
+    // decide, whether geometry is input, output or original in TINUpdate
     for (List<String> triple : updateList) {
 
       String input = getObject(triple.get(0));
       String output = getObject(triple.get(1));
       String original = getObject(triple.get(2));
 
+      // tin has newer versions
       if (input.equals(geometry) && !inputArr.contains(output)) {
         inputFor.add(output);
         inputArr.add(output);
+
+      // tin has older versions
       } else if (output.equals(geometry) && !outputArr.contains(input)) {
         outputFrom.add(input);
         outputArr.add(input);
       }
 
+      // tin is the original of other tins -> has newer versions
       if (original.equals(geometry) && !originalArr.contains(output)) {
         originalOf.add(output);
         originalArr.add(output);
@@ -148,10 +163,11 @@ public class RequestController {
 
     }
 
-    json.add("newerVersion", inputFor);
-    json.add("olderVersion", outputFrom);
+    json.add("newerVersions", inputFor);
+    json.add("olderVersions", outputFrom);
     json.add("originalOf", originalOf);
 
+    // create pretty json output
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
     return gson.toJson(json);
   }
@@ -199,7 +215,8 @@ public class RequestController {
   //   return json.toString();
   // }
 
-  @GetMapping(path = "/geometry/tinbreaklines/repo/{repo}")
+  // get breaklines contained by tin object
+  @GetMapping(path = "/geometry/tinBreaklines/repo/{repo}")
   @Operation(summary = "Get breaklines contained by a tin object")
   @ApiResponse(responseCode = "200", description = "Successful operation")
   public String getBreaklines(@Parameter(description = "The name of the GraphDB repository.") @PathVariable String repo,
@@ -211,10 +228,13 @@ public class RequestController {
       breaklines.add(getObject(list.get(i).get(0)));
     }
 
-    return breaklines.toString();
+    // create pretty json output
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    return gson.toJson(breaklines);
   }
 
-  @GetMapping(path = "/geometry/infosForTINUpdate/repo/{repo}")
+  // get version and original of tin object for TINUpdate
+  @GetMapping(path = "/geometry/tinVersion/repo/{repo}")
   @Operation(summary = "Get info of version and original tin for tin object")
   @ApiResponse(responseCode = "200", description = "Successful operation")
   public String getInfosForTIN(@Parameter(description = "The name of the GraphDB repository.") @PathVariable String repo,
@@ -227,12 +247,15 @@ public class RequestController {
       try {
         json.addProperty("original", list.get(i).get(1));
       } catch (Exception e) {
+        // if it has no original, because it is self an original, value will be empty
         json.addProperty("original", "");
         log.info("no original found");
       }
     }
 
-    return json.toString();
+    // create pretty json output
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    return gson.toJson(json);
   }
 
   // get object from iri

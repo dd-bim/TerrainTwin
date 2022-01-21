@@ -59,7 +59,7 @@ public class Queries {
             "filter(postgres:" + geometry + " in (?in) ||  postgres:" + geometry + " in (?out) || postgres:" + geometry + " in (?orig)) }";
         }
 
-    
+    // get version and original tin id for TINUpdate
     public String getInfosForTINUpdate(String geometry) {
         return "PREFIX postgres: <" + domain + "/postgres/>" +
                 Prefix.TTO.toString() +
@@ -69,6 +69,16 @@ public class Queries {
                         "?t tto:output postgres:" + geometry + " . " +
                         "?t tto:original ?original . " +
                     "}}"; 
+    }
+
+    // get source document of geometry
+    public String getSourceFile(String geometry) {
+        return "PREFIX postgres: <" + domain + "/postgres/>" +
+                Prefix.TTO.toString() +
+                Prefix.GEO.toString() +
+                "select ?doc where {" + 
+                    "?f geo:hasGeometry postgres:" + geometry + " ." +
+                    "?f tto:hasSource ?doc . }";  
     }
 
 }

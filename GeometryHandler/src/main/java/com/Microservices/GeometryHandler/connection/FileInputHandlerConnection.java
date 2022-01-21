@@ -55,7 +55,7 @@ public class FileInputHandlerConnection {
         String conn = "";
         try {
 
-            URL url = new URL("http://file-input-handler:7201/inputhandler/geometry/infosForTINUpdate/repo/" + repo
+            URL url = new URL("http://file-input-handler:7201/inputhandler/geometry/tinVersion/repo/" + repo
                     + "?geometry=" + geometry);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             // connection.setConnectTimeout(5000);// 5 secs
