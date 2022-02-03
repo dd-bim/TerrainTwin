@@ -2,6 +2,7 @@ package com.Microservices.GeometryHandler.controller;
 
 import com.Microservices.GeometryHandler.service.UpdateTIN;
 
+import org.locationtech.jts.io.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RefreshScope
 @RestController
-@Tag(name = "Edit geometries")
+@Tag(name = "Edit Geometry")
 @RequestMapping("/geometry/edit")
 public class EditController {
 
@@ -34,7 +35,7 @@ public class EditController {
   @ApiResponse(responseCode = "200", description = "Successful operation")
   public String updateTin(
       @Parameter(description = "The name of the target repository for the import of extra information into GraphDB.") @PathVariable String repo,
-      @Parameter(description = "The JSON vor update.") @RequestBody String input) {
+      @Parameter(description = "The JSON vor update.") @RequestBody String input) throws ParseException {
 
         return update.recalculateTIN(input, repo);
   
@@ -44,7 +45,7 @@ public class EditController {
     @PostMapping("/updateTIN")
     @Operation(summary = "Create an updated TIN with update information as JSON", description = "Only for testing. <br> Information are imported into GraphDB repository bin.")
     @ApiResponse(responseCode = "200", description = "Successful operation")
-    public String updateTinTest(@Parameter(description = "The JSON vor update.") @RequestBody String input) {
+    public String updateTinTest(@Parameter(description = "The JSON vor update.") @RequestBody String input) throws ParseException {
   
           return update.recalculateTIN(input, "bin");
     

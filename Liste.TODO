@@ -17,12 +17,13 @@ Microservice Architecture:
     ✔ Docker-Stack (Postgres DB, GraphDB, MinIO Object Storage) einbinden @done (14.6.2021, 08:40:26)
     ✔ Datacat in Microservice-Architektur einbinden @done (14.9.2021, 09:39:39)
     ✔ Sachdaten und Geometrie in einer CSV/TXT @done (18.6.2021, 13:07:17)
-    ☐ allgemeines Projekt anlegen (Bucket, Schema, Repository) z.B. als Profil, welches immer übergeben wird
+    ☐ allgemeines Projekt anlegen (Bucket, Schema, Repository) z.B. als Profil, welches immer übergeben wird (eventuell in .en oder .yml file)
     ☐ 3D-Objekte verwenden
     ☐ Nginx Proxy Container
     ✔ Geoserver Docker @done (17.8.2021, 11:09:15)
     ✔ Geometrieexport mit Angabe des EPSG Code für Ausgabe in bestimmtem Ref.-Sys. @done (27.7.2021, 08:26:22)
     ☐ Datenausgabe als GeoJSON, GeoPKG
+    ☐ ICCD Export?
     ✔ IFCTerrain + MinIO Standalone @done (14.9.2021, 09:39:57)
     ✔ Swagger überall umgestalten @done (17.8.2021, 11:37:07)
     ✔ BIMServer dockern und einbinden @done (7.1.2022, 14:33:07)
@@ -38,12 +39,15 @@ Microservice Architecture:
         ☐ GML Import 
         ☐ mehrere TINs aus einer LandXML Datei einlesen können 
         ☐ Was ist mit Multi- Point/Line/Polygon Geometrien?
+        ☐ mehrfach gleiche Version eines TIN verhindern / prüfen
+        ☐ Differenz zwischenTINS ermitteln
+        ☐ TIN mit Polygon ausschneiden
 
     MinIO-Upload-Service:
         ☐ Check der Dateien/Daten bei MinIO Upload
         ✔ File Upload Größe ändern @done (21.6.2021, 07:49:04)
     
-    File-Input-Service:
+    File-Input-Handler:
         ✔ Repositories über REST/automatisch neu erstellen (FreeSailRepository) @done (15.7.2021, 13:34:44)
         ✔ Elemente Updaten @done (15.7.2021, 10:08:48)
         ✔ Elemente Löschen @done (13.7.2021, 13:59:22)
@@ -51,6 +55,7 @@ Microservice Architecture:
         ✔ IFC Import @done (7.1.2022, 14:34:18)
         ☐ CRS speichern?
         ☐ Ontologieordner in MinIO automatisch anlegen, Ontologien hochladen und bei Erstellen eines Repo importieren
+        ☐ bei Bruchkanten Abfrage zu TIN, alle Bruchkanten aus vorherigen Änderungen mit ausgeben
 
     Berechnungen:
         ☐ Abfrage welche Objekte liegen übereinander (DE-9IM)
@@ -75,3 +80,7 @@ Microservice Architecture:
 
 Test:
 Create tables, Dateien Importieren, Topologien berechnen, wieder löschen, Vergleich Input und gelöschte Elemente
+
+Abfragen:
+    ☐ statt IDs Mengen abfragen
+    ☐ Welches Object liegt auf keiner Fläche?
