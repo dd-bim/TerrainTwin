@@ -116,6 +116,10 @@ public class RequestController {
 
     // try to get source file name
     String source = exec.executeQuery(repo, query.getSourceFile(geometry));
+    if (source.isEmpty()) {
+      ArrayList<List<String>> uList = exec.executeQuery1(repo, query.getInfosForTINUpdate(geometry));
+      source = uList.get(0).get(1);
+    }
     json.addProperty("source", getObject(source));
 
     // get breaklines contained by tin geometry
@@ -244,8 +248,9 @@ public class RequestController {
     JsonObject json = new JsonObject();
     for (int i = 0; i < list.size(); i++) {
       json.addProperty("version", list.get(i).get(0));
+      json.addProperty("source", list.get(i).get(1));
       try {
-        json.addProperty("original", list.get(i).get(1));
+        json.addProperty("original", list.get(i).get(2));
       } catch (Exception e) {
         // if it has no original, because it is self an original, value will be empty
         json.addProperty("original", "");

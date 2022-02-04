@@ -5,8 +5,11 @@ import java.io.FileOutputStream;
 import java.util.UUID;
 
 import com.Microservices.FileInputHandler.connection.GraphDBConnection;
+import com.Microservices.FileInputHandler.controller.RequestController;
 import com.Microservices.FileInputHandler.domain.model.PostgresInfos;
-import com.Microservices.FileInputHandler.domain.model.Queries;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.util.ModelBuilder;
@@ -30,7 +33,7 @@ public class ImportPostgresGeometryInfos {
     QueryExecution exec;
 
     @Autowired
-    Queries query;
+    RequestController request;
 
     @Value("${domain.url}")
     private String domain;
@@ -61,22 +64,23 @@ public class ImportPostgresGeometryInfos {
                 } catch (Exception e) {
                     newInput = false;
                 }
-     
+
                 // create rdf model from data
                 ModelBuilder builder = new ModelBuilder();
                 builder.setNamespace("postgres", namespace).setNamespace("tto", domain + "/terraintwin/ontology/")
-                        .setNamespace("geo", "http://www.opengis.net/ont/geosparql#").setNamespace("pro", projNs).setNamespace("export", export);
+                        .setNamespace("geo", "http://www.opengis.net/ont/geosparql#").setNamespace("pro", projNs)
+                        .setNamespace("export", export);
 
-                        String postgresUrl = "export:" + infos.getUrl().replace(export, "");
+                String postgresUrl = "export:" + infos.getUrl().replace(export, "");
                 builder.add(object, RDF.TYPE, "geo:Geometry").add(terrainobj, RDF.TYPE, "geo:Feature")
                         .add(terrainobj, "geo:hasGeometry", object).add(infos.getUrl(), RDF.TYPE, "tto:GeoLink")
-                        .add(object, "tto:url", postgresUrl )
+                        .add(object, "tto:url", postgresUrl)
                         .add(object, "geo:dimension", infos.getDimension())
                         .add(object, "geo:coordinateDimension", infos.getCoordDimension())
                         .add(object, "tto:geoVersion", infos.getVersion());
 
                 if (infos.getPath() != null) {
-      
+
                     String[] mNS = infos.getPath().split("/");
                     String minioNs = mNS[mNS.length - 1];
                     String doc = minioNs + ":" + infos.getFilename();
@@ -88,22 +92,25 @@ public class ImportPostgresGeometryInfos {
                     if (infos.getOriginId() != -1)
                         builder.add(object, "tto:originId", infos.getOriginId());
                 } else if (newInput) {
-   
+
                     String processStep = "pro:" + UUID.randomUUID().toString();
                     builder.add(processStep, RDF.TYPE, "tto:TINUpdate")
                             .add(processStep, "tto:original", "postgres:" + infos.getOriginal().toString())
                             .add(processStep, "tto:input", "postgres:" + infos.getInput())
                             .add(processStep, "tto:output", object).add(processStep, "tto:editor", infos.getEditor());
 
-                } 
+                    String bls = request.getBreaklines(infos.getGraphdbRepo(), infos.getInput().toString());
+                    Gson gson = new Gson();
+                    JsonArray blArr = gson.fromJson(bls, JsonArray.class);
+
+                    for (JsonElement bl : blArr) {
+                        builder.add("postgres:" + bl.getAsString(), "tto:breaklineOf", object);
+                    }
+
+                }
 
                 // if geometry links another geometry, insert triple between their features
                 if (infos.getLinkType() != null) {
-                    // String feature = exec.executeQuery(infos.getGraphdbRepo(),
-                    //         query.findFeature(namespace + infos.getLinkedGeometry().toString()));
-
-                    // // add link triple
-                    // builder.add(terrainobj, "tto:" + infos.getLinkType(), "pro:" + feature.replace(projNs, ""));
                     String linkedGeom = "postgres:" + infos.getLinkedGeometry();
                     builder.add(object, "tto:" + infos.getLinkType(), linkedGeom);
 

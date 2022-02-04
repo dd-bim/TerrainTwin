@@ -63,11 +63,18 @@ public class Queries {
     public String getInfosForTINUpdate(String geometry) {
         return "PREFIX postgres: <" + domain + "/postgres/>" +
                 Prefix.TTO.toString() +
-                "select ?version ?original where {" + 
+                Prefix.GEO.toString() +
+                "select ?version ?source ?original where {" + 
                     "postgres:" + geometry + " tto:geoVersion ?version ." +
+                    "optional {" +
+                        "?feature geo:hasGeometry postgres:" + geometry + " ." + 
+                        "?feature tto:hasSource ?source ." +
+                    "}" + 
                     "optional { " +
                         "?t tto:output postgres:" + geometry + " . " +
                         "?t tto:original ?original . " +
+                        "?ofeature geo:hasGeometry ?original ." +
+                        "?ofeature tto:hasSource ?source ." +
                     "}}"; 
     }
 

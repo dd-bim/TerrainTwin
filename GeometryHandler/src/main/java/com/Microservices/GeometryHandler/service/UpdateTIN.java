@@ -91,7 +91,7 @@ public class UpdateTIN {
             CoordinateList pointList = new CoordinateList();
             if (json[a].getObjectInfo().getFeatureId().equals(formerFeatureID)) {
                 pointList = new CoordinateList(newTIN.getCoordinates(), false);
-                formerFeatureID = newFeatureID;
+                // formerFeatureID = newFeatureID;
             } else {
                 // get original TIN by collectionId and featureId
                 TIN dbTin = TIN.class.cast(
@@ -108,7 +108,8 @@ public class UpdateTIN {
                 WKTReader wkt = new WKTReader(factory);
                 GeometryCollection oTin = (GeometryCollection) wkt.read(geometry);
                 pointList = new CoordinateList(oTin.getCoordinates(), false);
-                formerFeatureID = dbTin.getId();
+                // formerFeatureID = dbTin.getId();
+                newFeatureID = dbTin.getId();
 
             }
             System.out.println("Starting points: " + pointList.size());
@@ -172,16 +173,17 @@ public class UpdateTIN {
             pointList.addAll(addedPoints);
             System.out.println("Points after adding: " + pointList.size());
 
-             // calculate new TIN with conforming delauney triangulation
-             GeometryCollection triangles = helper.triangulate(pointList, lineList, factory);
+            // calculate new TIN with conforming delauney triangulation
+            GeometryCollection triangles = helper.triangulate(pointList, lineList, factory);
 
-             // filter new calculated points
-             CoordinateList newPointList = new CoordinateList(triangles.getCoordinates());
-             newPointList.removeAll(pointList);
-             System.out.println("New points after triangulation: " + newPointList.size());
+            // filter new calculated points
+            CoordinateList newPointList = new CoordinateList(triangles.getCoordinates());
+            newPointList.removeAll(pointList);
+            System.out.println("New points after triangulation: " + newPointList.size());
 
             // interpolate all z values of new points and create polygon list
-            List<Polygon> polygonList = helper.interpolateNaNValues(triangles, lineSegments, newPointList, breaklines, factory);
+            List<Polygon> polygonList = helper.interpolateNaNValues(triangles, lineSegments, newPointList, breaklines,
+                    factory);
 
             // write polygon list to WKT
             Polygon[] pol = new Polygon[polygonList.size()];
@@ -193,7 +195,8 @@ public class UpdateTIN {
             String gcWkt = wkt.write(col);
 
             // push updated TIN into postgres database
-            String tin = "SRID=" + col.getSRID() + ";" + gcWkt.replace("GEOMETRYCOLLECTION Z", "TIN").replaceAll("POLYGON Z","");
+            String tin = "SRID=" + col.getSRID() + ";"
+                    + gcWkt.replace("GEOMETRYCOLLECTION Z", "TIN").replaceAll("POLYGON Z", "");
             log.info(tin);
             TIN updatedTin = new TIN(tin);
             tinRepository.save(updatedTin);
@@ -201,11 +204,11 @@ public class UpdateTIN {
             result += updatedTin.getId().toString() + "\n";
 
             // get version and optional original tin from input tin
-            String res = graphdb.graphdbGetTINInfos(formerFeatureID.toString(), repo);
+            String res = graphdb.graphdbGetTINInfos(newFeatureID.toString(), repo);
             JsonObject resJson = gson.fromJson(res, JsonObject.class);
 
             String newVersion = "1.0";
-            UUID original = formerFeatureID;
+            UUID original = newFeatureID;
             try {
                 char[] v = resJson.get("version").toString().replaceAll("\"", "").toCharArray();
 
@@ -216,24 +219,23 @@ public class UpdateTIN {
                         newVersion = new String(v);
                         break;
                     }
-
-                    // if the original is empty, input is also the original tin
-                    try {
-                        String[] s = resJson.get("original").toString().replaceAll("\"", "").split("\\/");
-                        original = UUID.fromString(s[s.length - 1]);
-                    } catch (Exception e) {
-                        log.error("No original found");
-                        // original = formerFeatureID;
-                    }
-
                 }
+
+                // if the original is empty, input is also the original tin
+                try {
+                    String[] s = resJson.get("original").toString().replaceAll("\"", "").split("\\/");
+                    original = UUID.fromString(s[s.length - 1]);
+                } catch (Exception e) {
+                    log.error("No original found");
+                }
+
             } catch (Exception e) {
-                log.error("No tin for id " + formerFeatureID + " found.");
+                log.error("No tin for id " + newFeatureID + " found.");
             }
 
             // send update information to GraphDB
             String postgresUrl = urlPrefix + "dtm_tin" + "/items/" + updatedTin.getId();
-            PostgresInfos p = new PostgresInfos(updatedTin.getId(), formerFeatureID, original, newVersion,
+            PostgresInfos p = new PostgresInfos(updatedTin.getId(), newFeatureID, original, newVersion,
                     json[a].getMetaInfos().getUser(), postgresUrl, 4, 3, repo);
             graphdb.graphdbImport(p);
 
