@@ -262,6 +262,26 @@ public class RequestController {
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
     return gson.toJson(json);
   }
+  // get all version which relate to tin object
+  @GetMapping(path = "/geometry/tinAllVersions/repo/{repo}")
+  @Operation(summary = "Get all versions of tin object")
+  @ApiResponse(responseCode = "200", description = "Successful operation")
+  public String getAllVersionsfromTIN(@Parameter(description = "The name of the GraphDB repository.") @PathVariable String repo,
+      @Parameter(description = "The tin object id.") @RequestParam String geometry) {
+    ArrayList<List<String>> list = exec.executeQuery1(repo, query.getAllVersions(geometry));
+
+    JsonArray jsonArr = new JsonArray();
+    for (int i = 0; i < list.size(); i++) {
+      JsonObject json = new JsonObject();
+      json.addProperty("version", list.get(i).get(0));
+      json.addProperty("TIN", getObject(list.get(i).get(1)));
+      jsonArr.add(json);
+    }
+
+    // create pretty json output
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    return gson.toJson(jsonArr);
+  }
 
   // get object from iri
   public String getObject(String iri) {

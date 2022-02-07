@@ -88,4 +88,18 @@ public class Queries {
                     "?f tto:hasSource ?doc . }";  
     }
 
+    // get all versions relating to the tin object 
+    public String getAllVersions(String geometry) {
+        return "PREFIX postgres: <" + domain + "/postgres/>" +
+        Prefix.TTO.toString() +
+        "select ?version ?geo where {" +  
+            "?t tto:output | tto:input postgres:" + geometry + "." +
+            "?t tto:original ?origin ." +
+            "?tt tto:original ?origin ." +
+            "?tt tto:output | tto:input ?geo ." +
+            "?geo tto:geoVersion ?version ." +
+        "} Group By ?version ?geo";
+        
+    }
+
 }
