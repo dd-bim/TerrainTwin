@@ -97,7 +97,11 @@ public class ImportPostgresGeometryInfos {
                     builder.add(processStep, RDF.TYPE, "tto:TINUpdate")
                             .add(processStep, "tto:original", "postgres:" + infos.getOriginal().toString())
                             .add(processStep, "tto:input", "postgres:" + infos.getInput())
-                            .add(processStep, "tto:output", object).add(processStep, "tto:editor", infos.getEditor());
+                            .add(processStep, "tto:output", object)
+                            .add(processStep, "tto:editor", infos.getEditor())
+                            .add(processStep, "tto:excavation", infos.getExcavation())
+                            .add(processStep, "tto:backfill", infos.getBackfill())
+                            .add(processStep, "tto:massChange", infos.getBackfill() - infos.getExcavation());
 
                     String bls = request.getBreaklines(infos.getGraphdbRepo(), infos.getInput().toString());
                     Gson gson = new Gson();

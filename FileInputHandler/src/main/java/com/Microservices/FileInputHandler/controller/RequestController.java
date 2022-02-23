@@ -248,7 +248,7 @@ public class RequestController {
     JsonObject json = new JsonObject();
     for (int i = 0; i < list.size(); i++) {
       json.addProperty("version", list.get(i).get(0));
-      json.addProperty("source", list.get(i).get(1));
+      json.addProperty("source", getObject(list.get(i).get(1)));
       try {
         json.addProperty("original", list.get(i).get(2));
       } catch (Exception e) {

@@ -1,6 +1,7 @@
 package com.Microservices.GeometryHandler.controller;
 
 import com.Microservices.GeometryHandler.service.UpdateTIN;
+import com.Microservices.GeometryHandler.service.VolumeCalculation;
 
 import org.locationtech.jts.io.ParseException;
 import org.slf4j.Logger;
@@ -27,6 +28,12 @@ public class EditController {
   @Autowired
   UpdateTIN update;
 
+  @Autowired
+  VolumeCalculation getVolume;
+
+  @Autowired
+  ExportController export;
+
   Logger log = LoggerFactory.getLogger(EditController.class);
 
   // recalculate TIN with added, removed points and breaklines
@@ -37,17 +44,18 @@ public class EditController {
       @Parameter(description = "The name of the target repository for the import of extra information into GraphDB.") @PathVariable String repo,
       @Parameter(description = "The JSON vor update.") @RequestBody String input) throws ParseException {
 
-        return update.recalculateTIN(input, repo);
-  
+    return update.recalculateTIN(input, repo);
+
   }
 
-    // recalculate TIN with added, removed points and breaklines
-    @PostMapping("/updateTIN")
-    @Operation(summary = "Create an updated TIN with update information as JSON", description = "Only for testing. <br> Information are imported into GraphDB repository bin.")
-    @ApiResponse(responseCode = "200", description = "Successful operation")
-    public String updateTinTest(@Parameter(description = "The JSON vor update.") @RequestBody String input) throws ParseException {
-  
-          return update.recalculateTIN(input, "bin");
-    
-    }
+  // recalculate TIN with added, removed points and breaklines
+  @PostMapping("/updateTIN")
+  @Operation(summary = "Create an updated TIN with update information as JSON", description = "Only for testing. <br> Information are imported into GraphDB repository bin.")
+  @ApiResponse(responseCode = "200", description = "Successful operation")
+  public String updateTinTest(@Parameter(description = "The JSON vor update.") @RequestBody String input)
+      throws ParseException {
+
+    return update.recalculateTIN(input, "bin");
+
+  }
 }

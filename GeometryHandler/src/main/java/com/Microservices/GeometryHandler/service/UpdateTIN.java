@@ -6,8 +6,10 @@ import java.util.UUID;
 
 import com.Microservices.GeometryHandler.connection.FileInputHandlerConnection;
 import com.Microservices.GeometryHandler.controller.ExportController;
+import com.Microservices.GeometryHandler.domain.model.IndexedTin;
 import com.Microservices.GeometryHandler.domain.model.PostgresInfos;
 import com.Microservices.GeometryHandler.domain.model.UpdateJSON;
+import com.Microservices.GeometryHandler.domain.model.Volume;
 import com.Microservices.GeometryHandler.repositories.BreaklinesRepository;
 import com.Microservices.GeometryHandler.repositories.Polygon3DRepository;
 import com.Microservices.GeometryHandler.repositories.TINRepository;
@@ -15,6 +17,8 @@ import com.Microservices.GeometryHandler.schemas.Breaklines;
 import com.Microservices.GeometryHandler.schemas.Polygon3D;
 import com.Microservices.GeometryHandler.schemas.TIN;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import org.locationtech.jts.geom.Coordinate;
@@ -25,6 +29,7 @@ import org.locationtech.jts.geom.GeometryCollection;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineSegment;
 import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.geom.MultiLineString;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.PrecisionModel;
@@ -43,6 +48,9 @@ public class UpdateTIN {
 
     @Autowired
     TriangulationHelper helper;
+
+    @Autowired
+    VolumeCalculation getVolume;
 
     @Autowired
     TINRepository tinRepository;
@@ -66,10 +74,10 @@ public class UpdateTIN {
 
     public String recalculateTIN(String input, String repo) throws ParseException {
         String urlPrefix = domain + "/geometry/export/collections/";
-        String result = "";
+        JsonArray resultArray = new JsonArray();
 
         // deserialize json string to POJO
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         UpdateJSON[] json = null;
         try {
             json = gson.fromJson(input, UpdateJSON[].class);
@@ -77,21 +85,22 @@ public class UpdateTIN {
             log.error(e.getMessage(), e);
         }
 
-        GeometryCollection newTIN = new GeometryCollection(new Geometry[0], new GeometryFactory());
+        GeometryCollection oldTin = new GeometryCollection(new Geometry[0], new GeometryFactory());
         UUID formerFeatureID = null;
         UUID newFeatureID = null;
 
         // start loop over TIN updates in JSON
         for (int a = 0; a < json.length; a++) {
-            PrecisionModel precisionModel = new PrecisionModel(PrecisionModel.FLOATING);
-            GeometryFactory factory = new GeometryFactory(precisionModel, json[a].getObjectInfo().getSrid());
+            PrecisionModel precisionModel = new PrecisionModel(1000);
+            GeometryFactory factory = new GeometryFactory(precisionModel, 25832);
+            WKTReader wkt = new WKTReader(factory);
+            JsonObject resultJson = new JsonObject();
 
             // check, if same TIN as in former loop is used
             // put start TIN to point list
             CoordinateList pointList = new CoordinateList();
             if (json[a].getObjectInfo().getFeatureId().equals(formerFeatureID)) {
-                pointList = new CoordinateList(newTIN.getCoordinates(), false);
-                // formerFeatureID = newFeatureID;
+                pointList = new CoordinateList(oldTin.getCoordinates());
             } else {
                 // get original TIN by collectionId and featureId
                 TIN dbTin = TIN.class.cast(
@@ -105,10 +114,8 @@ public class UpdateTIN {
                             + geometry.replace("TIN(", "").replaceAll("\\(\\(", "POLYGON Z((");
                 }
 
-                WKTReader wkt = new WKTReader(factory);
-                GeometryCollection oTin = (GeometryCollection) wkt.read(geometry);
-                pointList = new CoordinateList(oTin.getCoordinates(), false);
-                // formerFeatureID = dbTin.getId();
+                oldTin = (GeometryCollection) wkt.read(geometry);
+                pointList = new CoordinateList(oldTin.getCoordinates());
                 newFeatureID = dbTin.getId();
 
             }
@@ -117,22 +124,26 @@ public class UpdateTIN {
             // read lists from JSON
 
             // put added points from json into unique list
-            List<List<Double>> newPtList = json[a].getAddedPoints();
-            CoordinateList addedPoints = new CoordinateList();
-            for (List<Double> point : newPtList) {
-                Coordinate p = new Coordinate(point.get(0), point.get(1), point.get(2));
-                addedPoints.add(p, false);
-            }
+            CoordinateList addedPoints = helper.getPointsFromList(json[a].getAddedPoints());
             System.out.println("Points to add: " + addedPoints.size());
 
             // put removed points from json into unique list
-            List<List<Double>> remPtList = json[a].getRemovedPoints();
-            CoordinateList removedPoints = new CoordinateList();
-            for (List<Double> point : remPtList) {
-                Coordinate p = new Coordinate(point.get(0), point.get(1), point.get(2));
-                removedPoints.add(p, false);
-            }
+            CoordinateList removedPoints = helper.getPointsFromList(json[a].getRemovedPoints());
             System.out.println("Points to remove: " + removedPoints.size());
+
+            // create updated point list
+            pointList.removeAll(removedPoints);
+            System.out.println("Points after removing: " + pointList.size());
+            pointList.addAll(addedPoints);
+            System.out.println("Points after adding: " + pointList.size());
+
+            // make a delaunay triangulation from point list
+            GeometryCollection dtTriangles = helper.triangulateDT(pointList, factory);
+            CoordinateList dtPoints = new CoordinateList(dtTriangles.getCoordinates());
+
+            // create a indexed tin from created
+            IndexedTin dtTinIndexed = TinTriangleList.createIndexedTriangles(dtTriangles);
+            Tin dtTin = Tin.CreateTin(dtTinIndexed.Points, dtTinIndexed.Triangles, 0);
 
             // put breaklines from json into line and line segments list
             List<List<List<Double>>> breaklineList = json[a].getBreaklines();
@@ -144,37 +155,40 @@ public class UpdateTIN {
                 lineStringList = new LineString[breaklineList.size()];
 
                 for (int f = 0; f < breaklineList.size(); f++) {
-                    List<List<Double>> linePoints = breaklineList.get(f);
+                    List<List<Double>> list = breaklineList.get(f);
                     CoordinateList linePointList = new CoordinateList();
-
-                    for (List<Double> coord : linePoints) {
-                        Coordinate p = new Coordinate(coord.get(0), coord.get(1), coord.get(2));
+                    for (List<Double> point : list) {
+                        Coordinate p = new Coordinate();
+                        if (point.size() == 3) {
+                            p = new Coordinate(point.get(0), point.get(1), point.get(2));
+                        // if breaklines are 2d, interpolate z values on created tin
+                        } else if (point.size() == 2) {
+                            double z  = dtTin.GetTriangle(new double[] {point.get(0), point.get(1)}).DoubleValue;
+                            p = new Coordinate(point.get(0), point.get(1), z);
+                        }
                         linePointList.add(p);
                     }
 
                     for (int i = 0; i < linePointList.size() - 1; i++) {
-                        LineSegment segment = new LineSegment(linePointList.get(i), linePointList.get(i + 1));
-                        lineSegments.add(segment);
+                        lineSegments.add(new LineSegment(linePointList.get(i), linePointList.get(i + 1)));
                     }
 
-                    CoordinateSequence cs = new CoordinateArraySequence(linePointList.toCoordinateArray());
-                    LineString lineString = new LineString(cs, factory);
-                    lineStringList[f] = lineString;
+                    lineStringList[f] = factory.createLineString(linePointList.toCoordinateArray());
                 }
                 System.out.println("Added breaklines: " + lineStringList.length);
                 System.out.println("Added breakline segments: " + lineSegments.size());
 
-            } else
+            } else {
                 System.out.println("No breaklines");
+            }
             MultiLineString lineList = factory.createMultiLineString(lineStringList);
 
-            pointList.removeAll(removedPoints);
-            System.out.println("Points after removing: " + pointList.size());
-            pointList.addAll(addedPoints);
-            System.out.println("Points after adding: " + pointList.size());
-
             // calculate new TIN with conforming delauney triangulation
-            GeometryCollection triangles = helper.triangulate(pointList, lineList, factory);
+            GeometryCollection triangles = helper.triangulate(dtPoints, lineList, factory);
+
+            // cut new TIN by boundary of original to restore concave forms
+            CoordinateSequence cs = new CoordinateArraySequence(oldTin.union().getBoundary().getCoordinates());
+            triangles = helper.cutCollectionByBoundary(triangles, new LinearRing(cs, factory), factory);
 
             // filter new calculated points
             CoordinateList newPointList = new CoordinateList(triangles.getCoordinates());
@@ -182,26 +196,28 @@ public class UpdateTIN {
             System.out.println("New points after triangulation: " + newPointList.size());
 
             // interpolate all z values of new points and create polygon list
-            List<Polygon> polygonList = helper.interpolateNaNValues(triangles, lineSegments, newPointList, breaklines,
+            Polygon[] polygonList = helper.interpolateNaNValues(triangles, lineSegments, newPointList, breaklines,
                     factory);
 
             // write polygon list to WKT
-            Polygon[] pol = new Polygon[polygonList.size()];
-            polygonList.toArray(pol);
-            GeometryCollection col = new GeometryCollection(pol, factory);
-
-            WKTWriter wkt = new WKTWriter(3);
-            wkt.setPrecisionModel(precisionModel);
-            String gcWkt = wkt.write(col);
+            GeometryCollection newTin = factory.createGeometryCollection(polygonList);
+            WKTWriter writer = new WKTWriter(3);
+            writer.setPrecisionModel(precisionModel);
+            String gcWkt = writer.write(newTin);
 
             // push updated TIN into postgres database
-            String tin = "SRID=" + col.getSRID() + ";"
+            String tin = "SRID=" + newTin.getSRID() + ";"
                     + gcWkt.replace("GEOMETRYCOLLECTION Z", "TIN").replaceAll("POLYGON Z", "");
             log.info(tin);
             TIN updatedTin = new TIN(tin);
             tinRepository.save(updatedTin);
             log.info("'ID: " + updatedTin.getId() + ", WKT: " + updatedTin.getGeometry() + "'");
-            result += updatedTin.getId().toString() + "\n";
+            resultJson.addProperty("updated TIN", updatedTin.getId().toString());
+
+            // calculate volume between old and new TIN
+            Volume volume = getVolume.calculateVolume(oldTin, newTin, null, json[a].getObjectInfo().getSrid());
+            resultJson.addProperty("Excavation [cbm]", volume.Negative);
+            resultJson.addProperty("Backfill [cbm]", volume.Positive);
 
             // get version and optional original tin from input tin
             String res = graphdb.graphdbGetTINInfos(newFeatureID.toString(), repo);
@@ -236,7 +252,7 @@ public class UpdateTIN {
             // send update information to GraphDB
             String postgresUrl = urlPrefix + "dtm_tin" + "/items/" + updatedTin.getId();
             PostgresInfos p = new PostgresInfos(updatedTin.getId(), newFeatureID, original, newVersion,
-                    json[a].getMetaInfos().getUser(), postgresUrl, 4, 3, repo);
+                    json[a].getMetaInfos().getUser(), postgresUrl, 4, 3, volume.Negative, volume.Positive, repo);
             graphdb.graphdbImport(p);
 
             String boundary = tinRepository.getExteriorRing(updatedTin.getId());
@@ -249,7 +265,7 @@ public class UpdateTIN {
 
             if (breaklines) {
                 for (int i = 0; i < lineStringList.length; i++) {
-                    String l = wkt.write(lineStringList[i]);
+                    String l = writer.write(lineStringList[i]);
                     Breaklines bl = new Breaklines(updatedTin.getId(),
                             "SRID=" + json[a].getObjectInfo().getSrid() + ";" + l);
                     blRepository.save(bl);
@@ -262,12 +278,13 @@ public class UpdateTIN {
                 }
             }
 
-            newTIN = col;
+            resultArray.add(resultJson);
+
+            oldTin = newTin;
             newFeatureID = updatedTin.getId();
             formerFeatureID = json[a].getObjectInfo().getFeatureId();
         }
-        return result;
-
+    
+    return gson.toJson(resultArray);
     }
-
 }

@@ -16,7 +16,7 @@ import io.swagger.v3.oas.models.servers.Server;
 
 @EnableDiscoveryClient
 @SpringBootApplication
-@OpenAPIDefinition(info = @Info(title = "Geometry Import/Export API", description = "Documentation of PostgreSQL Import and Export.", version = "v1.1", license = @License(name = "Apache 2.0", url = "http://www.apache.org/licenses/LICENSE-2.0.html")))
+@OpenAPIDefinition(info = @Info(title = "Geometry API", description = "Documentation of PostgreSQL Import, Export and geometry operations.", version = "v1.1", license = @License(name = "Apache 2.0", url = "http://www.apache.org/licenses/LICENSE-2.0.html")))
 public class GeometryHandlerApplication implements WebMvcConfigurer{
 
 	public static void main(String[] args) {
