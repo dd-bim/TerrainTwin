@@ -161,9 +161,9 @@ public class UpdateTIN {
                         Coordinate p = new Coordinate();
                         if (point.size() == 3) {
                             p = new Coordinate(point.get(0), point.get(1), point.get(2));
-                        // if breaklines are 2d, interpolate z values on created tin
+                            // if breaklines are 2d, interpolate z values on created tin
                         } else if (point.size() == 2) {
-                            double z  = dtTin.GetTriangle(new double[] {point.get(0), point.get(1)}).DoubleValue;
+                            double z = dtTin.GetTriangle(new double[] { point.get(0), point.get(1) }).DoubleValue;
                             p = new Coordinate(point.get(0), point.get(1), z);
                         }
                         linePointList.add(p);
@@ -252,7 +252,9 @@ public class UpdateTIN {
             // send update information to GraphDB
             String postgresUrl = urlPrefix + "dtm_tin" + "/items/" + updatedTin.getId();
             PostgresInfos p = new PostgresInfos(updatedTin.getId(), newFeatureID, original, newVersion,
-                    json[a].getMetaInfos().getUser(), postgresUrl, 4, 3, volume.Negative, volume.Positive, repo);
+                    json[a].getMetaInfos().getUser(), postgresUrl, 4, 3, json[a].getMetaInfos().getDescription(),
+                    json[a].getMetaInfos().getTimestamp(), json[a].getMetaInfos().getPhase(), volume.Negative,
+                    volume.Positive, repo);
             graphdb.graphdbImport(p);
 
             String boundary = tinRepository.getExteriorRing(updatedTin.getId());
@@ -284,7 +286,7 @@ public class UpdateTIN {
             newFeatureID = updatedTin.getId();
             formerFeatureID = json[a].getObjectInfo().getFeatureId();
         }
-    
-    return gson.toJson(resultArray);
+
+        return gson.toJson(resultArray);
     }
 }

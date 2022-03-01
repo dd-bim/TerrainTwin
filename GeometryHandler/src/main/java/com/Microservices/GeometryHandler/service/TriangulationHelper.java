@@ -160,7 +160,17 @@ public class TriangulationHelper {
                 }
             }
             if (!found) {
-                double z = tin.GetTriangle(new double[] { c.x, c.y }).DoubleValue;
+                double z = Double.NaN;
+                try {
+                    z = tin.GetTriangle(new double[] { c.x, c.y }).DoubleValue;
+                } catch (Exception e) {
+                    if (!Double.isNaN(c.z)) {
+                        z = c.z;
+                    } else {
+                        System.out.println(e);
+                        System.out.println("POINT Z(" + c.x + " " + c.y + " " + c.z + ")");
+                    }
+                }
                 list.add(new Coordinate(c.x, c.y, z));
             }
         }

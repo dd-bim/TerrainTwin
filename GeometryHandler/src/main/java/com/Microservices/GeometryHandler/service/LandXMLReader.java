@@ -141,10 +141,10 @@ public class LandXMLReader {
             String s = "((";
             for (int point : face) {
                 String[] p = points.get(point).split(" ");
-                s = s + p[1] + " " + p[0] + " " + p[2] + ", ";
+                s = s + roundC(p[1]) + " " + roundC(p[0]) + " " + roundC(p[2]) + ", ";
             }
             String[] q = points.get(face[0]).split(" ");
-            s = s + q[1] + " " + q[0] + " " + q[2] + ")), ";
+            s = s + roundC(q[1]) + " " + roundC(q[0]) + " " + roundC(q[2]) + ")), ";
             wkt.append(s);
         }
         wkt.setLength(wkt.length() - 2);
@@ -157,9 +157,15 @@ public class LandXMLReader {
         String line = "LINESTRING (";
         String[] points = breaklines.get(i).split(" ");
         for (int j = 0; j < points.length; j = j + 3) {
-            line = line + points[j + 1] + " " + points[j] + " " + points[j + 2] + ", ";
+            line = line + roundC(points[j + 1]) + " " + roundC(points[j]) + " " + roundC(points[j + 2]) + ", ";
         }
         line = line.substring(0, line.length() - 2) + ")";
         return line;
+    }
+
+    private String roundC(String c) {
+        String n = "";
+        n += Math.round(Double.parseDouble(c) * 1000.0) / 1000.0;
+        return n;
     }
 }

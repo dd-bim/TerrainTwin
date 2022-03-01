@@ -25,6 +25,9 @@ public class PostgresInfos {
     private UUID original;
     private double excavation;
     private double backfill;
+    private String description;
+    private String timestamp;
+    private String phase;
 
     public PostgresInfos() {
         
@@ -58,7 +61,7 @@ public class PostgresInfos {
         this.linkedGeometry = linkedGeometry;
     }
 
-    public PostgresInfos(UUID id, UUID input, UUID original, String version, String editor, String url, Integer dimension, Integer coordDimension, double excavation, double backfill, String graphdbRepo) {
+    public PostgresInfos(UUID id, UUID input, UUID original, String version, String editor, String url, Integer dimension, Integer coordDimension,  String description, String timestamp, String phase, double excavation, double backfill, String graphdbRepo) {
         this.id = id;
         this.input = input;
         this.original = original;
@@ -67,6 +70,9 @@ public class PostgresInfos {
         this.url = url;
         this.dimension = dimension;
         this.coordDimension = coordDimension;
+        this.description = description;
+        this.timestamp = timestamp;
+        this.phase = phase;
         this.excavation = excavation;
         this.backfill = backfill;
         this.graphdbRepo = graphdbRepo;

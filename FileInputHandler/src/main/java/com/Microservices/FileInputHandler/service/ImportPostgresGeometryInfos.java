@@ -99,6 +99,9 @@ public class ImportPostgresGeometryInfos {
                             .add(processStep, "tto:input", "postgres:" + infos.getInput())
                             .add(processStep, "tto:output", object)
                             .add(processStep, "tto:editor", infos.getEditor())
+                            .add(processStep, "tto:description", infos.getDescription())
+                            .add(processStep, "tto:timestamp", infos.getTimestamp())
+                            .add(processStep, "tto:phase", infos.getPhase())
                             .add(processStep, "tto:excavation", infos.getExcavation())
                             .add(processStep, "tto:backfill", infos.getBackfill())
                             .add(processStep, "tto:massChange", infos.getBackfill() - infos.getExcavation());
