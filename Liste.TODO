@@ -40,7 +40,7 @@ Microservice Architecture:
         ☐ mehrere TINs aus einer LandXML Datei einlesen können 
         ☐ Was ist mit Multi- Point/Line/Polygon Geometrien?
         ☐ mehrfach gleiche Version eines TIN verhindern / prüfen
-        ☐ Differenz zwischenTINS ermitteln
+        ✔ Differenz zwischenTINS ermitteln @done (2.3.2022, 11:00:19)
         ☐ TIN mit Polygon ausschneiden
 
     MinIO-Upload-Service:
