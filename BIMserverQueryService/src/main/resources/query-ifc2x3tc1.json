@@ -1,0 +1,107 @@
+{
+  "AllWalls" : {
+  "type": {   
+      "name": "IfcWall",  
+      "includeAllSubTypes": true 
+  },  
+  "includes": [   
+      "ifc2x3tc1-stdlib:ContainedInStructure",  
+      "ifc2x3tc1-stdlib:OwnerHistory",  
+      "ifc2x3tc1-stdlib:Representation", 
+      "ifc2x3tc1-stdlib:ObjectPlacement" 
+  ]
+},
+"WallsInStorey" : {
+    "type": "IfcBuildingStorey",
+    "includes": [
+      "ifc2x3tc1-stdlib:Decomposes",			
+      {
+        "type": "IfcBuildingStorey",
+        "field": "ContainsElements",
+        "include": {
+          "type": "IfcRelContainedInSpatialStructure",
+          "field": "RelatedElements",
+          "outputTypes":  [
+          {
+            "name": "IfcWall", 
+            "includeAllSubTypes": true
+          }
+          ], 
+          "includes": [
+            "ifc2x3tc1-stdlib:ObjectPlacement",
+              {
+              "type": "IfcProduct",
+              "fields": [
+                "Representation", 
+                "HasAssociations"
+              ],
+              "outputTypes": [
+                "IfcProductDefinitionShape", 
+                "IfcRelAssociatesClassification"
+              ],
+              "includes": [
+                      {
+                          "type": "IfcRelAssociatesClassification",
+                          "field": "RelatingClassification",
+                          "includes": [
+                    "ifc2x3tc1-geometry:IfcClassificationReference"
+                  ]
+                      },
+                      {
+                  "type": "IfcProductRepresentation",
+                  "field": "Representations",
+                  "includes": [
+                    "ifc2x3tc1-geometry:IfcStyleModel",
+                    "ifc2x3tc1-geometry:IfcStyledRepresentation",
+                    "ifc2x3tc1-geometry:IfcRepresentation",
+                    "ifc2x3tc1-geometry:IfcBooleanResult",
+                    "ifc2x3tc1-geometry:IfcShapeModel",
+                    "ifc2x3tc1-geometry:IfcShapeRepresentation",
+                    "ifc2x3tc1-geometry:IfcTopologyRepresentation"
+                  ]
+                }
+              ]
+            }
+          ]
+        } 
+      }
+    ]
+  },
+  "ExternalWalls" : {
+    "type": {
+      "name": "IfcWall",
+      "includeAllSubTypes": true
+    },
+    "properties": {
+      "Pset_WallCommon": {
+        "IsExternal": true
+      }
+    }
+  },
+  "BoundingBox": {
+    "inBoundingBox": {
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "width": 1000,
+      "height": 1000,
+      "depth": 1000,
+      "partial": true
+    },
+    "includes": [   
+      "ifc2x3tc1-stdlib:ContainedInStructure",  
+      "ifc2x3tc1-stdlib:OwnerHistory",  
+      "ifc2x3tc1-stdlib:Representation", 
+      "ifc2x3tc1-stdlib:ObjectPlacement" 
+    ]
+  },
+  "IncludeBasics": [   
+    "ifc2x3tc1-stdlib:ContainedInStructure",  
+    "ifc2x3tc1-stdlib:OwnerHistory",  
+    "ifc2x3tc1-stdlib:Representation", 
+    "ifc2x3tc1-stdlib:ObjectPlacement" 
+  ],
+  "IncludeAllProperties": [
+    "ifc2x3tc1-stdlib:AllProperties"
+  ]
+}
