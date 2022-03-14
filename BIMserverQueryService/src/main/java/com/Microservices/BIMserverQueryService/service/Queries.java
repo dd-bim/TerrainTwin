@@ -1,14 +1,11 @@
 package com.Microservices.BIMserverQueryService.service;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -22,22 +19,12 @@ public class Queries {
 
     Logger log = LoggerFactory.getLogger(Queries.class);
     public static JsonObject jObject = null;
+    Gson gson = new Gson();
 
     public Queries() {
         try {
-            // BufferedReader reader = Files.newBufferedReader(Paths.get("src/main/resources/query-ifc2x3tc1.json"),
-            //         StandardCharsets.UTF_8);
-            // String path = this.getClass().getClassLoader().getResource("query-ifc2x3tc1.json").toExternalForm();
-            // log.info(path);
-            // BufferedReader reader = Files.newBufferedReader(Paths.get(path),
-            //         StandardCharsets.UTF_8);
             InputStream in = this.getClass().getResourceAsStream("/query-ifc2x3tc1.json");
             BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-            // JsonParser parser = new JsonParser();
-            // JsonElement tree = parser.parse(reader);
-            // jObject = tree.getAsJsonObject();
- 
-            // jObject = JsonParser.parseString().getAsJsonObject();
             jObject = JsonParser.parseReader(reader).getAsJsonObject();
             log.info(jObject.getAsString());
         } catch (Exception e) {
@@ -46,22 +33,55 @@ public class Queries {
         }
     }
 
-    public String getWalls() {
-        return jObject.getAsJsonObject("AllWalls").toString();
-
+    public String getWalls(boolean basics) {
+        JsonObject obj = jObject.getAsJsonObject("AllWalls").deepCopy();
+        if (basics) {
+            JsonArray base = jObject.getAsJsonArray("IncludeBasics");
+            obj.add("includes", base);
+        }
+        return obj.toString();
     }
 
     public String getStoreyWalls(String guid) {
-        JsonObject obj = jObject.getAsJsonObject("WallsInStorey");
+        JsonObject obj = jObject.getAsJsonObject("WallsInStorey").deepCopy();
         if (guid != null) {
             obj.addProperty("guid", guid);
         }
         return obj.toString();
     }
 
-    public String getInBoundingBox(double x, double y, double z, double width, double height, double depth,
-            boolean partial) {
-        JsonObject obj = jObject.getAsJsonObject("BoundingBox");
+    // public String getInBoundingBox(double x, double y, double z, double width, double height, double depth,
+    //         boolean partial, boolean basics) {
+    //     JsonObject obj = jObject.getAsJsonObject("BoundingBox").deepCopy();
+    //     JsonObject bb = obj.getAsJsonObject("inBoundingBox");
+    //     bb.addProperty("x", x);
+    //     bb.addProperty("y", y);
+    //     bb.addProperty("z", z);
+    //     bb.addProperty("width", width);
+    //     bb.addProperty("height", height);
+    //     bb.addProperty("depth", depth);
+    //     bb.addProperty("partial", partial);
+
+    //     if (basics) {
+    //         JsonArray base = jObject.getAsJsonArray("IncludeBasics");
+    //         obj.add("includes", base);
+    //     }
+    //     return obj.toString();
+    // }
+
+    public String getElementsInBoundingBox(double x, double y, double z, double width, double height, double depth,
+            boolean partial, String elements, boolean basics) {
+        JsonObject obj = jObject.getAsJsonObject("BoundingBox").deepCopy();
+
+        if (elements != null) {
+            JsonArray array = new JsonArray();
+            String[] elementList = elements.replaceAll(" ", "").split(",");
+            for (String element : elementList) {
+                array.add(element);
+            }
+            obj.add("types", array);
+        }
+
         JsonObject bb = obj.getAsJsonObject("inBoundingBox");
         bb.addProperty("x", x);
         bb.addProperty("y", y);
@@ -71,6 +91,10 @@ public class Queries {
         bb.addProperty("depth", depth);
         bb.addProperty("partial", partial);
 
+        if (basics) {
+            JsonArray base = jObject.getAsJsonArray("IncludeBasics");
+            obj.add("includes", base);
+        }
         return obj.toString();
     }
 
@@ -87,7 +111,78 @@ public class Queries {
             JsonArray base = jObject.getAsJsonArray("IncludeBasics");
             obj.add("includes", base);
         }
-        System.out.println(obj.toString());
         return obj.toString();
     }
+
+    public String getExternalWalls(boolean basics) {
+        JsonObject obj = jObject.getAsJsonObject("ExternalWalls").deepCopy();
+        if (basics) {
+            JsonArray base = jObject.getAsJsonArray("IncludeBasics");
+            obj.add("includes", base);
+        }
+        return obj.toString();
+    }
+
+    public String getElementsByProperty(String types, String propertySet, String property, String value, boolean basics) {
+        JsonObject obj = new JsonObject();
+
+        if (types != null) {
+            JsonArray array = new JsonArray();
+            String[] typeList = types.replaceAll(" ", "").split(",");
+            for (String type : typeList) {
+                array.add(type);
+            }
+            obj.add("types", array);
+        }
+        JsonObject prop = new JsonObject();
+        prop.addProperty(property, value);
+        JsonObject pSet = new JsonObject();
+        pSet.add(propertySet, prop);
+        obj.add("properties", pSet);
+
+        if (basics) {
+            JsonArray base = jObject.getAsJsonArray("IncludeBasics");
+            obj.add("includes", base);
+        }
+        return obj.toString();
+    }
+
+    public String getPropertiesFromElements(String guids, boolean basics) {
+        JsonObject obj = new JsonObject();
+        JsonArray array = new JsonArray();
+        String[] elementList = guids.replaceAll(" ", "").split(",");
+        for (String element : elementList) {
+            array.add(element);
+        }
+        obj.add("guids", array);
+
+        if (basics) {
+            JsonArray base = jObject.getAsJsonArray("IncludeBasics").deepCopy();
+            JsonArray baseProp =jObject.getAsJsonArray("IncludeAllProperties").deepCopy();
+            base.addAll(baseProp);
+            obj.add("includes", base);
+        } else {
+            JsonArray base =jObject.getAsJsonArray("IncludeAllProperties").deepCopy();
+            obj.add("includes", base);
+        }
+        return obj.toString();
+    }
+
+    public String getWallsByType(String guids, boolean basics) {
+        JsonObject obj = jObject.getAsJsonObject("WallsByType").deepCopy();
+        JsonArray array = new JsonArray();
+        String[] elementList = guids.replaceAll(" ", "").split(",");
+        for (String element : elementList) {
+            array.add(element);
+        }
+        obj.add("guids", array);
+
+        if (basics) {
+            JsonObject wall = obj.get("include").getAsJsonObject().get("include").getAsJsonObject();
+            JsonArray base = jObject.getAsJsonArray("IncludeBasics");
+            wall.add("includes", base);
+        }
+        return obj.toString();
+    }
+
 }

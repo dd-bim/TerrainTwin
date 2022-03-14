@@ -3,13 +3,7 @@
   "type": {   
       "name": "IfcWall",  
       "includeAllSubTypes": true 
-  },  
-  "includes": [   
-      "ifc2x3tc1-stdlib:ContainedInStructure",  
-      "ifc2x3tc1-stdlib:OwnerHistory",  
-      "ifc2x3tc1-stdlib:Representation", 
-      "ifc2x3tc1-stdlib:ObjectPlacement" 
-  ]
+  }
 },
 "WallsInStorey" : {
     "type": "IfcBuildingStorey",
@@ -87,13 +81,7 @@
       "height": 1000,
       "depth": 1000,
       "partial": true
-    },
-    "includes": [   
-      "ifc2x3tc1-stdlib:ContainedInStructure",  
-      "ifc2x3tc1-stdlib:OwnerHistory",  
-      "ifc2x3tc1-stdlib:Representation", 
-      "ifc2x3tc1-stdlib:ObjectPlacement" 
-    ]
+    }
   },
   "IncludeBasics": [   
     "ifc2x3tc1-stdlib:ContainedInStructure",  
@@ -102,6 +90,32 @@
     "ifc2x3tc1-stdlib:ObjectPlacement" 
   ],
   "IncludeAllProperties": [
-    "ifc2x3tc1-stdlib:AllProperties"
-  ]
+    {
+      "type": "IfcObject",
+      "field": "IsDefinedBy",
+      "include": {
+         "type": "IfcRelDefinesByProperties",
+         "field": "RelatingPropertyDefinition",
+         "includes": [{
+            "type": "IfcPropertySet",
+            "field": "HasProperties"
+         }, {
+           "type": "IfcElementQuantity",
+           "field": "Quantities"
+         }]
+      }
+   }
+  ],
+  "WallsByType": {
+    "type": "IfcWallType",
+    "include": {
+      "type": "IfcWallType",
+      "field": "ObjectTypeOf",
+      "include": {
+        "type": "IfcRelDefinesByType",
+        "field": "RelatedObjects",
+        "outputType": "IfcWall"
+      }
+    }
+  }
 }

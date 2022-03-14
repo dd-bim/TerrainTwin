@@ -8,6 +8,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -55,19 +57,18 @@ public class Functions {
     public ResponseEntity<Resource> getFileByQuery(BimServerClient client, long roid, long serializerOid,
             String query) {
 
-        String result = "";
         Set<Long> roids = new HashSet<Long>();
         roids.add(roid);
         File file;
         ResponseEntity<Resource> response = null;
         try {
-            file = File.createTempFile("IfcOutput", ".tmp");
+            file = File.createTempFile("IfcOutput", ".ifc");
 
             SDownloadResult r = new SDownloadResult();
             try {
                 log.info(query);
-                log.info("R: " + roids);
-                log.info("S: " + serializerOid);
+                log.info("Roid: " + roids);
+                log.info("SerializerId: " + serializerOid);
                 long s = client.getServiceInterface().download(roids, query, serializerOid, true);
                 log.info("TopicId: " + s);
                 r = client.getServiceInterface().getDownloadData(s);
@@ -80,31 +81,29 @@ public class Functions {
                 out = new FileOutputStream(file.getAbsolutePath());
                 DataHandler d = r.getFile();
                 d.writeTo(out);
-                modifyFile(file.getAbsolutePath());
-
-                result = "Download successful";
-                // file.deleteOnExit();
+                // modifyFile(file.getAbsolutePath());
 
                 ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(file.toPath()));
-                file.delete();
-
-                ContentDisposition contentDisposition = ContentDisposition.builder("inline").filename(file.getName())
-                        .build();
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                String timestamp = format.format(new Date()).replaceAll(":", "-");
+                ContentDisposition contentDisposition = ContentDisposition.builder("inline")
+                        .filename("BIMserverOut_" + timestamp + ".ifc").build();
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentDisposition(contentDisposition);
 
                 response = ResponseEntity.ok().headers(headers).contentLength(file.length())
                         .contentType(MediaType.APPLICATION_OCTET_STREAM).body(resource);
+                file.delete();
 
             } catch (FileNotFoundException e1) {
-                result = e1.getMessage();
+                log.error(e1.getMessage());
                 e1.printStackTrace();
             } catch (IOException e) {
-                result = e.getMessage();
+                log.error(e.getMessage());
                 e.printStackTrace();
             }
         } catch (IOException e2) {
-            result = e2.getMessage();
+            log.error(e2.getMessage());
             e2.printStackTrace();
         }
         return response;
