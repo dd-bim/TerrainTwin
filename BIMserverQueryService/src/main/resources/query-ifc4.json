@@ -1,0 +1,115 @@
+{
+  "AllWalls" : {
+  "type": {   
+      "name": "IfcWall",  
+      "includeAllSubTypes": true 
+  }
+},
+"ElementsInStorey" : {
+    "type": "IfcBuildingStorey",
+    "includes": [
+      "ifc4-stdlib:Decomposes",			
+      {
+        "type": "IfcBuildingStorey",
+        "field": "ContainsElements",
+        "include": {
+          "type": "IfcRelContainedInSpatialStructure",
+          "field": "RelatedElements", 
+          "includes": [
+            "ifc4-stdlib:ObjectPlacement",
+              {
+              "type": "IfcProduct",
+              "fields": [
+                "Representation", 
+                "HasAssociations"
+              ],
+              "outputTypes": [
+                "IfcProductDefinitionShape", 
+                "IfcRelAssociatesClassification"
+              ],
+              "includes": [
+                      {
+                          "type": "IfcRelAssociatesClassification",
+                          "field": "RelatingClassification",
+                          "includes": [
+                    "ifc4-geometry:IfcClassificationReference"
+                  ]
+                      },
+                      {
+                  "type": "IfcProductRepresentation",
+                  "field": "Representations",
+                  "includes": [
+                    "ifc4-geometry:IfcStyleModel",
+                    "ifc4-geometry:IfcStyledRepresentation",
+                    "ifc4-geometry:IfcRepresentation",
+                    "ifc4-geometry:IfcBooleanResult",
+                    "ifc4-geometry:IfcShapeModel",
+                    "ifc4-geometry:IfcShapeRepresentation",
+                    "ifc4-geometry:IfcTopologyRepresentation"
+                  ]
+                }
+              ]
+            }
+          ]
+        } 
+      }
+    ]
+  },
+  "ExternalWalls" : {
+    "type": {
+      "name": "IfcWall",
+      "includeAllSubTypes": true
+    },
+    "properties": {
+      "Pset_WallCommon": {
+        "IsExternal": true
+      }
+    }
+  },
+  "WallsByType": {
+    "type": "IfcWallType",
+    "include": {
+      "type": "IfcWallType",
+      "field": "ObjectTypeOf",
+      "include": {
+        "type": "IfcRelDefinesByType",
+        "field": "RelatedObjects",
+        "outputType": "IfcWall"
+      }
+    }
+  },
+  "BoundingBox": {
+    "inBoundingBox": {
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "width": 1000,
+      "height": 1000,
+      "depth": 1000,
+      "partial": true
+    }
+  },
+  "IncludeBasics": [   
+    "ifc4-stdlib:ContainedInStructure",
+    "ifc4-stdlib:OwnerHistory",
+    "ifc4-stdlib:Representation",
+    "ifc4-stdlib:ObjectPlacement"
+  ],
+  "IncludeAllProperties": [
+    {
+      "type": "IfcObject",
+      "field": "IsDefinedBy",
+      "include": {
+         "type": "IfcRelDefinesByProperties",
+         "field": "RelatingPropertyDefinition",
+         "includes": [{
+            "type": "IfcPropertySet",
+            "field": "HasProperties"
+         }, {
+           "type": "IfcElementQuantity",
+           "field": "Quantities"
+         }]
+      }
+   }
+  ]
+}

@@ -21,9 +21,19 @@ public class Queries {
     public static JsonObject jObject = null;
     Gson gson = new Gson();
 
+
     public Queries() {
+    }
+
+    public Queries(String schema) {
         try {
-            InputStream in = this.getClass().getResourceAsStream("/query-ifc2x3tc1.json");
+            String path;
+            if (schema == "ifc2x3tc1") {
+                path = "/query-ifc2x3tc1.json";
+            } else {
+                path = "/query-ifc4.json";
+            }
+            InputStream in = this.getClass().getResourceAsStream(path);
             BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
             jObject = JsonParser.parseReader(reader).getAsJsonObject();
             log.info(jObject.getAsString());
@@ -41,33 +51,6 @@ public class Queries {
         }
         return obj.toString();
     }
-
-    public String getStoreyWalls(String guid) {
-        JsonObject obj = jObject.getAsJsonObject("WallsInStorey").deepCopy();
-        if (guid != null) {
-            obj.addProperty("guid", guid);
-        }
-        return obj.toString();
-    }
-
-    // public String getInBoundingBox(double x, double y, double z, double width, double height, double depth,
-    //         boolean partial, boolean basics) {
-    //     JsonObject obj = jObject.getAsJsonObject("BoundingBox").deepCopy();
-    //     JsonObject bb = obj.getAsJsonObject("inBoundingBox");
-    //     bb.addProperty("x", x);
-    //     bb.addProperty("y", y);
-    //     bb.addProperty("z", z);
-    //     bb.addProperty("width", width);
-    //     bb.addProperty("height", height);
-    //     bb.addProperty("depth", depth);
-    //     bb.addProperty("partial", partial);
-
-    //     if (basics) {
-    //         JsonArray base = jObject.getAsJsonArray("IncludeBasics");
-    //         obj.add("includes", base);
-    //     }
-    //     return obj.toString();
-    // }
 
     public String getElementsInBoundingBox(double x, double y, double z, double width, double height, double depth,
             boolean partial, String elements, boolean basics) {
@@ -123,7 +106,8 @@ public class Queries {
         return obj.toString();
     }
 
-    public String getElementsByProperty(String types, String propertySet, String property, String value, boolean basics) {
+    public String getElementsByProperty(String types, String propertySet, String property, String value,
+            boolean basics) {
         JsonObject obj = new JsonObject();
 
         if (types != null) {
@@ -158,11 +142,11 @@ public class Queries {
 
         if (basics) {
             JsonArray base = jObject.getAsJsonArray("IncludeBasics").deepCopy();
-            JsonArray baseProp =jObject.getAsJsonArray("IncludeAllProperties").deepCopy();
+            JsonArray baseProp = jObject.getAsJsonArray("IncludeAllProperties").deepCopy();
             base.addAll(baseProp);
             obj.add("includes", base);
         } else {
-            JsonArray base =jObject.getAsJsonArray("IncludeAllProperties").deepCopy();
+            JsonArray base = jObject.getAsJsonArray("IncludeAllProperties").deepCopy();
             obj.add("includes", base);
         }
         return obj.toString();
@@ -185,4 +169,21 @@ public class Queries {
         return obj.toString();
     }
 
+    public String getElementsInStorey(String guid, String types) {
+        JsonObject obj = jObject.getAsJsonObject("ElementsInStorey").deepCopy();
+        if (guid != null) {
+            obj.addProperty("guid", guid);
+        }
+        if (types != null) {
+            JsonArray arr = obj.getAsJsonArray("includes");
+            JsonObject storey = arr.get(1).getAsJsonObject().get("include").getAsJsonObject();
+            JsonArray outType = new JsonArray();
+            String[] typeList = types.replaceAll(" ", "").split(",");
+            for (String type : typeList) {
+                outType.add(type);
+            }
+            storey.add("outputTypes", outType);
+        }
+        return obj.toString();
+    }
 }

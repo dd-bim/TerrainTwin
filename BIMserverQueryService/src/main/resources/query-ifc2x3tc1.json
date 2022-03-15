@@ -5,7 +5,7 @@
       "includeAllSubTypes": true 
   }
 },
-"WallsInStorey" : {
+"ElementsInStorey" : {
     "type": "IfcBuildingStorey",
     "includes": [
       "ifc2x3tc1-stdlib:Decomposes",			
@@ -14,13 +14,7 @@
         "field": "ContainsElements",
         "include": {
           "type": "IfcRelContainedInSpatialStructure",
-          "field": "RelatedElements",
-          "outputTypes":  [
-          {
-            "name": "IfcWall", 
-            "includeAllSubTypes": true
-          }
-          ], 
+          "field": "RelatedElements", 
           "includes": [
             "ifc2x3tc1-stdlib:ObjectPlacement",
               {
@@ -72,6 +66,18 @@
       }
     }
   },
+  "WallsByType": {
+    "type": "IfcWallType",
+    "include": {
+      "type": "IfcWallType",
+      "field": "ObjectTypeOf",
+      "include": {
+        "type": "IfcRelDefinesByType",
+        "field": "RelatedObjects",
+        "outputType": "IfcWall"
+      }
+    }
+  },
   "BoundingBox": {
     "inBoundingBox": {
       "x": 0,
@@ -105,17 +111,5 @@
          }]
       }
    }
-  ],
-  "WallsByType": {
-    "type": "IfcWallType",
-    "include": {
-      "type": "IfcWallType",
-      "field": "ObjectTypeOf",
-      "include": {
-        "type": "IfcRelDefinesByType",
-        "field": "RelatedObjects",
-        "outputType": "IfcWall"
-      }
-    }
-  }
+  ]
 }

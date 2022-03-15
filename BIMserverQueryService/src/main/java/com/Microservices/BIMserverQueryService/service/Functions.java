@@ -16,6 +16,8 @@ import java.util.Set;
 
 import javax.activation.DataHandler;
 
+import com.Microservices.BIMserverQueryService.domain.ProjectData;
+
 import org.bimserver.client.BimServerClient;
 import org.bimserver.interfaces.objects.SDownloadResult;
 import org.bimserver.interfaces.objects.SProject;
@@ -139,25 +141,26 @@ public class Functions {
         }
     }
 
-    public long[] getProjectRoidAndSerializerOid(BimServerClient client, String projectName) {
+    public ProjectData getProjectData(BimServerClient client, String projectName) {
 
-        long[] pInfos = new long[2];
+        ProjectData data = new ProjectData();
 
         try {
             List<SProject> projects = client.getServiceInterface().getProjectsByName(projectName);
 
-            pInfos[0] = projects.get(0).getLastRevisionId();
-            String serializerName = projects.get(0).getSchema().replaceFirst("i", "I");
-
+            data.setRoid(projects.get(0).getLastRevisionId());
+            String schema = projects.get(0).getSchema();
+            data.setSchema(schema);
+            String serializerName = schema.replaceFirst("i", "I");
             SSerializerPluginConfiguration serializer = client.getServiceInterface()
                     .getSerializerByName(serializerName);
-            pInfos[1] = serializer.getOid();
+            data.setSerializerOid(serializer.getOid());
 
         } catch (ServerException | UserException | PublicInterfaceNotFoundException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
 
-        return pInfos;
+        return data;
     }
 }
