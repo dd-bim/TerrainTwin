@@ -150,22 +150,15 @@ services:
 
     bimserver:
         container_name: bimserver
-        # image: schi11er/tt_bimserver:latest
-        image: schi11er/tt_bimserver:183
+        image: schi11er/tt_bimserver:1.5.183
         restart: unless-stopped
         ports:
             - 9005:8080
         networks:
             - terraintwin_microservices
-        # healthcheck:  wget fehlt im container
-        #     test: wget --spider http://localhost:9005/actuator/health || exit 1
-        #     interval: 30s
-        #     timeout: 5s
-        #     retries: 5
-        #     start_period: 10s
         volumes:
-            - ./volumes/bimserver:/usr/local/tomcat/webapps
-            # - ./volumes/bimserver/database:/usr/local/tomcat/webapps/bimserver/ROOT/WEB-INF/database
+            - ./volumes/bimserver:/var/bimserver/home
+            #
 
     # proxy-manager:
     #   container_name: proxy-manager

@@ -144,7 +144,7 @@ public class ImportIfc {
         } catch (ServerException | UserException | PublicInterfaceNotFoundException e) {
 
             e.printStackTrace();
-            result += "6: " + e.getMessage();
+            result += e.getMessage();
         }
 
         // get the revision id (roid) of the uploaded file

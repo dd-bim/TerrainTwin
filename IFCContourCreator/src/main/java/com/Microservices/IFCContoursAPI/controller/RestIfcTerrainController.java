@@ -150,14 +150,20 @@ public class RestIfcTerrainController {
     // call IfcContourExtractor with file as input
     String res = execService.callConverter(CPATH + filename, epsg);
 
-    // if creation succeeds, give WKT back
+    // if creation succeeds, upload file to MinIO
     if (res.contains("Successful creation.")) {
-      String outputName = filename.split("\\.")[0] + "_ifc_WKT_contour.txt";
-
-      // boolean upload = files.uploadFile(bucket, outputName);
-      // if(upload) result = outputName;
-      files.uploadFile(bucket, outputName);
-      result = outputName;
+      String outputName;
+      try{
+        outputName = filename.split("\\.")[0] + "_ifc_WKT_contour_Slabs.txt";
+  
+        files.uploadFile(bucket, outputName);
+        result = outputName;
+        } catch (Exception e) {
+          outputName = filename.split("\\.")[0] + "_ifc_WKT_contour_Walls.txt";
+  
+          files.uploadFile(bucket, outputName);
+          result = outputName;
+        }
 
     } else {
       // if creation fails open log file and print logs

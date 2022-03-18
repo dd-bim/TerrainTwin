@@ -33,9 +33,6 @@ public class QueryController {
   @Autowired
   Functions func;
 
-  // @Autowired
-  // Queries queries;
-
   Logger log = LoggerFactory.getLogger(QueryController.class);
 
   @GetMapping("/querybimserver/getAllWalls")
@@ -115,7 +112,7 @@ public class QueryController {
   @GetMapping("/querybimserver/getElementsByProperty")
   @Operation(summary = "Get all elements with specific property in property set")
   public ResponseEntity<Resource> getElementsByProperty(@RequestParam String projectName,
-      @RequestParam Optional<String> types, @RequestParam String propertySet, @RequestParam String property,
+      @RequestParam Optional<String> elementClasses, @RequestParam String propertySet, @RequestParam String property,
       @RequestParam String value,
       @Parameter(description = "Include the structure, where elements are contained in, the owner history, the geometry representation and the object placement.") @RequestParam(defaultValue = "true") boolean basics) {
 
@@ -123,12 +120,12 @@ public class QueryController {
     ProjectData pInfos = func.getProjectData(client, projectName);
     Queries queries = new Queries(pInfos.getSchema());
 
-    String elementTypes = null;
-    if (types.isPresent()) {
-      elementTypes = types.get();
+    String types = null;
+    if (elementClasses.isPresent()) {
+      types = elementClasses.get();
     }
     return func.getFileByQuery(client, pInfos.getRoid(), pInfos.getSerializerOid(),
-        queries.getElementsByProperty(elementTypes, propertySet, property, value, basics));
+        queries.getElementsByProperty(types, propertySet, property, value, basics));
   }
 
   @GetMapping("/querybimserver/getPropertiesFromElements")

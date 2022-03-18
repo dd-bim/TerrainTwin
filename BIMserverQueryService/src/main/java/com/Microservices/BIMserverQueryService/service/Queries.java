@@ -28,7 +28,8 @@ public class Queries {
     public Queries(String schema) {
         try {
             String path;
-            if (schema == "ifc2x3tc1") {
+            log.warn("Schema :" + schema);
+            if (schema.equals("ifc2x3tc1")) {
                 path = "/query-ifc2x3tc1.json";
             } else {
                 path = "/query-ifc4.json";
