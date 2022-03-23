@@ -74,7 +74,10 @@
       "include": {
         "type": "IfcRelDefinesByType",
         "field": "RelatedObjects",
-        "outputType": "IfcWall"
+        "outputTypes": [
+          "IfcWall",
+          "IfcWallStandardCase"
+        ]
       }
     }
   },

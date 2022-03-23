@@ -38,25 +38,25 @@ public class QueryController {
   @GetMapping("/querybimserver/getAllWalls")
   @Operation(summary = "Get all walls in ifc model including elements of subclasses")
   public ResponseEntity<Resource> getAllWalls(@RequestParam String projectName,
-      @Parameter(description = "Include the structure, where elements are contained in, the owner history, the geometry representation and the object placement.") @RequestParam(defaultValue = "true") boolean basics) {
+      @Parameter(description = "Include the structure, where elements are contained in, the owner history, the geometry representation and the object placement.") @RequestParam(defaultValue = "true") boolean elementInfos) {
 
     BimServerClient client = bimserver.getConnection();
     ProjectData pInfos = func.getProjectData(client, projectName);
     Queries queries = new Queries(pInfos.getSchema());
 
-    return func.getFileByQuery(client, pInfos.getRoid(), pInfos.getSerializerOid(), queries.getWalls(basics));
+    return func.getFileByQuery(client, pInfos.getRoid(), pInfos.getSerializerOid(), queries.getWalls(elementInfos));
   }
 
   @GetMapping("/querybimserver/getExternalWalls")
   @Operation(summary = "Get all external walls off ifc model")
   public ResponseEntity<Resource> getExternalWalls(@RequestParam String projectName,
-      @Parameter(description = "Include the structure, where elements are contained in, the owner history, the geometry representation and the object placement.") @RequestParam(defaultValue = "true") boolean basics) {
+      @Parameter(description = "Include the structure, where elements are contained in, the owner history, the geometry representation and the object placement.") @RequestParam(defaultValue = "true") boolean elementInfos) {
 
     BimServerClient client = bimserver.getConnection();
     ProjectData pInfos = func.getProjectData(client, projectName);
     Queries queries = new Queries(pInfos.getSchema());
 
-    return func.getFileByQuery(client, pInfos.getRoid(), pInfos.getSerializerOid(), queries.getExternalWalls(basics));
+    return func.getFileByQuery(client, pInfos.getRoid(), pInfos.getSerializerOid(), queries.getExternalWalls(elementInfos));
   }
 
   @GetMapping("/querybimserver/getElementsInStorey")
@@ -78,23 +78,23 @@ public class QueryController {
   @Operation(summary = "Get a list of elements from different ifc classes")
   public ResponseEntity<Resource> getElements(@RequestParam String projectName,
       @Parameter(description = "Comma seperated list of ifc element classes") @RequestParam String elementClasses,
-      @Parameter(description = "Include the structure, where elements are contained in, the owner history, the geometry representation and the object placement.") @RequestParam(defaultValue = "true") boolean basics) {
+      @Parameter(description = "Include the structure, where elements are contained in, the owner history, the geometry representation and the object placement.") @RequestParam(defaultValue = "true") boolean elementInfos) {
 
     BimServerClient client = bimserver.getConnection();
     ProjectData pInfos = func.getProjectData(client, projectName);
     Queries queries = new Queries(pInfos.getSchema());
 
-    return func.getFileByQuery(client, pInfos.getRoid(), pInfos.getSerializerOid(), queries.getElements(elementClasses, basics));
+    return func.getFileByQuery(client, pInfos.getRoid(), pInfos.getSerializerOid(), queries.getElements(elementClasses, elementInfos));
   }
 
   @GetMapping("/querybimserver/getElementsInBoundingBox")
-  @Operation(summary = "Get all Entities in a bounding box.", description = " The unit of the values depends on the length unit in the ifc model")
+  @Operation(summary = "Get all Entities in a bounding box.", description = " The unit of values in the metric system is always millimetre")
   public ResponseEntity<Resource> getElementsInBoundingBox(@RequestParam String projectName,
       @Parameter(description = "Comma seperated list of ifc element classes") @RequestParam Optional<String> elementClasses,
       @RequestParam double x,
       @RequestParam double y, @RequestParam double z, @RequestParam double width, @RequestParam double height,
       @RequestParam double depth, @RequestParam(defaultValue = "true") boolean partial,
-      @Parameter(description = "Include the structure, where elements are contained in, the owner history, the geometry representation and the object placement.") @RequestParam(defaultValue = "true") boolean basics) {
+      @Parameter(description = "Include the structure, where elements are contained in, the owner history, the geometry representation and the object placement.") @RequestParam(defaultValue = "true") boolean elementInfos) {
 
     BimServerClient client = bimserver.getConnection();
     ProjectData pInfos = func.getProjectData(client, projectName);
@@ -106,7 +106,7 @@ public class QueryController {
     }
 
     return func.getFileByQuery(client, pInfos.getRoid(), pInfos.getSerializerOid(),
-        queries.getElementsInBoundingBox(x, y, z, width, height, depth, partial, elements, basics));
+        queries.getElementsInBoundingBox(x, y, z, width, height, depth, partial, elements, elementInfos));
   }
 
   @GetMapping("/querybimserver/getElementsByProperty")
@@ -114,7 +114,7 @@ public class QueryController {
   public ResponseEntity<Resource> getElementsByProperty(@RequestParam String projectName,
       @RequestParam Optional<String> elementClasses, @RequestParam String propertySet, @RequestParam String property,
       @RequestParam String value,
-      @Parameter(description = "Include the structure, where elements are contained in, the owner history, the geometry representation and the object placement.") @RequestParam(defaultValue = "true") boolean basics) {
+      @Parameter(description = "Include the structure, where elements are contained in, the owner history, the geometry representation and the object placement.") @RequestParam(defaultValue = "true") boolean elementInfos) {
 
     BimServerClient client = bimserver.getConnection();
     ProjectData pInfos = func.getProjectData(client, projectName);
@@ -125,33 +125,33 @@ public class QueryController {
       types = elementClasses.get();
     }
     return func.getFileByQuery(client, pInfos.getRoid(), pInfos.getSerializerOid(),
-        queries.getElementsByProperty(types, propertySet, property, value, basics));
+        queries.getElementsByProperty(types, propertySet, property, value, elementInfos));
   }
 
   @GetMapping("/querybimserver/getPropertiesFromElements")
   @Operation(summary = "Get all properties of specific elements")
   public ResponseEntity<Resource> getPropertiesFromElements(@RequestParam String projectName,
       @Parameter(description = "Comma seperated list of ifc element guids") @RequestParam String guids,
-      @Parameter(description = "Include the structure, where elements are contained in, the owner history, the geometry representation and the object placement.") @RequestParam(defaultValue = "true") boolean basics) {
+      @Parameter(description = "Include the structure, where elements are contained in, the owner history, the geometry representation and the object placement.") @RequestParam(defaultValue = "true") boolean elementInfos) {
 
     BimServerClient client = bimserver.getConnection();
     ProjectData pInfos = func.getProjectData(client, projectName);
     Queries queries = new Queries(pInfos.getSchema());
 
-    return func.getFileByQuery(client, pInfos.getRoid(), pInfos.getSerializerOid(), queries.getPropertiesFromElements(guids, basics));
+    return func.getFileByQuery(client, pInfos.getRoid(), pInfos.getSerializerOid(), queries.getPropertiesFromElements(guids, elementInfos));
   }
 
   @GetMapping("/querybimserver/getWallsByType")
   @Operation(summary = "Get all walls with specific wall type")
   public ResponseEntity<Resource> getWallsByType(@RequestParam String projectName,
       @Parameter(description = "Comma seperated list of ifc wall type guids") @RequestParam String guids,
-      @Parameter(description = "Include the structure, where elements are contained in, the owner history, the geometry representation and the object placement.") @RequestParam(defaultValue = "true") boolean basics) {
+      @Parameter(description = "Include the structure, where elements are contained in, the owner history, the geometry representation and the object placement.") @RequestParam(defaultValue = "true") boolean elementInfos) {
 
     BimServerClient client = bimserver.getConnection();
     ProjectData pInfos = func.getProjectData(client, projectName);
     Queries queries = new Queries(pInfos.getSchema());
 
-    return func.getFileByQuery(client, pInfos.getRoid(), pInfos.getSerializerOid(), queries.getWallsByType(guids, basics));
+    return func.getFileByQuery(client, pInfos.getRoid(), pInfos.getSerializerOid(), queries.getWallsByType(guids, elementInfos));
   }
 
 }

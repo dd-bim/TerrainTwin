@@ -1,41 +1,41 @@
 {
-  "AllWalls" : {
-  "type": {   
-      "name": "IfcWall",  
-      "includeAllSubTypes": true 
-  }
-},
-"ElementsInStorey" : {
+  "AllWalls": {
+    "type": {
+      "name": "IfcWall",
+      "includeAllSubTypes": true
+    }
+  },
+  "ElementsInStorey": {
     "type": "IfcBuildingStorey",
     "includes": [
-      "ifc4-stdlib:Decomposes",			
+      "ifc4-stdlib:Decomposes",
       {
         "type": "IfcBuildingStorey",
         "field": "ContainsElements",
         "include": {
           "type": "IfcRelContainedInSpatialStructure",
-          "field": "RelatedElements", 
+          "field": "RelatedElements",
           "includes": [
             "ifc4-stdlib:ObjectPlacement",
-              {
+            {
               "type": "IfcProduct",
               "fields": [
-                "Representation", 
+                "Representation",
                 "HasAssociations"
               ],
               "outputTypes": [
-                "IfcProductDefinitionShape", 
+                "IfcProductDefinitionShape",
                 "IfcRelAssociatesClassification"
               ],
               "includes": [
-                      {
-                          "type": "IfcRelAssociatesClassification",
-                          "field": "RelatingClassification",
-                          "includes": [
+                {
+                  "type": "IfcRelAssociatesClassification",
+                  "field": "RelatingClassification",
+                  "includes": [
                     "ifc4-geometry:IfcClassificationReference"
                   ]
-                      },
-                      {
+                },
+                {
                   "type": "IfcProductRepresentation",
                   "field": "Representations",
                   "includes": [
@@ -51,11 +51,11 @@
               ]
             }
           ]
-        } 
+        }
       }
     ]
   },
-  "ExternalWalls" : {
+  "ExternalWalls": {
     "type": {
       "name": "IfcWall",
       "includeAllSubTypes": true
@@ -70,11 +70,14 @@
     "type": "IfcWallType",
     "include": {
       "type": "IfcWallType",
-      "field": "ObjectTypeOf",
+      "field": "Types",
       "include": {
         "type": "IfcRelDefinesByType",
         "field": "RelatedObjects",
-        "outputType": "IfcWall"
+        "outputTypes": [
+          "IfcWall",
+          "IfcWallStandardCase"
+        ]
       }
     }
   },
@@ -89,27 +92,105 @@
       "partial": true
     }
   },
-  "IncludeBasics": [   
-    "ifc4-stdlib:ContainedInStructure",
-    "ifc4-stdlib:OwnerHistory",
-    "ifc4-stdlib:Representation",
-    "ifc4-stdlib:ObjectPlacement"
+  "IncludeBasics": [
+    "ifc4-stdlib:ObjectPlacement",
+    {
+      "type": "IfcProduct",
+      "fields": [
+        "Representation",
+        "HasAssociations"
+      ],
+      "includes": [
+        "ifc4-stdlib:IfcRelAssociatesMaterial",
+        {
+          "type": "IfcProductRepresentation",
+          "field": "Representations",
+          "includes": [
+            "ifc4-geometry:IfcStyleModel",
+            "ifc4-geometry:IfcStyledRepresentation",
+            "ifc4-geometry:IfcRepresentation",
+            "ifc4-geometry:IfcBooleanResult",
+            "ifc4-geometry:IfcShapeModel",
+            "ifc4-geometry:IfcShapeRepresentation",
+            "ifc4-geometry:IfcTopologyRepresentation"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "IfcElement",
+      "field": "ContainedInStructure",
+      "includes": [
+        {
+          "type": "IfcRelContainedInSpatialStructure",
+          "fields": [
+            "RelatingStructure"
+          ],
+          "includes": [
+            "ifc4-stdlib:Decomposes",
+            "ifc4-stdlib:OwnerHistory"
+          ]
+        },
+        "ifc4-stdlib:OwnerHistory"
+      ]
+    },
+    {
+      "type": "IfcRoot",
+      "field": "OwnerHistory",
+      "includes": [
+         {
+            "type": "IfcOwnerHistory",
+            "field": "OwningUser",
+            "includes": [
+               {
+                  "type": "IfcPersonAndOrganization",
+                  "field": "ThePerson"
+               },
+               {
+                  "type": "IfcPersonAndOrganization",
+                  "field": "TheOrganization",
+                  "includes": [
+                     {
+                        "type": "IfcOrganization",
+                        "field": "Roles"
+                     },
+                     {
+                        "type": "IfcOrganization",
+                        "field": "Addresses"
+                     }
+                  ]
+               }
+            ]
+         },
+         {
+            "type": "IfcOwnerHistory",
+            "field": "OwningApplication",
+            "include": {
+               "type": "IfcApplication",
+               "field": "ApplicationDeveloper"
+            }
+         }
+      ]
+   }
   ],
   "IncludeAllProperties": [
     {
       "type": "IfcObject",
       "field": "IsDefinedBy",
       "include": {
-         "type": "IfcRelDefinesByProperties",
-         "field": "RelatingPropertyDefinition",
-         "includes": [{
+        "type": "IfcRelDefinesByProperties",
+        "field": "RelatingPropertyDefinition",
+        "includes": [
+          {
             "type": "IfcPropertySet",
             "field": "HasProperties"
-         }, {
-           "type": "IfcElementQuantity",
-           "field": "Quantities"
-         }]
+          },
+          {
+            "type": "IfcElementQuantity",
+            "field": "Quantities"
+          }
+        ]
       }
-   }
+    }
   ]
 }
