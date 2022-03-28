@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import com.Microservices.FileInputHandler.connection.GeometryHandlerConnection;
 import com.Microservices.FileInputHandler.connection.GraphDBConnection;
 import com.Microservices.FileInputHandler.connection.IfcContourCreatorConnection;
 import com.Microservices.FileInputHandler.connection.MinIOConnection;
+import com.Microservices.FileInputHandler.domain.model.IfcFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.io.FilenameUtils;
@@ -145,7 +147,8 @@ public class ImportFiles {
                     // process file if it is of type ifc
                     else if (extension.equals("ifc")) {
 
-                        results += importIfc.importIfcFile(bucket, repo, filename);
+                        IfcFile ifcFile = importIfc.getIfcFile(bucket, filename);
+                        results += importIfc.importIfcFile(ifcFile, bucket, repo);
 
                         String contourFile = contourCreator.creator(bucket, filename);
                         InputStream stream = client
@@ -153,7 +156,6 @@ public class ImportFiles {
 
                         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
                         String line = "";
-                        
 
                         File file = new File(contourFile);
                         FileWriter writer = new FileWriter(file);
@@ -169,7 +171,7 @@ public class ImportFiles {
                             }
                             c++;
                         }
-                        
+
                         if (content.get(0).startsWith("SRID")) {
                             writer.write("id; wkt\n");
                         } else {
@@ -181,12 +183,29 @@ public class ImportFiles {
                             } catch (IOException e) {
                             }
                         });
-                        
+
                         writer.close();
                         client.uploadObject(
-                                UploadObjectArgs.builder().bucket(bucket).object(contourFile).filename(contourFile).build());
+                                UploadObjectArgs.builder().bucket(bucket).object(contourFile).filename(contourFile)
+                                        .build());
 
                         results += geoconn.geometryImport(bucket, repo, contourFile);
+
+                        Path ifcPropFilePath = importIfc.createIfcPropertyFile(ifcFile);
+                        Path ttlPropFilePath = importIfc.convertIfcToTtl(ifcPropFilePath);
+
+                        client.uploadObject(
+                                UploadObjectArgs.builder().bucket(bucket)
+                                        .object(ifcPropFilePath.getFileName().toString())
+                                        .filename(ifcPropFilePath.toString()).build());
+
+                        client.uploadObject(
+                                UploadObjectArgs.builder().bucket(bucket)
+                                        .object(ttlPropFilePath.getFileName().toString())
+                                        .filename(ttlPropFilePath.toString()).build());
+
+                        String baseURI = url + "/" + bucket + "/" + ttlPropFilePath.getFileName().toString() + "/";
+                        db.add(ttlPropFilePath.toFile(), baseURI, RDFFormat.TURTLE);
 
                     }
 
