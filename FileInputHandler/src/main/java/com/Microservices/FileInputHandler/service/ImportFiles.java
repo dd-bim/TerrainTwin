@@ -147,10 +147,16 @@ public class ImportFiles {
                     // process file if it is of type ifc
                     else if (extension.equals("ifc")) {
 
+                        // download file from MinIO
                         IfcFile ifcFile = importIfc.getIfcFile(bucket, filename);
+
+                        // import file into BIMserver and project metadata into GraphDB
                         results += importIfc.importIfcFile(ifcFile, bucket, repo);
 
+                        // let IfcContourCreator Service create the footprint of the Ifc model
                         String contourFile = contourCreator.creator(bucket, filename);
+
+                        // stream footprint file from MinIo
                         InputStream stream = client
                                 .getObject(GetObjectArgs.builder().bucket(bucket).object(contourFile).build());
 
@@ -185,25 +191,34 @@ public class ImportFiles {
                         });
 
                         writer.close();
+
+                        // upload edited footprint file
                         client.uploadObject(
                                 UploadObjectArgs.builder().bucket(bucket).object(contourFile).filename(contourFile)
                                         .build());
 
+                        // import footprint into Postgres database
                         results += geoconn.geometryImport(bucket, repo, contourFile);
 
+                        // create ifc file, where all entities refrencing to geometry are removed
                         Path ifcPropFilePath = importIfc.createIfcPropertyFile(ifcFile);
-                        Path ttlPropFilePath = importIfc.convertIfcToTtl(ifcPropFilePath);
 
+                        // upload property ifc to MinIO
                         client.uploadObject(
                                 UploadObjectArgs.builder().bucket(bucket)
                                         .object(ifcPropFilePath.getFileName().toString())
                                         .filename(ifcPropFilePath.toString()).build());
 
+                        // convert ifc file with properties into RDF Turtle (ttl) syntax
+                        Path ttlPropFilePath = importIfc.convertIfcToTtl(ifcPropFilePath);
+
+                        // upload RDF file of properties to MinIO
                         client.uploadObject(
                                 UploadObjectArgs.builder().bucket(bucket)
                                         .object(ttlPropFilePath.getFileName().toString())
                                         .filename(ttlPropFilePath.toString()).build());
 
+                        // import created RDF triples into GraphDB
                         String baseURI = url + "/" + bucket + "/" + ttlPropFilePath.getFileName().toString() + "/";
                         db.add(ttlPropFilePath.toFile(), baseURI, RDFFormat.TURTLE);
 
@@ -247,7 +262,7 @@ public class ImportFiles {
                 // log.info("Nothing to do.");
             }
         } catch (Exception e) {
-            results += "Could not connect to GraphDB. Possibly the database is not available. \n Message: "
+            results += "Something went wrong during the import. \n Message: "
                     + e.getMessage();
         }
         return results;
