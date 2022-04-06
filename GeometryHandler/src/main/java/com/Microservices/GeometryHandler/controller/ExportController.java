@@ -27,6 +27,9 @@ import com.Microservices.GeometryHandler.schemas.Solid;
 import com.Microservices.GeometryHandler.schemas.SpecialPoints;
 import com.Microservices.GeometryHandler.schemas.TIN;
 import com.Microservices.GeometryHandler.service.CheckFiles;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -188,12 +191,13 @@ public class ExportController {
         break;
     }
 
-    String res = "";
-    for (int i = 0; i < items.size(); i++) {
-      res += items.get(i) + "\n";
-    }
+    JsonArray json = new JsonArray();
+    items.forEach(item -> {
+      json.add(item);
+    });
 
-    return "Geometries count: " + items.size() + "\n" + res;
+    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    return gson.toJson(json);
   }
 
   // get all items of one collection - in standard formats json, xml
