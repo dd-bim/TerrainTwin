@@ -125,20 +125,26 @@ public class ImportIfc {
         BimServerClient bimClient = bimserver.getConnection();
 
         // create new project with name of the file
-        SProject newProject = null;
+        SProject newProject;
+        long poid = -1;
+        UUID uuid = UUID.fromString("00000000-0000-0000-0000-000000000000");
         try {
-            newProject = bimClient.getServiceInterface().addProject(pName, ifcFile.getVersion());
-        } catch (ServerException | UserException | PublicInterfaceNotFoundException e1) {
+            newProject = bimClient.getServiceInterface().addProject(pName,
+                    ifcFile.getVersion());
+            poid = newProject.getOid();
+            uuid = newProject.getUuid();
+                } catch (ServerException | UserException | PublicInterfaceNotFoundException e1) {
             e1.printStackTrace();
-            result += e1.getMessage();
+            result += "new Project: " + e1.getMessage();
         }
-        long poid = newProject.getOid();
 
         // find the correct deserializer for uploading the file
-        SDeserializerPluginConfiguration deserializer = null;
+        SDeserializerPluginConfiguration deserializer;
+        long doid = -1;
         try {
             deserializer = bimClient.getServiceInterface().getSuggestedDeserializerForExtension("ifc",
                     poid);
+            doid = deserializer.getOid();
         } catch (ServerException | UserException | PublicInterfaceNotFoundException e1) {
             e1.printStackTrace();
             result += e1.getMessage();
@@ -150,38 +156,116 @@ public class ImportIfc {
 
         SLongCheckinActionState state;
         try {
-            state = bimClient.getServiceInterface().checkinSync(poid, "", deserializer.getOid(),
+            state = bimClient.getServiceInterface().checkinSync(poid, "", doid,
                     file.getTotalSpace(), file.getName(), data, false);
 
             result += "\n Title: " + state.getTitle() + "\n Oid: " + state.getOid() + "\n Roid: " + state.getRoid()
                     + "\n Rid: " + state.getRid() + "\n Stage: " + state.getStage() + "\n TopicId: "
-                    + state.getTopicId() + "\n Progress: " + state.getProgress() + "\n Uuid: " + state.getUuid()
+                    + state.getTopicId() + "\n Progress: " + state.getProgress() + "\n Uuid: " +
+                    state.getUuid()
                     + "\n State: " + state.getState();
             log.info("Title: " + state.getTitle());
         } catch (ServerException | UserException | PublicInterfaceNotFoundException e) {
 
             e.printStackTrace();
-            result += e.getMessage();
+            result += "Checkin failed: " + e.getMessage();
         }
 
         // get the revision id (roid) of the uploaded file
-        List<SRevision> revs = null;
+        List<SRevision> revs;
+        long roid = -1;
         try {
             revs = bimClient.getServiceInterface().getAllRevisionsOfProject(poid);
+            roid = revs.get(0).getOid();
         } catch (ServerException | UserException | PublicInterfaceNotFoundException e) {
             e.printStackTrace();
         }
 
-        Long roid = revs.get(0).getOid();
-        // UUID uuid = revs.get(0).getUuid(); // ist immer Null
-        UUID uuid = newProject.getUuid();
-        log.info("poid: " + poid + "\n" + "roid: " + roid + "\n" + "uuid: " + uuid);
+        try {
+            bimClient.close();
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
 
+        log.info(poid + " " + roid + " " + uuid);
         // import poid, roid, uuid as metadate vor linking into the GraphDB repository
-        result += "\n" + ifcInfos.importIfcInfos(poid, roid, uuid, filename, bucket, repo) + "\n";
+        try {
+            result += "\n" + ifcInfos.importIfcInfos(poid, roid, uuid, filename, bucket, repo) + "\n";
+        } catch (Exception e) {
+            result += e.getMessage();
+        }
 
         return result;
     }
+
+    // // import ifc files to BIMserver and metadata to GraphDB
+    // public String importIfcFile(IfcFile ifcFile, String bucket, String repo) {
+
+    // String result = "";
+    // File file = ifcFile.getFile();
+    // String filename = file.getName();
+    // String pName = filename.replace(".ifc", "");
+
+    // // connect to BIMserver
+    // BimServerClient bimClient = bimserver.getConnection();
+
+    // // create new project with name of the file
+    // try {
+    // SProject newProject = bimClient.getServiceInterface().addProject(pName,
+    // ifcFile.getVersion());
+    // long poid = newProject.getOid();
+    // UUID uuid = newProject.getUuid();
+
+    // // find the correct deserializer for uploading the file
+    // SDeserializerPluginConfiguration deserializer =
+    // bimClient.getServiceInterface()
+    // .getSuggestedDeserializerForExtension("ifc",
+    // poid);
+    // long doid = deserializer.getOid();
+
+    // // try to upload the file to the new project
+    // DataSource source = new FileDataSource(file);
+    // DataHandler data = new DataHandler(source);
+
+    // SLongCheckinActionState state =
+    // bimClient.getServiceInterface().checkinSync(poid, "", doid,
+    // file.getTotalSpace(), file.getName(), data, false);
+
+    // result += "\n Title: " + state.getTitle() + "\n Oid: " + state.getOid() + "\n
+    // Roid: " + state.getRoid()
+    // + "\n Rid: " + state.getRid() + "\n Stage: " + state.getStage() + "\n
+    // TopicId: "
+    // + state.getTopicId() + "\n Progress: " + state.getProgress() + "\n Uuid: " +
+    // state.getUuid()
+    // + "\n State: " + state.getState();
+    // log.info("Title: " + state.getTitle());
+
+    // // get the revision id (roid) of the uploaded file
+    // List<SRevision> revs =
+    // bimClient.getServiceInterface().getAllRevisionsOfProject(poid);
+    // long roid = revs.get(0).getOid();
+
+    // try {
+    // bimClient.close();
+    // } catch (Exception e1) {
+    // e1.printStackTrace();
+    // }
+
+    // log.info(poid + " " + roid + " " + uuid);
+    // // import poid, roid, uuid as metadate vor linking into the GraphDB
+    // repository
+
+    // result += "\n" + ifcInfos.importIfcInfos(poid, roid, uuid, filename, bucket,
+    // repo) + "\n";
+
+    // } catch (ServerException | UserException | PublicInterfaceNotFoundException
+    // e) {
+    // e.printStackTrace();
+    // result += e.getMessage();
+    // }
+
+    // return result;
+    // }
 
     // remove all entities with geometry context
     public Path createIfcPropertyFile(IfcFile ifcFile) throws FileNotFoundException, IOException {

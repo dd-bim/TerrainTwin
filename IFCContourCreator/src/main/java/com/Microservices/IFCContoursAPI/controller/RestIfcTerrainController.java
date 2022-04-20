@@ -26,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,6 +42,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
+@RequestMapping("/ifccontourcreator")
 @Tag(name = "Contour Extractor", description = "Get contour from IFC model")
 public class RestIfcTerrainController {
 
@@ -133,9 +135,64 @@ public class RestIfcTerrainController {
 
   // send IFC file downloaded from MinIO to IfcGeometryExtractor and get resulting
   // WKT string back
-  @GetMapping(path = {"/createFromStorage/minio/{bucket}/file/{filename}", "/createFromStorage/minio/{bucket}/file/{filename}/{epsg}"})
+  @GetMapping(path = {"/createFromStorage/minio/{bucket}/file/{filename}"})
   @Operation(summary = "get IFC file from minio, create contour and output it as WKT")
   public String createContourFromStorage(
+      @Parameter(description = "The name of the source and target MinIO bucket.") @PathVariable String bucket,
+      @Parameter(description = "The name of the source file in MinIO bucket.") @PathVariable String filename)
+      throws IOException, InterruptedException, InvalidKeyException, ErrorResponseException, InsufficientDataException,
+      InternalException, InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException,
+      IllegalArgumentException {
+    String result = "";
+
+    // copy file from minio into container
+    files.getSourceFile(bucket, filename);
+
+    // call IfcContourExtractor with file as input
+    String res = execService.callConverter(CPATH + filename, null);
+
+    // if creation succeeds, upload file to MinIO
+    if (res.contains("Successful creation.")) {
+      String outputName;
+      try{
+        outputName = filename.split("\\.")[0] + "_ifc_WKT_contour_Slabs.txt";
+  
+        files.uploadFile(bucket, outputName);
+        result = outputName;
+        } catch (Exception e) {
+          outputName = filename.split("\\.")[0] + "_ifc_WKT_contour_Walls.txt";
+  
+          files.uploadFile(bucket, outputName);
+          result = outputName;
+        }
+
+    } else {
+      // if creation fails open log file and print logs
+      File dir = new File(CPATH);
+      String[] logfile = dir.list((d, s) -> {
+        return s.toLowerCase().endsWith(".log");
+      });
+
+      BufferedReader reader = new BufferedReader(new FileReader(CPATH + logfile[0]));
+      String line;
+      while ((line = reader.readLine()) != null) {
+        result += line + "\n";
+      }
+
+      reader.close();
+    }
+
+    // clean folder from old files
+    files.removeFiles();
+
+    return result;
+  }
+
+  // send IFC file downloaded from MinIO to IfcGeometryExtractor and get resulting
+  // WKT string back
+  @GetMapping(path = {"/createFromStorage/minio/{bucket}/file/{filename}/{epsg}"})
+  @Operation(summary = "get IFC file from minio, create contour and output it as WKT")
+  public String createContourFromStorageEpsg(
       @Parameter(description = "The name of the source and target MinIO bucket.") @PathVariable String bucket,
       @Parameter(description = "The name of the source file in MinIO bucket.") @PathVariable String filename, 
       @Parameter(description = "EPSG code") @PathVariable(value = "epsg", required = false) Integer epsg)

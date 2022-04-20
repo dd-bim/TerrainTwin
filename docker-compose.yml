@@ -355,8 +355,32 @@ services:
             - bimserver.password=${BIMSERVER_PASSWORD}
         volumes:
             - ./volumes/logs:/var/log
-            - ./volumes/files:/app/files
 
+    ifccontour-creator: 
+        container_name: ifccontour-creator
+        image: schi11er/tt_ifccontour-creator:latest
+        restart: unless-stopped
+        ports:
+            - 7212:7212
+        depends_on:
+            - configserver
+            - eurekaserver
+        healthcheck:
+            test: wget --spider http://localhost:7212/actuator/health || exit 1
+            interval: 30s
+            timeout: 5s
+            retries: 5
+            start_period: 20s
+        networks:
+            - terraintwin_microservices
+        environment:
+            - domain.url=${DOMAIN_URL}
+            - minio.url=${MINIO_URL}
+            - minio.port=${MINIO_PORT}
+            - minio.access_key=${MINIO_ACCESS_KEY}
+            - minio.secret_key=${MINIO_SECRET_KEY}
+        volumes:
+            - ./volumes/logs:/var/log
 
 networks:
     terraintwin_microservices:

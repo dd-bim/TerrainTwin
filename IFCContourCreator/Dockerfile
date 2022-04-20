@@ -12,6 +12,7 @@ LABEL maintainer="Schilling"
 WORKDIR /app
 COPY --from=mvn-build /app/build/target/*.jar /opt/lib/application.jar
 COPY ./src/ifccontours /app
+RUN mkdir files
 RUN apk add --no-cache -X http://dl-cdn.alpinelinux.org/alpine/edge/testing mono
 CMD ["java", "-jar", "/opt/lib/application.jar"]
-EXPOSE 7209
+EXPOSE 7212

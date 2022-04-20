@@ -20,10 +20,8 @@ public class IfcContourCreatorConnection {
         try {
 
             URL url = new URL(
-                    "http://ifccontour-creator:7212/createFromStorage/minio/" + bucket + "/file/" + filename);
+                    "http://ifccontour-creator:7212/ifccontourcreator/createFromStorage/minio/" + bucket + "/file/" + filename);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            // connection.setConnectTimeout(10000);
-            // connection.setReadTimeout(10000);
 
             connection.setRequestMethod("GET");
             connection.setDoOutput(true);
