@@ -102,4 +102,14 @@ public class Queries {
         
     }
 
+    // get instance of Building from source
+    public String getBuildingInstance(String source) {
+        return Prefix.RDF.toString() +
+        Prefix.TTO.toString() +
+        "PREFIX postgres: <" + domain + "/postgres/>" +
+        "select ?s where {" +
+            "?s rdf:type tto:BuildingElement ." + 
+            "?s tto:hasSource <" + source + "> . }";
+        }
+
 }

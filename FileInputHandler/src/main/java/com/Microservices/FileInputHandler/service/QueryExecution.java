@@ -68,11 +68,10 @@ public class QueryExecution {
         return feature;
     }
 
-     // execute a query with max. 1 result on GraphDB
+     // execute a query with possibly more than 1 result on GraphDB
      public ArrayList<List<String>> executeQuery1(String repo, String query) {
 
         ArrayList<List<String>> features = new ArrayList<List<String>>();
-        // String feature = "";
 
         // connect to a repository
         RepositoryConnection db = dbconnection.connection(repo);

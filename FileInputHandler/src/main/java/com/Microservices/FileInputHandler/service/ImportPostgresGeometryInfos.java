@@ -7,6 +7,7 @@ import java.util.UUID;
 import com.Microservices.FileInputHandler.connection.GraphDBConnection;
 import com.Microservices.FileInputHandler.controller.RequestController;
 import com.Microservices.FileInputHandler.domain.model.PostgresInfos;
+import com.Microservices.FileInputHandler.domain.model.Queries;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -34,6 +35,9 @@ public class ImportPostgresGeometryInfos {
 
     @Autowired
     RequestController request;
+
+    @Autowired
+    Queries query;
 
     @Value("${domain.url}")
     private String domain;
@@ -91,6 +95,19 @@ public class ImportPostgresGeometryInfos {
                             .add(terrainobj, "tto:hasSource", doc);
                     if (infos.getOriginId() != -1)
                         builder.add(object, "tto:originId", infos.getOriginId());
+
+                    if(infos.getFilename().contains("_contour_")) {
+                        try {
+                        String[] parts = infos.getFilename().split("_ifc");
+                        String buildingSource = infos.getPath() + "/" + parts[0] + ".ifc";
+                    
+                        String buildingURI = exec.executeQuery(infos.getGraphdbRepo(), query.getBuildingInstance(buildingSource));
+
+                        builder.add(buildingURI, "tto:hasFootprint", object);
+                    } catch (Exception e) {
+                        log.info(e.getMessage());
+                    }
+                    }
                 } else if (newInput) {
 
                     String processStep = "pro:" + UUID.randomUUID().toString();

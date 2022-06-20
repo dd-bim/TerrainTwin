@@ -226,6 +226,8 @@ services:
             - terraintwin_microservices
         environment:
             - domain.url=${DOMAIN_URL}
+            - smtp.mail=${ADMIN_MAIL}
+            - smtp.password=${ADMIN_PW}
         volumes:
             - ./volumes/logs:/var/log
    

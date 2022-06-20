@@ -39,7 +39,7 @@ logging:
         org:
             hibernate:
                 stat: debug
-                type: trace
+                type: debug
     file:
         name: /var/log/geometry-handler.log
 
