@@ -112,4 +112,16 @@ public class Queries {
             "?s tto:hasSource <" + source + "> . }";
         }
 
+    // get building project information from footprint geometry
+    public String getBuildingInfosFromFootprint(String geometry) {
+        return "PREFIX postgres: <" + domain + "/postgres/>" +
+                Prefix.TTO.toString() +
+                Prefix.GEO.toString() +
+                "select ?bim ?poid ?roid ?source where {" + 
+                    "?f geo:hasGeometry postgres:" + geometry + " ." +
+                    "?bim tto:hasFootprint ?f ." +
+                    "?bim tto:ifcProjectId ?poid ." +
+                    "?bim tto:ifcRevisionId ?roid ." +
+                    "?bim tto:hasSource ?source . }";  
+    }
 }

@@ -103,7 +103,7 @@ public class ImportPostgresGeometryInfos {
                     
                         String buildingURI = exec.executeQuery(infos.getGraphdbRepo(), query.getBuildingInstance(buildingSource));
 
-                        builder.add(buildingURI, "tto:hasFootprint", object);
+                        builder.add(buildingURI, "tto:hasFootprint", terrainobj);
                     } catch (Exception e) {
                         log.info(e.getMessage());
                     }

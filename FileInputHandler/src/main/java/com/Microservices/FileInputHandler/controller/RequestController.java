@@ -176,6 +176,31 @@ public class RequestController {
     return gson.toJson(json);
   }
 
+    // get most information about a geometry at once
+    @GetMapping(path = "/geometry/buildingInfosFromFootprint/repo/{repo}")
+    @Operation(summary = "Get infos of a building project by using the footprint geometry id")
+    @ApiResponse(responseCode = "200", description = "Successful operation")
+    public String getBuildingProjectInfosFromFootprint(@Parameter(description = "The name of the GraphDB repository.") @PathVariable String repo,
+        @Parameter(description = "The foorprint geometry object id.") @RequestParam String geometry) {
+  
+      // get general information about geometry
+      ArrayList<List<String>> list = exec.executeQuery1(repo, query.getBuildingInfosFromFootprint(geometry));
+  
+      JsonObject json = new JsonObject();
+  
+  
+      for (List<String> triple : list) {
+        json.addProperty("building", triple.get(0));
+        json.addProperty("projectId", triple.get(1));
+        json.addProperty("revisionId", triple.get(2));
+        json.addProperty("source", triple.get(3));
+      }
+
+      // create pretty json output
+      Gson gson = new GsonBuilder().setPrettyPrinting().create();
+      return gson.toJson(json);
+    }
+  
   // @GetMapping(path = "/geometry/infos2/repo/{repo}")
   // @Operation(summary = "Get the dimension of a geometry object")
   // @ApiResponse(responseCode = "200", description = "Successful operation")
