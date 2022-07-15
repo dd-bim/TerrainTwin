@@ -1,6 +1,6 @@
 # TerrainTwin
 
-Weitere Infos dazu im [Wiki](Projekt-TerrainTwin).
+Weitere Infos dazu im [Wiki](https://github.com/dd-bim/TerrainTwin/wiki).
 
 ## Übersicht
 
@@ -8,9 +8,10 @@ Weitere Infos dazu im [Wiki](Projekt-TerrainTwin).
 * `./volumes`: Lokale Laufzeitdaten und Properties der Container ([Docker bind mounts](https://docs.docker.com/storage/bind-mounts/))
 * `./.env.example`: Beispiel für die notwendige Konfigurationsdatei `.env`
 * `./docker-compose.yml`: Docker-Stack der in TerrainTwin genutzten Komponenten
+* `./docker-compose.yml`: Docker-Stack der in TerrainTwin genutzten Komponenten für lokale Ausführung
 * `./docker-compose.databases.yml`: Basiskomponenten, z.B. Datenbanken und Object Storages, auf denen die Komponenten in der `./docker-compose.yml` aufbauen
 
-Der Aufbau der Microservice Architecture und deren Komponenten werde im [Wiki](Microservice-Architecture) beschrieben.
+Der Aufbau der Microservice Architecture und deren Komponenten werde im [Wiki](https://github.com/dd-bim/TerrainTwin/wiki/Microservice-Architecture) beschrieben.
 
 **Geplante Komponenten**
 
@@ -22,8 +23,8 @@ Der Aufbau der Microservice Architecture und deren Komponenten werde im [Wiki](M
 - [x] PostgreSQL / PostGIS für 2D/3D-Berechnungen, Speicherung von Geodaten
 - [ ] Geoserver / OGC-Server für Rasterausgabe / OGC-Services
 - [x] GraphDB für Speicherung und Verknüpfen von Semantischen Informationen
-- [ ] OpenBIM-Server / BIMServer für IFC-Abfragen/Ausgabe (als Schnittstelle zu LandPlan?)
-- [ ] (Proxy-Server zum Konsolidieren der Ports)
+- [x] OpenBIM-Server / BIMServer für IFC-Abfragen/Ausgabe (als Schnittstelle zu LandPlan?)
+- [x] (Proxy-Server zum Konsolidieren der Ports)
 
 **Optionale Komponenten für Tests / Experimente**
 
@@ -33,9 +34,9 @@ Der Aufbau der Microservice Architecture und deren Komponenten werde im [Wiki](M
 
 - [x] CSV / TXT mit WKT
 - [ ] (Shapefile)
-- [ ] TIN / Raster
+- [x] TIN / Raster
 - [x] LandXML mit TIN
-- [ ] IFC / Step
+- [x] IFC / Step
 - [ ] IFCxml
 - [ ] GML / CityGML
 
@@ -68,4 +69,4 @@ Nur Mitglieder der Gruppe **dd-bim** erhalten Zugriff.
 
 ## Installation
 
-Eine ausfürhliche Anleitung befindet sich im [Wiki](Installation-Microservice-Architecture).
+Eine ausfürhliche Anleitung befindet sich im [Wiki](https://github.com/dd-bim/TerrainTwin/wiki/Installation-Microservice-Architecture).
