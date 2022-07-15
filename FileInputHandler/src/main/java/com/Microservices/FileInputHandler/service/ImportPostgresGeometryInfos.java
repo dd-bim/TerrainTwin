@@ -115,10 +115,10 @@ public class ImportPostgresGeometryInfos {
                             .add(processStep, "tto:original", "postgres:" + infos.getOriginal().toString())
                             .add(processStep, "tto:input", "postgres:" + infos.getInput())
                             .add(processStep, "tto:output", object)
-                            .add(processStep, "tto:editor", infos.getEditor())
-                            .add(processStep, "tto:description", infos.getDescription())
-                            .add(processStep, "tto:timestamp", infos.getTimestamp())
-                            .add(processStep, "tto:phase", infos.getPhase())
+                            .add(processStep, "tto:editor", infos.getEditor() != null ? infos.getEditor() : "")
+                            .add(processStep, "tto:description", infos.getDescription() != null ? infos.getDescription() : "")
+                            .add(processStep, "tto:timestamp", infos.getTimestamp() != null ? infos.getTimestamp() : "")
+                            .add(processStep, "tto:phase", infos.getPhase() != null ? infos.getPhase() : "")
                             .add(processStep, "tto:excavation", infos.getExcavation())
                             .add(processStep, "tto:backfill", infos.getBackfill())
                             .add(processStep, "tto:massChange", infos.getBackfill() - infos.getExcavation());
@@ -130,7 +130,6 @@ public class ImportPostgresGeometryInfos {
                     for (JsonElement bl : blArr) {
                         builder.add("postgres:" + bl.getAsString(), "tto:breaklineOf", object);
                     }
-
                 }
 
                 // if geometry links another geometry, insert triple between their features

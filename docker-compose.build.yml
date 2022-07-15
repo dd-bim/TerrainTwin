@@ -147,6 +147,7 @@ services:
             - minio.access_key=${MINIO_ACCESS_KEY}
             - minio.secret_key=${MINIO_SECRET_KEY}
             - postgres.url=${POSTGRES_URL}
+            - postgres.port=${POSTGRES_PORT}
             - postgres.database.name=${POSTGRES_DATABASE}
             - postgres.database.username=${POSTGRES_USERNAME}
             - postgres.database.password=${POSTGRES_PASSWORD}
@@ -286,6 +287,7 @@ services:
         environment:
             - domain.url=${DOMAIN_URL}
             - postgres.url=${POSTGRES_URL}
+            - postgres.port=${POSTGRES_PORT}
             - postgres.database.name=${POSTGRES_DATABASE}
             - postgres.database.username=${POSTGRES_USERNAME}
             - postgres.database.password=${POSTGRES_PASSWORD}

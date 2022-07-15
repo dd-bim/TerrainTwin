@@ -80,17 +80,19 @@ public class ImportTopology {
                 if ((t.getPredicate()) != "sfTouches") {
                     int dim1 = -1;
                     int dim2 = -1;
-                    String res1 = exec.executeQuery(repo, query.getDimension(namespace + t.getSubject()));
+              
+                    String res1 = exec.executeQuery(repo, query.getDimension(t.getSubject()));
                     if (!res1.isEmpty()) dim1 = Integer.parseInt(res1);
-                    String res2 = exec.executeQuery(repo, query.getDimension(namespace + t.getObject()));
+                
+                    String res2 = exec.executeQuery(repo, query.getDimension(t.getObject()));
                     if (!res2.isEmpty()) dim2 = Integer.parseInt(res2);
                     
                     log.info("dim1: " + dim1 + " dim2: " + dim2);
 
                     if (dim1 == dim2 && dim1 == 2) {
                         // get features of geometry for linking
-                        String subjFeature = exec.executeQuery(repo, query.findFeature(namespace + t.getSubject()));
-                        String objFeature = exec.executeQuery(repo, query.findFeature(namespace + t.getObject()));
+                        String subjFeature = exec.executeQuery(repo, query.findFeature(t.getSubject()));
+                        String objFeature = exec.executeQuery(repo, query.findFeature(t.getObject()));
                         log.info("subjFeature: " + subjFeature + " \n objFeature: " + objFeature);
 
                         // check if they have bounds
@@ -98,7 +100,7 @@ public class ImportTopology {
                         String boundedFeatureO = exec.executeQuery(repo, query.findBoundedFeature(objFeature));
                         log.info("SFeature: " + boundedFeatureS);
                         log.info("OFeature: " + boundedFeatureO);
-
+                      
                         // create relation instance
                         String inst = "pro:" + UUID.randomUUID().toString();
 
@@ -114,7 +116,7 @@ public class ImportTopology {
                     }
                 }
             });
-
+          
             Model m = builder.build();
 
             // write model in turtle file and import into repository

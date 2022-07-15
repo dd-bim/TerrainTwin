@@ -11,7 +11,7 @@ springdoc:
 
 spring:
     datasource:
-        url: jdbc:postgresql://${postgres.url}/${postgres.database.name}
+        url: jdbc:postgresql://${postgres.url}:${postgres.port}/${postgres.database.name}
         username: ${postgres.database.username}
         password: ${postgres.database.password}
         platform: postgresql

@@ -11,7 +11,8 @@ public class Queries {
 
     // find a feature of a specific geometry
     public String findFeature(String geometry) {
-        return Prefix.GEO.toString() +
+        return "PREFIX postgres: <" + domain + "/postgres/>" +
+                Prefix.GEO.toString() +
                 "select ?s where {" +
                 "?s geo:hasGeometry postgres:" + geometry + " . }";
     }
