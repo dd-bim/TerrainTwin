@@ -70,3 +70,6 @@ Nur Mitglieder der Gruppe **dd-bim** erhalten Zugriff.
 ## Installation
 
 Eine ausfürhliche Anleitung befindet sich im [Wiki](https://github.com/dd-bim/TerrainTwin/wiki/Installation-Microservice-Architecture).
+
+| <img src="https://github.com/dd-bim/TerrainTwin/wiki/images/logo_htwdd.jpg" width="300"/> | HTW Dresden - Faculty Geoinformation - Friedrich-List-Platz 1 - 01069 Dresden<br/>Project head:<br>Prof. Dr.-Ing. Christian Clemen<br/>>>>Back to github wiki main page: [here](Home)! <<<|
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
